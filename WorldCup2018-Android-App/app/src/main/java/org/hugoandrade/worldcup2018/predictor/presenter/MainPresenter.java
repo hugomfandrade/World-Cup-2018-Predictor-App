@@ -72,7 +72,6 @@ public class MainPresenter extends MobileClientPresenterBase<MVP.RequiredMainVie
         mServiceManager = new ServiceManager(getModel().getService());
         getView().notifyServiceIsBound();
 
-        Log.e(TAG, "notifyServiceIsBound");
         if (!GlobalData.getInstance().hasFetchedInfo()) {
             getInfo();
         }

@@ -3,11 +3,9 @@ package org.hugoandrade.worldcup2018.predictor.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,7 +22,6 @@ import org.hugoandrade.worldcup2018.predictor.view.listadapter.GroupListAdapter;
 import org.hugoandrade.worldcup2018.predictor.view.listadapter.KnockoutListAdapter;
 
 import java.util.List;
-import java.util.Locale;
 
 public class CountryDetailsActivity extends SimpleActivityBase {
 
@@ -74,8 +71,7 @@ public class CountryDetailsActivity extends SimpleActivityBase {
         }
 
         ImageView ivFlag = findViewById(R.id.iv_country_flag);
-        BitmapUtils.decodeSampledBitmapFromResource(this, ivFlag, Country.getImageID(mCountry),
-                "Portugal".equals(mCountry.getName()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivFlag, Country.getImageID(mCountry));
         //ivFlag.setImageResource(Country.getImageID(mCountry));
 
         TextView tvCountryName = findViewById(R.id.tv_country_name);

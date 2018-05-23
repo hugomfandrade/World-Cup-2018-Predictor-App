@@ -355,6 +355,7 @@ public class StandingsFragment extends FragmentBase<FragComm.RequiredActivityBas
         void set(List<Country> countryList) {
             mCountryList = countryList;
             mGroupAdapter.set(mCountryList);
+            mGroupAdapter.notifyDataSetChanged();
         }
 
         RecyclerView.Adapter getAdapter() {

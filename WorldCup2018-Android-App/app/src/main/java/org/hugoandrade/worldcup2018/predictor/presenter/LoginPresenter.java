@@ -30,7 +30,6 @@ public class LoginPresenter extends MobileClientPresenterBase<MVP.RequiredLoginV
     @Override
     public void onCreate(MVP.RequiredLoginViewOps view) {
 
-        Log.e(TAG, "startService");
         // Start service
         view.getApplicationContext()
                 .startService(MobileService.makeIntent(view.getApplicationContext()));

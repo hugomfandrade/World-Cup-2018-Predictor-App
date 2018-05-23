@@ -61,10 +61,8 @@ public class KnockoutListAdapter extends RecyclerView.Adapter<KnockoutListAdapte
         holder.tvHomeTeam.setText(MatchUtils.tryGetTemporaryHomeTeam(context, mMatchSet, match));
         holder.tvAwayTeam.setText(MatchUtils.tryGetTemporaryAwayTeam(context, mMatchSet, match));
 
-        BitmapUtils.decodeSampledBitmapFromResource(context, holder.ivHomeTeam, Country.getImageID(match.getHomeTeam()),
-                "Portugal".equals(match.getHomeTeam() == null ? null: match.getHomeTeam().getName()));
-        BitmapUtils.decodeSampledBitmapFromResource(context, holder.ivAwayTeam, Country.getImageID(match.getAwayTeam()),
-                "Portugal".equals(match.getAwayTeam() == null ? null: match.getAwayTeam().getName()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, Country.getImageID(match.getHomeTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, Country.getImageID(match.getAwayTeam()));
         //holder.ivHomeTeam.setImageResource(Country.getImageID(match.getHomeTeam()));
         //holder.ivAwayTeam.setImageResource(Country.getImageID(match.getAwayTeam()));
 

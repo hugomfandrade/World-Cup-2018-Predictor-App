@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Prognósticos WC 2016</string>
-    <string name="app_name_long">Prognósticos Mundial 2016</string>
+    <string name="app_name">Prognósticos Mundial 2018</string>
+    <string name="app_name_long">Prognósticos Mundial 2018</string>
     <string name="sign_up" >Registar</string>
     <string name="hint_confirm_password">Confirmar Password</string>
 

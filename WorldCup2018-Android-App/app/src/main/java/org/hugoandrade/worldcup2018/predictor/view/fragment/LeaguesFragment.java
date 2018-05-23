@@ -46,7 +46,6 @@ public class LeaguesFragment extends FragmentBase<FragComm.RequiredActivityOps>
             mServiceManager.subscribeServiceCallback(mServiceCallback);
         }
 
-        GlobalData.getInstance().addOnLatestPerformanceChangedListener(mOnLatestPerformanceChangedListener);
         GlobalData.getInstance().addOnLeaguesChangedListener(mOnLeaguesChangedListener);
 
         return inflater.inflate(R.layout.fragment_leagues, container, false);
@@ -185,20 +184,8 @@ public class LeaguesFragment extends FragmentBase<FragComm.RequiredActivityOps>
     public void onDestroyView() {
         super.onDestroyView();
 
-        GlobalData.getInstance().removeOnLatestPerformanceChangedListener(mOnLatestPerformanceChangedListener);
         GlobalData.getInstance().removeOnLeaguesChangedListener(mOnLeaguesChangedListener);
     }
-
-    private GlobalData.OnLatestPerformanceChangedListener mOnLatestPerformanceChangedListener
-            = new GlobalData.OnLatestPerformanceChangedListener() {
-
-        @Override
-        public void onLatestPerformanceChanged() {
-            if (mLeagueListAdapter != null) {
-                mLeagueListAdapter.notifyDataSetChanged();
-            }
-        }
-    };
 
     private GlobalData.OnLeaguesChangedListener mOnLeaguesChangedListener
             = new GlobalData.OnLeaguesChangedListener() {

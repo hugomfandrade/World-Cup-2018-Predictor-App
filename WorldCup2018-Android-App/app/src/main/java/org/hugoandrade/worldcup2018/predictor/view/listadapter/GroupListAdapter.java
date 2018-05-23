@@ -46,9 +46,8 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         holder.tvPosition.setText(String.valueOf(country.getPosition()));
         holder.tvCountryName.setText(TranslationUtils.translateCountryName(context, country.getName()));
         holder.tvCountryName.setGravity(Gravity.START);
-        BitmapUtils.decodeSampledBitmapFromResource(context, holder.ivCountryFlag, Country.getImageID(country),
-                "Portugal".equals(country.getName()));
-        //holder.ivCountryFlag.setImageResource(Country.getImageID(country));
+        BitmapUtils.decodeSampledBitmapFromResourceSync(context, holder.ivCountryFlag, Country.getImageID(country));
+
         holder.tvVictories.setText(String.valueOf(country.getVictories()));
         holder.tvDraws.setText(String.valueOf(country.getDraws()));
         holder.tvDefeats.setText(String.valueOf(country.getDefeats()));
@@ -81,7 +80,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
     public void set(@NonNull List<Country> countryList) {
         mCountryList = countryList;
-        notifyDataSetChanged();
     }
 
     public void setPrimaryCountry(Country country) {

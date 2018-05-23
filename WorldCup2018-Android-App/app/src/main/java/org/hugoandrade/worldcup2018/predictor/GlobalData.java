@@ -36,7 +36,6 @@ public class GlobalData {
     private Set<OnMatchesChangedListener> mOnMatchesChangedListenerSet = new HashSet<>();
     private Set<OnCountriesChangedListener> mOnCountriesChangedListenerSet = new HashSet<>();
     private Set<OnPredictionsChangedListener> mOnPredictionsChangedListenerSet = new HashSet<>();
-    private Set<OnLatestPerformanceChangedListener> mOnLatestPerformanceChangedListenerSet = new HashSet<>();
     private Set<OnLeaguesChangedListener> mOnLeaguesChangedListenerSet = new HashSet<>();
 
     private List<Country> mCountryList = new ArrayList<>();
@@ -85,7 +84,6 @@ public class GlobalData {
             clear(mInstance.mOnMatchesChangedListenerSet,
                     mInstance.mOnCountriesChangedListenerSet,
                     mInstance.mOnPredictionsChangedListenerSet,
-                    mInstance.mOnLatestPerformanceChangedListenerSet,
                     mInstance.mOnLeaguesChangedListenerSet);
 
             clear(mInstance.mLatestPerformanceMap,
@@ -156,10 +154,16 @@ public class GlobalData {
 
     public void updatePrediction(Prediction prediction) {
 
+        boolean isUpdated = false;
         for (int l = 0; l < mPredictionList.size() ; l++) {
             if (mPredictionList.get(l).getMatchNumber() == prediction.getMatchNumber()) {
                 mPredictionList.set(l, prediction);
+                isUpdated = true;
             }
+        }
+
+        if (!isUpdated) {
+            mPredictionList.add(prediction);
         }
 
         updatePredictionOfUser(user, prediction);
@@ -205,56 +209,6 @@ public class GlobalData {
         for (OnMatchesChangedListener listener : mOnMatchesChangedListenerSet) {
             listener.onMatchesChanged();
         }
-    }
-
-    public void setLatestPerformanceOfUsers(List<Prediction> predictionList) {
-
-        for (Prediction p : predictionList) {
-            String userID = p.getUserID();
-
-            if (mLatestPerformanceMap.containsKey(userID)) {
-                mLatestPerformanceMap.get(userID).add(p);
-            } else {
-                mLatestPerformanceMap.put(userID, new ArrayList<Prediction>());
-                mLatestPerformanceMap.get(userID).add(p);
-            }
-        }
-
-        for (OnLatestPerformanceChangedListener listener : mOnLatestPerformanceChangedListenerSet) {
-            listener.onLatestPerformanceChanged();
-        }
-    }
-
-    public int[] getLatestPerformance(User user) {
-        List<Prediction> latestPerformancePredictionList = mLatestPerformanceMap.get(user.getID());
-
-        if (latestPerformancePredictionList == null) {
-            latestPerformancePredictionList = new ArrayList<>();
-        }
-
-        int finalMatchNumber = MatchUtils.getMatchNumberOfFirstNotPlayedMatch(mMatchList, getServerTime().getTime());
-
-        // 2
-        // 7
-        int initMatchNumber = finalMatchNumber < 6 ? 1 : finalMatchNumber - 5;
-
-        int[] a = new int[finalMatchNumber - initMatchNumber];
-
-        int i = 0;
-        for (int matchNumber = finalMatchNumber - 1 ; matchNumber >= initMatchNumber; matchNumber--) {
-            int score = systemData.getRules().getRuleIncorrectPrediction();
-
-            //Prediction prediction = null;
-            for (Prediction p : latestPerformancePredictionList) {
-                if (p.getMatchNumber() == matchNumber && p.getScore() != -1) {
-                    score = p.getScore();
-                }
-            }
-            a[i] = score;
-            i++;
-        }
-
-        return a;
     }
 
     public Country getCountry(Country country) {
@@ -413,14 +367,6 @@ public class GlobalData {
 
     public boolean wasPredictionFetched(User user, int matchNumber) {
         return mMatchPredictionMap.containsKey(user.getID()) && mMatchPredictionMap.get(user.getID()).get(matchNumber) != null;
-        /*if (mPredictionOfUserMap.containsKey(user.getID())) {
-            for (Integer matchNo : mPredictionOfUserMap.get(user.getID())) {
-                if (matchNo == matchNumber)
-                    return true;
-            }
-            return false;
-        }
-        return false;/**/
     }
 
     public void addLeague(LeagueWrapper leagueWrapper) {
@@ -556,10 +502,6 @@ public class GlobalData {
         return mLeagueWrapperMap.get(leagueID).get(stage);
     }
 
-    public interface OnLatestPerformanceChangedListener {
-        void onLatestPerformanceChanged();
-    }
-
     public interface OnMatchesChangedListener {
         void onMatchesChanged();
     }
@@ -598,14 +540,6 @@ public class GlobalData {
 
     public void removeOnPredictionsChangedListener(OnPredictionsChangedListener listener) {
         mOnPredictionsChangedListenerSet.remove(listener);
-    }
-
-    public void addOnLatestPerformanceChangedListener(OnLatestPerformanceChangedListener listener) {
-        mOnLatestPerformanceChangedListenerSet.add(listener);
-    }
-
-    public void removeOnLatestPerformanceChangedListener(OnLatestPerformanceChangedListener listener) {
-        mOnLatestPerformanceChangedListenerSet.remove(listener);
     }
 
     public void addOnLeaguesChangedListener(OnLeaguesChangedListener listener) {

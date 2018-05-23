@@ -184,7 +184,6 @@ public class MainActivity extends MainActivityBase<MVP.RequiredMainViewOps,
     protected void notifyNetworkIsAvailable() {
         if (!GlobalData.getInstance().hasFetchedInfo()) {
             errorContainer.setVisibility(View.GONE);
-            Log.e(TAG, "getInfo::notifyNetworkIsAvailable");
             getPresenter().getInfo();
         }
     }

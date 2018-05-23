@@ -121,10 +121,8 @@ public class PredictionListAdapter extends RecyclerView.Adapter<PredictionListAd
         holder.tvHomeTeam.setTextColor(isPast ? TEXT_COLOR_DEFAULT : TEXT_COLOR);
         holder.tvAwayTeam.setTextColor(isPast ? TEXT_COLOR_DEFAULT : TEXT_COLOR);
 
-        BitmapUtils.decodeSampledBitmapFromResource(context, holder.ivHomeTeam, Country.getImageID(match.getHomeTeam()),
-                "Portugal".equals(match.getHomeTeam() == null ? null : match.getHomeTeam().getName()));
-        BitmapUtils.decodeSampledBitmapFromResource(context, holder.ivAwayTeam, Country.getImageID(match.getAwayTeam()),
-                "Portugal".equals(match.getAwayTeam() == null ? null : match.getAwayTeam().getName()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, Country.getImageID(match.getHomeTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, Country.getImageID(match.getAwayTeam()));
         //holder.ivHomeTeam.setImageResource(Country.getImageID(match.getHomeTeam()));
         //holder.ivAwayTeam.setImageResource(Country.getImageID(match.getAwayTeam()));
 
@@ -186,7 +184,7 @@ public class PredictionListAdapter extends RecyclerView.Adapter<PredictionListAd
             mInputPredictionList.add(inputPrediction);
         }
         mMatchSet = new SparseArray<>();
-        for (Match m : GlobalData.getInstance().getMatchList()) {
+        for (Match m : matchList) {
             mMatchSet.put(m.getMatchNumber(), m);
         }
     }
@@ -204,13 +202,24 @@ public class PredictionListAdapter extends RecyclerView.Adapter<PredictionListAd
     }
 
     public void updatePrediction(Prediction prediction) {
-        for (int l = 0; l < mInputPredictionList.size() ; l++)
+        for (int l = 0; l < mInputPredictionList.size() ; l++) {
             if (mInputPredictionList.get(l).mMatch.getMatchNumber() == prediction.getMatchNumber()) {
                 mInputPredictionList.get(l).setPrediction(prediction);
                 mInputPredictionList.get(l).mIsEnabled = true;
-                //notifyItemChanged(l);
-                break;
             }
+        }
+
+        boolean isUpdated = false;
+        for (int l = 0; l < mPredictionList.size() ; l++) {
+            if (mPredictionList.get(l).getMatchNumber() == prediction.getMatchNumber()) {
+                mPredictionList.set(l, prediction);
+                isUpdated = true;
+            }
+        }
+
+        if (!isUpdated) {
+            mPredictionList.add(prediction);
+        }
     }
 
     public void updateFailedPrediction(Prediction prediction) {
