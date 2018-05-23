@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/cardlist_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    custom:cardCornerRadius="4dp"
+    custom:cardElevation="@dimen/cardview_default_elevation"
+    custom:cardBackgroundColor="#aaffffff"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/prediction_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="4dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_match_date_time"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_horizontal"
+                    android:textStyle="bold"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <org.hugoandrade.worldcup2018.predictor.customview.RoundedCornerLayout
+                        style="@style/Prediction.CountryFlagContainer">
+
+                        <ImageView
+                            android:id="@+id/iv_match_home_team"
+                            style="@style/Prediction.CountryFlag"/>
+
+                    </org.hugoandrade.worldcup2018.predictor.customview.RoundedCornerLayout>
+
+                    <TextView
+                        android:id="@+id/tv_match_home_team"
+                        style="@style/Prediction.CountryName"
+                        tools:text="Portugal"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_home_team_goals"
+                        style="@style/Prediction.InputScore"
+                        android:textSize="18sp"
+                        android:background="@null"
+                        />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="2dp"
+                        android:background="#26629e"/>
+
+                    <TextView
+                        android:id="@+id/tv_away_team_goals"
+                        style="@style/Prediction.InputScore"
+                        android:textSize="18sp"
+                        android:background="@null"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:minHeight="50dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <org.hugoandrade.worldcup2018.predictor.customview.RoundedCornerLayout
+                        style="@style/Prediction.CountryFlagContainer">
+
+                        <ImageView
+                            android:id="@+id/iv_match_away_team"
+                            style="@style/Prediction.CountryFlag"/>
+
+                    </org.hugoandrade.worldcup2018.predictor.customview.RoundedCornerLayout>
+
+                    <TextView
+                        android:id="@+id/tv_match_away_team"
+                        style="@style/Prediction.CountryName"
+                        tools:text="Spain"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="invisible"
+            android:id="@+id/viewGroup_info_details_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/prediction_container"
+            android:layout_alignBottom="@id/prediction_container"
+            android:orientation="vertical"
+            android:background="#ddffffff"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tv_match_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#222222"
+                android:textSize="16sp"
+                tools:text="Match number: 1"/>
+
+            <TextView
+                android:id="@+id/tv_stage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#222222"
+                android:textSize="16sp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="6dp"
+                tools:text="Group Stage A"/>
+
+            <TextView
+                android:id="@+id/tv_match_stadium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#222222"
+                android:textSize="16sp"
+                tools:text="Stadium of Light"
+                android:lines="1"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_info"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_info"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

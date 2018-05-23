@@ -1,0 +1,185 @@
+<resources>
+    <string name="app_name" translatable="true">WC 2018 Predictor</string>
+    <string name="app_name_long" translatable="true">World Cup 2018 Predictor</string>
+    <string name="sign_up" translatable="true">Sign up</string>
+    <string name="login">Login</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password" translatable="true">Confirm Password</string>
+
+    <string name="group_stage" translatable="true">Group Stage</string>
+    <string name="group_a" translatable="true">Group A</string>
+    <string name="group_b" translatable="true">Group B</string>
+    <string name="group_c" translatable="true">Group C</string>
+    <string name="group_d" translatable="true">Group D</string>
+    <string name="group_e" translatable="true">Group E</string>
+    <string name="group_f" translatable="true">Group F</string>
+    <string name="group_g" translatable="true">Group G</string>
+    <string name="group_h" translatable="true">Group H</string>
+    <string name="round_of_16" translatable="true">Round of 16</string>
+    <string name="quarter_finals" translatable="true">Quarter Finals</string>
+    <string name="semi_finals" translatable="true">Semi Finals</string>
+    <string name="third_place_playoff" translatable="true">3rd Place Playoff</string>
+    <string name="finals" translatable="true">Final</string>
+    <string name="scores" translatable="true">Scores</string>
+
+    <string name="n_a">n/a</string>
+    <string name="set">Set</string>
+
+    <string name="name" translatable="true">Team</string>
+    <string name="victories_abbr" translatable="true">V</string>
+    <string name="draws_abbr" translatable="true">D</string>
+    <string name="defeats_abbr" translatable="true">L</string>
+    <string name="goals_for_abbr" translatable="true">GF</string>
+    <string name="goals_against_abbr" translatable="true">GA</string>
+    <string name="goals_difference_abbr" translatable="true">GD</string>
+    <string name="points_abbr" translatable="true">P</string>
+    <string name="position_abbr" translatable="true">#</string>
+
+    <string name="or" translatable="true">or</string>
+    <string name="loading" translatable="true">Loading…</string>
+    <string name="final_result" translatable="true">Final Result</string>
+    <string name="in_group" translatable="true"> in Group </string>
+    <string name="prediction_filter_all">Euro 2016</string>
+    <string name="prediction_matchday_1" translatable="true">Matchday 1</string>
+    <string name="prediction_matchday_2" translatable="true">Matchday 2</string>
+    <string name="prediction_matchday_3" translatable="true">Matchday 3</string>
+    <string name="prediction_round_of_16" translatable="true">Round of 16</string>
+    <string name="prediction_quarter_finals" translatable="true">Quarter Finals</string>
+    <string name="prediction_semi_finals" translatable="true">Semi Finals</string>
+    <string name="prediction_third_place_playoff" translatable="true">3rd Place Playoff</string>
+    <string name="prediction_final" translatable="true">Final</string>
+    <string name="match_number" translatable="true">Match Number</string>
+
+    <string name="league_details" translatable="true"><u>Full Standings</u></string>
+    <string name="member" translatable="true">Member</string>
+    <string name="members" translatable="true">Members</string>
+
+    <string name="matches" translatable="true">Matches</string>
+    <string name="predictions" translatable="true">Predictions</string>
+    <string name="standings" translatable="true">Standings</string>
+    <string name="league" translatable="true">League</string>
+    <string name="leagues" translatable="true">Leagues</string>
+    <string name="rules" translatable="true">Rules</string>
+    <string name="logout" translatable="true">Logout</string>
+
+    <string name="create_league" translatable="true">Create League</string>
+    <string name="join_league" translatable="true">Join League</string>
+
+    <string name="match_result_scoring" translatable="true">Match result scoring</string>
+    <string name="correct_prediction" translatable="true">Correct prediction</string>
+    <string name="correct_outcome" translatable="true">Correct outcome</string>
+    <string name="correct_margin" translatable="true">Correct margin of victory</string>
+    <string name="incorrect_prediction" translatable="true">Incorrect prediction</string>
+    <string name="points" translatable="true">points</string>
+    <string name="point" translatable="true">point</string>
+
+    <string name="predictions_details" translatable="true">Predictions can be changed at any point up to the scheduled kick-off time of the match in question.</string>
+    <string name="winner_prize" translatable="true">Winner prize</string>
+    <string name="winner_gets_bragging_rights" translatable="true">Winner gets bragging rights.</string>
+
+    <string name="eliminated_round_of_16" translatable="true">Eliminated in Round of 16</string>
+    <string name="eliminated_quarter_finals" translatable="true">Eliminated in Quarter Finals</string>
+    <string name="eliminated_semi_finals" translatable="true">Eliminated in Semi Finals</string>
+    <string name="finished_in_4th_place" translatable="true">Finished in 4th Place</string>
+    <string name="finished_in_3rd_place" translatable="true">Finished in 3rd Place</string>
+    <string name="lost_final" translatable="true">Lost the Final</string>
+    <string name="winners" translatable="true">Euro 2016 Winners</string>
+
+
+    <string name="country_argentina" translatable="true">Argentina</string>
+    <string name="country_australia" translatable="true">Australia</string>
+    <string name="country_belgium" translatable="true">Belgium</string>
+    <string name="country_brazil" translatable="true">Brazil</string>
+    <string name="country_colombia" translatable="true">Colombia</string>
+    <string name="country_costa_rica" translatable="true">Costa Rica</string>
+    <string name="country_croatia" translatable="true">Croatia</string>
+    <string name="country_denmark" translatable="true">Denmark</string>
+    <string name="country_egypt" translatable="true">Egypt</string>
+    <string name="country_england" translatable="true">England</string>
+    <string name="country_france" translatable="true">France</string>
+    <string name="country_germany" translatable="true">Germany</string>
+    <string name="country_iceland" translatable="true">Iceland</string>
+    <string name="country_iran" translatable="true">Iran</string>
+    <string name="country_japan" translatable="true">Japan</string>
+    <string name="country_mexico" translatable="true">Mexico</string>
+    <string name="country_morocco" translatable="true">Morocco</string>
+    <string name="country_nigeria" translatable="true">Nigeria</string>
+    <string name="country_panama" translatable="true">Panama</string>
+    <string name="country_peru" translatable="true">Peru</string>
+    <string name="country_poland" translatable="true">Poland</string>
+    <string name="country_portugal" translatable="true">Portugal</string>
+    <string name="country_russia" translatable="true">Russia</string>
+    <string name="country_saudi_arabia" translatable="true">Saudi Arabia</string>
+    <string name="country_senegal" translatable="true">Senegal</string>
+    <string name="country_serbia" translatable="true">Serbia</string>
+    <string name="country_south_korea" translatable="true">South Korea</string>
+    <string name="country_spain" translatable="true">Spain</string>
+    <string name="country_sweden" translatable="true">Sweden</string>
+    <string name="country_switzerland" translatable="true">Switzerland</string>
+    <string name="country_tunisia" translatable="true">Tunisia</string>
+    <string name="country_uruguay" translatable="true">Uruguay</string>
+
+    <string name="leave_league" translatable="true">Leave League</string>
+    <string name="leave_league_details" translatable="true">Are you sure you want to leave this league?</string>
+    <string name="delete_league" translatable="true">Delete League</string>
+    <string name="delete_league_details" translatable="true">Are you sure you want to delete this league? The remaining members will leave this league as well</string>
+
+    <string name="choose_the_name_of_your_league" translatable="true">Choose the name of your league</string>
+    <string name="write_the_name_of_the_league" translatable="true">Write the name of the league</string>
+    <string name="maximum_of_20_characters" translatable="true">Maximum of 20 characters</string>
+    <string name="create" translatable="true">Create</string>
+
+    <string name="write_the_league_code" translatable="true">Write the league code</string>
+    <string name="write_the_code_of_the_league" translatable="true">Write the code of the league</string>
+    <string name="join" translatable="true">Join</string>
+
+    <string name="winner" translatable="true">Winner</string>
+    <string name="loser" translatable="true">Loser</string>
+    <string name="runner_up" translatable="true">Runner-up</string>
+    <string name="group" translatable="true">Group</string>
+    <string name="third_place" translatable="true">3rd Place</string>
+    <string name="fourth_place" translatable="true">4rd Place</string>
+    <string name="match" translatable="true">Match</string>
+
+    <string name="league_code" translatable="true">League code</string>
+    <string name="latest_match" translatable="true">Latest Match</string>
+    <string name="leave_this_league" translatable="true">Leave this League</string>
+    <string name="delete_this_league" translatable="true">Delete this League</string>
+
+    <string name="user_name" translatable="true">Name</string>
+    <string name="total" translatable="true">Total</string>
+    <string name="no_network_connection" translatable="true">No Network Connection</string>
+
+    <string name="error_username_not_exists" translatable="true">Username is already in use</string>
+    <string name="error_password_wrong" translatable="true">Password is incorrect</string>
+    <string name="error_login_failed" translatable="true">Try again</string>
+    <string name="error_try_again" translatable="true">Try again</string>
+    <string name="error_username_exists" translatable="true">This username is already being used</string>
+    <string name="error_league_code" translatable="true">No league with such code</string>
+    <string name="error_league_already_member" translatable="true">You are a member of this league already</string>
+    <string name="error_too_many_leagues" translatable="true">You reached the maximum number of leagues</string>
+    <string name="error_default" translatable="true">An error occurred</string>
+
+    <string name="app_state_unavailable" translatable="true">App is not available</string>
+    <string name="app_state_unavailable_come_back_later" translatable="true">Come back at a later time</string>
+    <string name="app_state_unavailable_updating_scores" translatable="true">Updating score</string>
+    <string name="app_state_unavailable_details" translatable="true">Failed to get state of the app. Try again or come back at a later time.</string>
+    <string name="app_state_error" translatable="true">Error</string>
+    <string name="yes" translatable="true">Yes</string>
+    <string name="no" translatable="true">No</string>
+
+    <string name="stadium_luzhniki_stadium" translatable="true">Luzhniki Stadium (Moscow)</string>
+    <string name="stadium_otkritie_arena" translatable="true">Otkritie Arena (Moscow)</string>
+    <string name="stadium_krestovsky_stadium" translatable="true">Krestovsky Stadium (Saint Petersburg)</string>
+    <string name="stadium_fisht_olympic_stadium" translatable="true">Fisht Olympic Stadium (Sochi)</string>
+    <string name="stadium_cosmos_arena" translatable="true">Cosmos Arena (Samara)</string>
+    <string name="stadium_rostov_arena" translatable="true">Rostov Arena (Rostov-on-Don)</string>
+    <string name="stadium_kazan_arena" translatable="true">Kazan Arena (Kazan)</string>
+    <string name="stadium_volgograd_arena" translatable="true">Volgograd Arena (Volgograd)</string>
+    <string name="stadium_nizhny_novgorod_tadium" translatable="true">Nizhny Novgorod Stadium (Nizhny Novgorod)</string>
+    <string name="stadium_mordovia_arena" translatable="true">Mordovia Arena (Saransk)</string>
+    <string name="stadium_central_stadium" translatable="true">Central Stadium (Yekaterinburg)</string>
+    <string name="stadium_kaliningrad_stadium" translatable="true">Kaliningrad Stadium (Kaliningrad)</string>
+
+</resources>

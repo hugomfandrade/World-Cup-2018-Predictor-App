@@ -1,0 +1,8 @@
+package org.hugoandrade.worldcup2018.predictor.admin;
+
+
+public interface DevConstants {
+
+    String appUrl = "https://world-cup-2018-predictor-app.azurewebsites.net";
+    String appKey = null;
+}

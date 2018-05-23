@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Prognósticos WC 2016</string>
+    <string name="app_name_long">Prognósticos Mundial 2016</string>
+    <string name="sign_up" >Registar</string>
+    <string name="hint_confirm_password">Confirmar Password</string>
+
+    <string name="league_details"><u>Ver Classificação</u></string>
+    <string name="member">Membro</string>
+    <string name="members">Membros</string>
+    <string name="in_group"> no Grupo </string>
+
+    <string name="group_stage">Fase de Grupos</string>
+    <string name="group_a">Grupo A</string>
+    <string name="group_b">Grupo B</string>
+    <string name="group_c">Grupo C</string>
+    <string name="group_d">Grupo D</string>
+    <string name="group_e">Grupo E</string>
+    <string name="group_f">Grupo F</string>
+    <string name="group_g">Grupo G</string>
+    <string name="group_h">Grupo H</string>
+    <string name="round_of_16">Oitavos de Final</string>
+    <string name="quarter_finals">Quartos de Finals</string>
+    <string name="semi_finals">Semi Finais</string>
+    <string name="third_place_playoff">Playoff do 3º lugar</string>
+    <string name="finals">Final</string>
+    <string name="scores">Resultados</string>
+
+    <string name="name">Equipa</string>
+    <string name="victories_abbr">V</string>
+    <string name="draws_abbr">E</string>
+    <string name="defeats_abbr">D</string>
+    <string name="goals_for_abbr">GM</string>
+    <string name="goals_against_abbr">GS</string>
+    <string name="goals_difference_abbr">DG</string>
+    <string name="points_abbr">P</string>
+    <string name="position_abbr">#</string>
+
+    <string name="or" >ou</string>
+    <string name="loading" >A Carregar…</string>
+    <string name="prediction_filter_all">Euro 2016</string>
+    <string name="prediction_matchday_1" >Jornada 1</string>
+    <string name="prediction_matchday_2" >Jornada 2</string>
+    <string name="prediction_matchday_3" >Jornada 3</string>
+    <string name="prediction_round_of_16">Oitavos de Final</string>
+    <string name="prediction_quarter_finals" >Quartos de Finals</string>
+    <string name="prediction_semi_finals" >Semi Finais</string>
+    <string name="prediction_third_place_playoff">Playoff do 3º lugar</string>
+    <string name="prediction_final" >Final</string>
+    <string name="match_number" >Jogo</string>
+
+    <string name="matches">Jogos</string>
+    <string name="final_result">Resultado Final</string>
+    <string name="predictions">Prognósticos</string>
+    <string name="standings">Classificações</string>
+    <string name="league">Liga</string>
+    <string name="leagues">Ligas</string>
+    <string name="rules">Regras</string>
+
+    <string name="create_league" >Criar Liga</string>
+    <string name="join_league" >Juntar a Liga</string>
+
+    <string name="match_result_scoring" >Pontuação de resultado do jogo</string>
+    <string name="correct_prediction" >Prever resultado exacto</string>
+    <string name="correct_outcome" >Prever resultado correcto</string>
+    <string name="correct_margin" >Prever a margem de vitória correcta</string>
+    <string name="incorrect_prediction">Previsão incorrecta</string>
+    <string name="points">pontos</string>
+    <string name="point">ponto</string>
+
+    <string name="predictions_details">Os prognósticos podem ser alterados a qualquer momento até ao horário previsto para começo do jogo em questão.</string>
+    <string name="winner_prize">Prémio para o Vencedor</string>
+    <string name="winner_gets_bragging_rights">O Vencedor ganha o direito de se gabar.</string>
+
+    <string name="eliminated_round_of_16">Eliminado nos Oitavos de Final</string>
+    <string name="eliminated_quarter_finals">Eliminado nos Quartos de Final</string>
+    <string name="eliminated_semi_finals">Eliminado nas Semi Finais</string>
+    <string name="finished_in_4th_place" >Terminou em 4º lugar</string>
+    <string name="finished_in_3rd_place" >Terminou em 3º lugar</string>
+    <string name="lost_final">Perdeu a Final</string>
+    <string name="winners">Vencedores do Euro 2016</string>
+
+    <string name="country_argentina" >Argentina</string>
+    <string name="country_australia" >Austrália</string>
+    <string name="country_belgium" >Bélgica</string>
+    <string name="country_brazil">Brasil</string>
+    <string name="country_colombia" >Colmbia</string>
+    <string name="country_costa_rica" >Costa Rica</string>
+    <string name="country_croatia" >Croácia</string>
+    <string name="country_denmark" >Dinamarca</string>
+    <string name="country_egypt" >Egipto</string>
+    <string name="country_england" >Inglaterra</string>
+    <string name="country_france" >França</string>
+    <string name="country_germany" >Alemanha</string>
+    <string name="country_iceland" >Islândia</string>
+    <string name="country_iran" >Irão</string>
+    <string name="country_japan" >Japão</string>
+    <string name="country_mexico" >México</string>
+    <string name="country_morocco" >Marrocos</string>
+    <string name="country_nigeria" >Nigéria</string>
+    <string name="country_panama">Panamá</string>
+    <string name="country_peru" >Perú</string>
+    <string name="country_poland" >Polónia</string>
+    <string name="country_portugal" >Portugal</string>
+    <string name="country_russia" >Rússia</string>
+    <string name="country_saudi_arabia" >Arábia Saudita</string>
+    <string name="country_senegal" >Senegal</string>
+    <string name="country_serbia" >Sérvia</string>
+    <string name="country_south_korea" >Coreia do Sul</string>
+    <string name="country_spain" >Espanha</string>
+    <string name="country_sweden" >Suécia</string>
+    <string name="country_switzerland" >Suíça</string>
+    <string name="country_tunisia">Tunísia</string>
+    <string name="country_uruguay" >Uruguai</string>
+
+    <string name="leave_league">Abandonar Liga</string>
+    <string name="leave_league_details">Tem a certeza que pretende abandonar esta liga?</string>
+    <string name="delete_league">Apagar Liga</string>
+    <string name="delete_league_details">Tem a certeza que pretender apagar esta liga? Os restantes membros também abandonarão esta liga</string>
+
+    <string name="choose_the_name_of_your_league">Escolha o nome da sua liga</string>
+    <string name="write_the_name_of_the_league">Escreva o nome da liga</string>
+    <string name="maximum_of_20_characters">No máximo 20 caracteres</string>
+    <string name="create">Criar</string>
+
+    <string name="write_the_league_code">Introduza o código da liga</string>
+    <string name="write_the_code_of_the_league">Introduza o código</string>
+    <string name="join">Juntar-se</string>
+
+    <string name="winner">Vencedor do</string>
+    <string name="loser">Perdedor do</string>
+    <string name="runner_up">2º do</string>
+    <string name="group">Grupo</string>
+    <string name="third_place" >3º do Grupo</string>
+    <string name="fourth_place" >4º do Grupo</string>
+    <string name="match">Jogo</string>
+
+    <string name="league_code">Código da Liga</string>
+    <string name="latest_match">Último Jogo</string>
+    <string name="leave_this_league">Deixar esta Liga</string>
+    <string name="delete_this_league">Apagar esta Liga</string>
+
+    <string name="user_name">Nome</string>
+    <string name="total">Total</string>
+    <string name="no_network_connection">Sem ligação à Internet</string>
+
+
+    <string name="error_username_not_exists">Esse username não existe</string>
+    <string name="error_password_wrong">Password incorrecta</string>
+    <string name="error_login_failed">Tente novamente</string>
+    <string name="error_try_again">Tente novamente</string>
+    <string name="error_username_exists">Esse username já está a ser utilizado</string>
+    <string name="error_league_code">Não existe nenhuma liga com o código introduzido</string>
+    <string name="error_league_already_member">Já é membro desta liga</string>
+    <string name="error_too_many_leagues">Já atingiu o máximo de ligas a que pertence</string>
+    <string name="error_default">Ocorreu um erro</string>
+
+    <string name="app_state_unavailable">App não está disponível</string>
+    <string name="app_state_unavailable_come_back_later">Volte mais tarde</string>
+    <string name="app_state_unavailable_updating_scores" >Atualizando os resultados</string>
+    <string name="app_state_unavailable_details" >Falha ao obter o estado da aplicação. Tente novamente ou volte mais tarde.</string>
+    <string name="app_state_error" >Erro</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="logout" >Sair</string>
+
+    <string name="stadium_luzhniki_stadium" >Estádio Lujniki (Moscovo)</string>
+    <string name="stadium_otkritie_arena" >Arena Otkrytie (Moscovo)</string>
+    <string name="stadium_krestovsky_stadium" >Estádio Krestovsky (São Petersburgo)</string>
+    <string name="stadium_fisht_olympic_stadium" >Estádio Olímpico de Fisht (Sóchi)</string>
+    <string name="stadium_cosmos_arena" >Cosmos Arena (Samara)</string>
+    <string name="stadium_rostov_arena" >Arena Rostov (Rostov do Don)</string>
+    <string name="stadium_kazan_arena" >Arena Kazan (Cazã)</string>
+    <string name="stadium_volgograd_arena" >Arena Volgogrado (Volgogrado)</string>
+    <string name="stadium_nizhny_novgorod_tadium" >Estádio de Níjni Novgorod (Níjni Novgorod)</string>
+    <string name="stadium_mordovia_arena" >Arena Mordovia (Saransk)</string>
+    <string name="stadium_central_stadium" >Estádio Central (Ecaterimburgo)</string>
+    <string name="stadium_kaliningrad_stadium" >Estádio de Kaliningrado (Kaliningrado)</string>
+
+</resources>
