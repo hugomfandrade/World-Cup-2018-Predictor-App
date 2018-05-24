@@ -14,16 +14,16 @@ import java.util.List;
  */
 public final class StageUtils {
 
-    private final static int STAGE_ALL = 0;
-    private final static int STAGE_GROUP_STAGE_MATCHDAY_1 = 1;
-    private final static int STAGE_GROUP_STAGE_MATCHDAY_2 = 2;
-    private final static int STAGE_GROUP_STAGE_MATCHDAY_3 = 3;
-    private final static int STAGE_ROUND_OF_16 = 4;
-    private final static int STAGE_QUARTER_FINALS = 5;
-    private final static int STAGE_SEMI_FINALS = 6;
-    private final static int STAGE_3RD_PLACE_PLAYOFF  = 7;
-    private final static int STAGE_FINAL = 8;
-    private final static int STAGE_UNKNOWN = 9;
+    public final static int STAGE_ALL = 0;
+    public final static int STAGE_GROUP_STAGE_MATCHDAY_1 = 1;
+    public final static int STAGE_GROUP_STAGE_MATCHDAY_2 = 2;
+    public final static int STAGE_GROUP_STAGE_MATCHDAY_3 = 3;
+    public final static int STAGE_ROUND_OF_16 = 4;
+    public final static int STAGE_QUARTER_FINALS = 5;
+    public final static int STAGE_SEMI_FINALS = 6;
+    public final static int STAGE_3RD_PLACE_PLAYOFF  = 7;
+    public final static int STAGE_FINAL = 8;
+    public final static int STAGE_UNKNOWN = 9;
     /**
      * Logging tag.
      */
@@ -60,6 +60,11 @@ public final class StageUtils {
 
         return StaticVariableUtils.SStage.unknown;
     }
+
+    public static boolean isGroupStage(Match match) {
+        return match != null && getStage(match).equals(StaticVariableUtils.SStage.groupStage);
+    }
+
     public static StaticVariableUtils.SStage getStage(int stage) {
 
         switch (stage) {

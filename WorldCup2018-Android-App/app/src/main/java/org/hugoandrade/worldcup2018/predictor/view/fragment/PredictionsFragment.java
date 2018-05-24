@@ -23,10 +23,9 @@ import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 import org.hugoandrade.worldcup2018.predictor.utils.ErrorMessageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
-import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 import org.hugoandrade.worldcup2018.predictor.view.CountryDetailsActivity;
-import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterTheme;
+import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.helper.StageFilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.listadapter.PredictionListAdapter;
 
@@ -91,17 +90,27 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
         rvPredictions.setAdapter(mPredictionsAdapter);
         ((SimpleItemAnimator) rvPredictions.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        int startingItemPosition =
+        /*int startingItemPosition =
                 MatchUtils.getPositionOfFirstNotPlayedMatch(
                         GlobalData.getInstance().getMatchList(),
                         GlobalData.getInstance().getServerTime().getTime());
-        rvPredictions.scrollToPosition(startingItemPosition);
+        rvPredictions.scrollToPosition(startingItemPosition);7**/
 
+        Match lastPlayedMatch = MatchUtils.getLastPlayedMatch(
+                GlobalData.getInstance().getMatchList(),
+                GlobalData.getInstance().getServerTime().getTime());
 
-        Match match =
-                MatchUtils.getFirstMatchOfYesterday(
-                        GlobalData.getInstance().getMatchList(),
-                        GlobalData.getInstance().getServerTime().getTime());
+        Match match;
+        if (StageUtils.isGroupStage(lastPlayedMatch)) {
+            match = MatchUtils.getFirstMatchOfPreviousTwoHours(
+                    GlobalData.getInstance().getMatchList(),
+                    GlobalData.getInstance().getServerTime().getTime());
+        }
+        else {
+            match = MatchUtils.getFirstMatchOfPreviousThreeHours(
+                    GlobalData.getInstance().getMatchList(),
+                    GlobalData.getInstance().getServerTime().getTime());
+        }
 
         if (match == null) {
             onFilterSelected(mFilterWrapper.getSelectedFilter());
@@ -160,10 +169,25 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
         @Override
         public void onMatchesChanged() {
 
-            Match match =
+            Match lastPlayedMatch = MatchUtils.getLastPlayedMatch(
+                    GlobalData.getInstance().getMatchList(),
+                    GlobalData.getInstance().getServerTime().getTime());
+
+            Match match;
+            if (StageUtils.isGroupStage(lastPlayedMatch)) {
+                match = MatchUtils.getFirstMatchOfPreviousTwoHours(
+                        GlobalData.getInstance().getMatchList(),
+                        GlobalData.getInstance().getServerTime().getTime());
+            }
+            else {
+                match = MatchUtils.getFirstMatchOfPreviousThreeHours(
+                        GlobalData.getInstance().getMatchList(),
+                        GlobalData.getInstance().getServerTime().getTime());
+            }
+            /*Match match =
                     MatchUtils.getFirstMatchOfYesterday(
                             GlobalData.getInstance().getMatchList(),
-                            GlobalData.getInstance().getServerTime().getTime());
+                            GlobalData.getInstance().getServerTime().getTime());/**/
 
             if (match == null) {
                 onFilterSelected(mFilterWrapper.getSelectedFilter());
@@ -250,8 +274,19 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
                     GlobalData.getInstance().getServerTime().getTime());
             //}
 
-        if (startingPosition != 0 && startingPosition == matchList.size()) {
+        int currentStage = StageUtils.getStageNumber(MatchUtils.getFirstMatchOfPrevious24Hours(
+                GlobalData.getInstance().getMatchList(),
+                GlobalData.getInstance().getServerTime().getTime()
+        ));
+
+        if (startingPosition == matchList.size() && stage != StageUtils.STAGE_ALL && stage != currentStage) {
+            startingPosition = 0;
+        }
+        else if (startingPosition != 0 && stage != StageUtils.STAGE_ALL) {
             startingPosition--;
+        }
+        else if (stage == StageUtils.STAGE_ALL) {
+            startingPosition = matchList.size() - 1;
         }
 
         if (mPredictionsAdapter != null) {

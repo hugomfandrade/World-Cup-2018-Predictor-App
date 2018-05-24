@@ -197,6 +197,62 @@ public final class MatchUtils {
         return null;
     }
 
+    public static Match getFirstMatchOfPreviousTwoHours(List<Match> matchList, Date time) {
+        Calendar tomorrow = previousTwoHours(toCalendar(time));
+        if (matchList != null && matchList.size() != 0) {
+            for (Match match : matchList) {
+
+                if (match.getDateAndTime().after(tomorrow.getTime())) {
+                    return match;
+                }
+            }
+            return null;//matchList.get(matchList.size() - 1);
+        }
+        return null;
+    }
+
+    public static Match getFirstMatchOfPrevious24Hours(List<Match> matchList, Date time) {
+        Calendar tomorrow = previous24Hours(toCalendar(time));
+        if (matchList != null && matchList.size() != 0) {
+            for (Match match : matchList) {
+
+                if (match.getDateAndTime().after(tomorrow.getTime())) {
+                    return match;
+                }
+            }
+            return null;//matchList.get(matchList.size() - 1);
+        }
+        return null;
+    }
+
+    public static Match getFirstMatchOfPreviousThreeHours(List<Match> matchList, Date time) {
+        Calendar tomorrow = previousThreeHours(toCalendar(time));
+        if (matchList != null && matchList.size() != 0) {
+            for (Match match : matchList) {
+
+                if (match.getDateAndTime().after(tomorrow.getTime())) {
+                    return match;
+                }
+            }
+            return null;//matchList.get(matchList.size() - 1);
+        }
+        return null;
+    }
+
+    public static Match getFirstMatchOfPreviousSixHours(List<Match> matchList, Date time) {
+        Calendar tomorrow = previousSixHours(toCalendar(time));
+        if (matchList != null && matchList.size() != 0) {
+            for (Match match : matchList) {
+
+                if (match.getDateAndTime().after(tomorrow.getTime())) {
+                    return match;
+                }
+            }
+            return null;//matchList.get(matchList.size() - 1);
+        }
+        return null;
+    }
+
     private static Calendar toCalendar(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -218,6 +274,26 @@ public final class MatchUtils {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         calendar.add(Calendar.DAY_OF_MONTH, -1);
+        return calendar;
+    }
+
+    private static Calendar previousTwoHours(Calendar calendar) {
+        calendar.add(Calendar.HOUR_OF_DAY, -2);
+        return calendar;
+    }
+
+    private static Calendar previous24Hours(Calendar calendar) {
+        calendar.add(Calendar.HOUR_OF_DAY, -24);
+        return calendar;
+    }
+
+    private static Calendar previousThreeHours(Calendar calendar) {
+        calendar.add(Calendar.HOUR_OF_DAY, -3);
+        return calendar;
+    }
+
+    private static Calendar previousSixHours(Calendar calendar) {
+        calendar.add(Calendar.HOUR_OF_DAY, -6);
         return calendar;
     }
 

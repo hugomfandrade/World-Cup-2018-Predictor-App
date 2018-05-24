@@ -1,6 +1,11 @@
 package org.hugoandrade.worldcup2018.predictor.view;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +18,8 @@ import org.hugoandrade.worldcup2018.predictor.utils.NetworkBroadcastReceiverUtil
 import org.hugoandrade.worldcup2018.predictor.utils.NetworkUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.SharedPreferencesUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
+
+import java.util.Locale;
 
 public abstract class SimpleActivityBase extends AppCompatActivity {
 
@@ -105,4 +112,38 @@ public abstract class SimpleActivityBase extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(updateBaseContextLocale(base));
+    }
+
+    private Context updateBaseContextLocale(Context context) {
+        Locale locale = Locale.US;
+        if (!Locale.getDefault().getLanguage().equals("pt")) {
+            locale = Locale.getDefault();
+        }
+        Locale.setDefault(locale);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return updateResourcesLocale(context, locale);
+        }
+
+        return updateResourcesLocaleLegacy(context, locale);
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private Context updateResourcesLocale(Context context, Locale locale) {
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        return context.createConfigurationContext(configuration);
+    }
+
+    @SuppressWarnings("deprecation")
+    private Context updateResourcesLocaleLegacy(Context context, Locale locale) {
+        Resources resources = context.getResources();
+        Configuration configuration = resources.getConfiguration();
+        configuration.locale = locale;
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+        return context;
+    }
 }

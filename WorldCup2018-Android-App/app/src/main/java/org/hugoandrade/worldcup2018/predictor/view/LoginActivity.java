@@ -24,6 +24,8 @@ import org.hugoandrade.worldcup2018.predictor.utils.LoginUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.SharedPreferencesUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 
+import java.util.Locale;
+
 public class LoginActivity extends ActivityBase<MVP.RequiredLoginViewOps,
                                                 MVP.ProvidedLoginPresenterOps,
                                                 LoginPresenter>
