@@ -136,7 +136,7 @@ public class EditSystemDataActivity extends AppCompatActivity {
         viewStructIncorrectPrediction.setProgress(mSystemData.getRules().getRuleIncorrectPrediction());
 
         cvSelect.setDate(mSystemData.getSystemDate().getTimeInMillis());
-        npHour.setValue(mSystemData.getSystemDate().get(Calendar.HOUR));
+        npHour.setValue(mSystemData.getSystemDate().get(Calendar.HOUR_OF_DAY));
         npMinute.setValue(mSystemData.getSystemDate().get(Calendar.MINUTE));
 
         updateSystemDataUI();
