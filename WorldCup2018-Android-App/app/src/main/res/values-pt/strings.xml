@@ -38,7 +38,7 @@
 
     <string name="or" >ou</string>
     <string name="loading" >A Carregar…</string>
-    <string name="prediction_filter_all">Euro 2016</string>
+    <string name="prediction_filter_all">Mundial 2018</string>
     <string name="prediction_matchday_1" >Jornada 1</string>
     <string name="prediction_matchday_2" >Jornada 2</string>
     <string name="prediction_matchday_3" >Jornada 3</string>
@@ -78,7 +78,7 @@
     <string name="finished_in_4th_place" >Terminou em 4º lugar</string>
     <string name="finished_in_3rd_place" >Terminou em 3º lugar</string>
     <string name="lost_final">Perdeu a Final</string>
-    <string name="winners">Vencedores do Euro 2016</string>
+    <string name="winners">Vencedores do Mundial 2018</string>
 
     <string name="country_argentina" >Argentina</string>
     <string name="country_australia" >Austrália</string>

@@ -40,7 +40,7 @@
     <string name="loading" translatable="true">Loading…</string>
     <string name="final_result" translatable="true">Final Result</string>
     <string name="in_group" translatable="true"> in Group </string>
-    <string name="prediction_filter_all">Euro 2016</string>
+    <string name="prediction_filter_all">World Cup 2018</string>
     <string name="prediction_matchday_1" translatable="true">Matchday 1</string>
     <string name="prediction_matchday_2" translatable="true">Matchday 2</string>
     <string name="prediction_matchday_3" translatable="true">Matchday 3</string>
@@ -84,7 +84,7 @@
     <string name="finished_in_4th_place" translatable="true">Finished in 4th Place</string>
     <string name="finished_in_3rd_place" translatable="true">Finished in 3rd Place</string>
     <string name="lost_final" translatable="true">Lost the Final</string>
-    <string name="winners" translatable="true">Euro 2016 Winners</string>
+    <string name="winners" translatable="true">World Cup 2018 Winners</string>
 
 
     <string name="country_argentina" translatable="true">Argentina</string>
