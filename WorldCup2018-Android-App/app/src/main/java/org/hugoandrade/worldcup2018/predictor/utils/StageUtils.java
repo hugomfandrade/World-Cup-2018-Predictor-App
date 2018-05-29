@@ -83,7 +83,7 @@ public final class StageUtils {
 
     public static int getStageNumber(Match match) {
         if (match == null)
-            return 0;
+            return STAGE_ALL;
 
         int matchNumber = match.getMatchNumber();
         if (matchNumber >= 1 && matchNumber <= 16) return STAGE_GROUP_STAGE_MATCHDAY_1;
@@ -95,7 +95,7 @@ public final class StageUtils {
         if (matchNumber >= 63 && matchNumber <= 63) return STAGE_3RD_PLACE_PLAYOFF;
         if (matchNumber >= 64 && matchNumber <= 64) return STAGE_FINAL;
 
-        return 0;
+        return STAGE_ALL;
     }
 
     public static int getMinMatchNumber(int stage) {

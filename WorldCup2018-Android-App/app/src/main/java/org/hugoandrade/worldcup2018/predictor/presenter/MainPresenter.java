@@ -32,6 +32,12 @@ public class MainPresenter extends MobileClientPresenterBase<MVP.RequiredMainVie
     @Override
     public void onResume() {
         getModel().registerCallback();
+
+        if (GlobalData.getInstance().wasLastFetchMoreThanFiveMinutesAgo()) {
+            GlobalData.getInstance().resetInfo();
+            GlobalData.getInstance().updateServerTime();
+            getInfo();
+        }
     }
 
     @Override
@@ -72,7 +78,9 @@ public class MainPresenter extends MobileClientPresenterBase<MVP.RequiredMainVie
         mServiceManager = new ServiceManager(getModel().getService());
         getView().notifyServiceIsBound();
 
-        if (!GlobalData.getInstance().hasFetchedInfo()) {
+        if (!GlobalData.getInstance().hasFetchedInfo() && GlobalData.getInstance().wasLastFetchMoreThanFiveMinutesAgo()) {
+            GlobalData.getInstance().resetInfo();
+            GlobalData.getInstance().updateServerTime();
             getInfo();
         }
     }

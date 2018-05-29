@@ -10,4 +10,8 @@
     <color name="colorText">#444444</color>
     <color name="colorTextLight">#666666</color>
     <color name="colorTextVeryLight">#888888</color>
+    <color name="colorGreen2">#aaFF5500</color>
+    <color name="colorGreen4">#aaaa7d00</color>
+    <color name="colorGreen3">#aaAAAA00</color>
+    <color name="colorGreen">#aa00AA00</color>
 </resources>

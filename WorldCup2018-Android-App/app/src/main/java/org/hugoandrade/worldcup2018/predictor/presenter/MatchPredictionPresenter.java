@@ -6,6 +6,7 @@ import android.os.RemoteException;
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.MVP;
 import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
+import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
 import org.hugoandrade.worldcup2018.predictor.data.raw.User;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
@@ -34,9 +35,13 @@ public class MatchPredictionPresenter extends MobileClientPresenterBase<MVP.Requ
     @Override
     public void notifyServiceIsBound() {
 
-        int currentMatchNumber = MatchUtils.getMatchNumberOfFirstNotPlayedMatch(
+        int currentMatchNumber = 0;
+        Match match = MatchUtils.getLastPlayedMatch(
                 GlobalData.getInstance().getMatchList(),
-                GlobalData.getInstance().getServerTime().getTime()) - 1;
+                GlobalData.getInstance().getServerTime().getTime());
+
+        if (match != null)
+            currentMatchNumber = match.getMatchNumber();
 
         getPredictions(getView().getUserList(), currentMatchNumber);
     }

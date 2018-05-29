@@ -84,7 +84,7 @@
     <string name="country_australia" >Austrália</string>
     <string name="country_belgium" >Bélgica</string>
     <string name="country_brazil">Brasil</string>
-    <string name="country_colombia" >Colmbia</string>
+    <string name="country_colombia" >Colômbia</string>
     <string name="country_costa_rica" >Costa Rica</string>
     <string name="country_croatia" >Croácia</string>
     <string name="country_denmark" >Dinamarca</string>
@@ -176,5 +176,6 @@
     <string name="stadium_mordovia_arena" >Arena Mordovia (Saransk)</string>
     <string name="stadium_central_stadium" >Estádio Central (Ecaterimburgo)</string>
     <string name="stadium_kaliningrad_stadium" >Estádio de Kaliningrado (Kaliningrado)</string>
+    <string name="wc_2018_not_started">O Mundial 2018 ainda não começou</string>
 
 </resources>

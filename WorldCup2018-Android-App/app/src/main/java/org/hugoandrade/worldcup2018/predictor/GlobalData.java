@@ -42,7 +42,6 @@ public class GlobalData {
     private List<Match> mMatchList = new ArrayList<>();
     private List<Prediction> mPredictionList = new ArrayList<>();
     private List<LeagueWrapper> mLeagueWrapperList = new ArrayList<>();
-    private Map<String, List<Prediction>> mLatestPerformanceMap = new HashMap<>();
 
     // LeagueID, Map Stage - LeagueWrapper
     private Map<String, SparseArray<LeagueWrapper>> mLeagueWrapperMap = new HashMap<>();
@@ -51,6 +50,7 @@ public class GlobalData {
     // UserID, Map MatchNumber - predictions
     private Map<String, SparseArray<Prediction>> mMatchPredictionMap = new HashMap<>();
     private boolean mHasFetchedInfo = false;
+    private long pastCurrentTimeInMillis;
 
     /*public static GlobalData getInstance() {
         if (mInstance == null) {
@@ -74,6 +74,7 @@ public class GlobalData {
             mInstance.user = null;
             mInstance.systemData = null;
             mInstance.mHasFetchedInfo = false;
+            mInstance.pastCurrentTimeInMillis = 0L;
 
             clear(mInstance.mCountryList,
                     mInstance.mMatchList,
@@ -86,14 +87,22 @@ public class GlobalData {
                     mInstance.mOnPredictionsChangedListenerSet,
                     mInstance.mOnLeaguesChangedListenerSet);
 
-            clear(mInstance.mLatestPerformanceMap,
-                    //mInstance.mPredictionOfUserMap,
-                    mInstance.mLeagueWrapperMap,
+            clear(mInstance.mLeagueWrapperMap,
                     mInstance.mMatchPredictionMap);
 
         } catch (IllegalStateException e) {
             Log.e(TAG, "unInitialize error: " + e.getMessage());
         }
+    }
+
+    public void resetInfo() {
+        mCountryList.clear();
+        mMatchList.clear();
+        mPredictionList.clear();
+        mLeagueWrapperList.clear();
+        mLeagueWrapperMap.clear();
+        mMatchPredictionMap.clear();
+        mHasFetchedInfo = false;
     }
 
     public Calendar getServerTime() {
@@ -102,6 +111,18 @@ public class GlobalData {
 
     public void setSystemData(SystemData systemData) {
         this.systemData = systemData;
+        this.pastCurrentTimeInMillis = System.currentTimeMillis();
+    }
+
+    public void updateServerTime() {
+        if (pastCurrentTimeInMillis != 0L) {
+            systemData.add(System.currentTimeMillis() - pastCurrentTimeInMillis);
+            pastCurrentTimeInMillis = System.currentTimeMillis();
+        }
+    }
+
+    public boolean wasLastFetchMoreThanFiveMinutesAgo() {
+        return pastCurrentTimeInMillis == 0L || (System.currentTimeMillis() - pastCurrentTimeInMillis) > 5 * 60 * 1000;
     }
 
     public User getUser() {
@@ -248,6 +269,14 @@ public class GlobalData {
         return MatchUtils.getMatchList(mMatchList, minMatchNumber, maxMatchNumber);
     }
 
+    public List<Match> getPlayedMatchList() {
+        return MatchUtils.getPlayedMatchList(mMatchList, getServerTime().getTime(), 1, 62);
+    }
+
+    public List<Match> getPlayedMatchList(int minMatchNumber, int maxMatchNumber) {
+        return MatchUtils.getPlayedMatchList(mMatchList, getServerTime().getTime(), minMatchNumber, maxMatchNumber);
+    }
+
     public List<Match> getMatchList(StaticVariableUtils.SStage stage) {
         return MatchUtils.getMatchList(mMatchList, stage);
     }
@@ -384,6 +413,8 @@ public class GlobalData {
         for (LeagueWrapper leagueWrapper : mLeagueWrapperList) {
             if (leagueWrapper.getLeague().getID().equals(leagueID)) {
                 for (LeagueUser newUser : userList) {
+                    if (leagueWrapper.getLeagueUserList().size() == 20)
+                        continue;
 
                     boolean isUserOnList = false;
                     for (LeagueUser user : leagueWrapper.getLeagueUserList()) {
@@ -469,6 +500,8 @@ public class GlobalData {
         LeagueWrapper leagueWrapper = mLeagueWrapperMap.get(leagueID).get(stage);
 
         for (LeagueUser newUser : userList) {
+            if (leagueWrapper.getLeagueUserList().size() == 20)
+                continue;
 
             boolean isUserOnList = false;
             for (LeagueUser user : leagueWrapper.getLeagueUserList()) {
@@ -519,7 +552,8 @@ public class GlobalData {
     }
 
     public void addOnMatchesChangedListener(OnMatchesChangedListener listener) {
-        mOnMatchesChangedListenerSet.add(listener);
+        if (!mOnMatchesChangedListenerSet.contains(listener))
+            mOnMatchesChangedListenerSet.add(listener);
     }
 
     public void removeOnMatchesChangedListener(OnMatchesChangedListener listener) {
@@ -527,7 +561,8 @@ public class GlobalData {
     }
 
     public void addOnCountriesChangedListener(OnCountriesChangedListener listener) {
-        mOnCountriesChangedListenerSet.add(listener);
+        if (!mOnCountriesChangedListenerSet.contains(listener))
+            mOnCountriesChangedListenerSet.add(listener);
     }
 
     public void removeOnCountriesChangedListener(OnCountriesChangedListener listener) {
@@ -535,7 +570,8 @@ public class GlobalData {
     }
 
     public void addOnPredictionsChangedListener(OnPredictionsChangedListener listener) {
-        mOnPredictionsChangedListenerSet.add(listener);
+        if (!mOnPredictionsChangedListenerSet.contains(listener))
+            mOnPredictionsChangedListenerSet.add(listener);
     }
 
     public void removeOnPredictionsChangedListener(OnPredictionsChangedListener listener) {
@@ -543,7 +579,8 @@ public class GlobalData {
     }
 
     public void addOnLeaguesChangedListener(OnLeaguesChangedListener listener) {
-        mOnLeaguesChangedListenerSet.add(listener);
+        if (!mOnLeaguesChangedListenerSet.contains(listener))
+            mOnLeaguesChangedListenerSet.add(listener);
     }
 
     public void removeOnLeaguesChangedListener(OnLeaguesChangedListener listener) {

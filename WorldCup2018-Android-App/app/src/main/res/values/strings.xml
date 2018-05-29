@@ -181,5 +181,6 @@
     <string name="stadium_mordovia_arena" translatable="true">Mordovia Arena (Saransk)</string>
     <string name="stadium_central_stadium" translatable="true">Central Stadium (Yekaterinburg)</string>
     <string name="stadium_kaliningrad_stadium" translatable="true">Kaliningrad Stadium (Kaliningrad)</string>
+    <string name="wc_2018_not_started" translatable="true">World Cup 2018 has not yet started</string>
 
 </resources>

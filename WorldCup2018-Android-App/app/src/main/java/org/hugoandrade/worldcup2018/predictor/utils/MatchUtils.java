@@ -1,11 +1,14 @@
 package org.hugoandrade.worldcup2018.predictor.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
+import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -153,6 +156,89 @@ public final class MatchUtils {
         return 0;
     }
 
+    public static int getPositionOfFirstNotPlayedMatchOfPreviousTwoHours(List<Match> matchList, Date serverTime) {
+        Calendar tomorrow = previousTwoHours(toCalendar(serverTime));
+        if (matchList != null) {
+            for (int i = 0; i < matchList.size(); i++) {
+                if (matchList.get(i).getDateAndTime().after(tomorrow.getTime())) {
+                    return i;
+                }
+            }
+            return matchList.size();
+        }
+        return 0;
+    }
+
+    public static int getPositionOfFirstNotPlayedMatchOfPreviousThreeHours(List<Match> matchList, Date serverTime) {
+        Calendar tomorrow = previousThreeHours(toCalendar(serverTime));
+        if (matchList != null) {
+            for (int i = 0; i < matchList.size(); i++) {
+                if (matchList.get(i).getDateAndTime().after(tomorrow.getTime())) {
+                    return i;
+                }
+            }
+            return matchList.size();
+        }
+        return 0;
+    }
+
+    public static int getPositionOfLastPlayedPlayedMatch(List<Match> matchList, Date serverTime) {
+        return getPositionOfLastPlayedPlayedMatch(matchList, serverTime, 0);
+    }
+
+    public static int getPositionOfLastPlayedPlayedMatch(List<Match> matchList, Date serverTime, int offset) {
+        if (matchList != null) {
+            int lastMatchPosition = 0;
+            for (int i = 0; i < matchList.size(); i++) {
+                Match match = matchList.get(i);
+                if (match.getDateAndTime().after(serverTime)) {
+                    return (lastMatchPosition < offset)? 0 : (lastMatchPosition - offset);
+                }
+                else {
+                    lastMatchPosition = i;
+                }
+            }
+            return (matchList.size() < offset)? 0 : (matchList.size() - offset);
+        }
+        return 0;
+    }
+
+    public static int getPositionOfLastPlayedPlayedMatchOfPreviousThreeHours(List<Match> matchList, Date serverTime) {
+        Calendar tomorrow = previousThreeHours(toCalendar(serverTime));
+        if (matchList != null) {
+            int lastMatchPosition = 0;
+            for (int i = 0; i < matchList.size(); i++) {
+                Match match = matchList.get(i);
+                if (match.getDateAndTime().after(tomorrow.getTime())) {
+                    return lastMatchPosition;
+                }
+                else {
+                    lastMatchPosition = i;
+                }
+            }
+            return matchList.size();
+        }
+        return 0;
+    }
+
+    public static int getPositionOfLastPlayedPlayedMatchOfPreviousTwoHours(List<Match> matchList, Date serverTime) {
+        Calendar tomorrow = previousTwoHours(toCalendar(serverTime));
+        if (matchList != null) {
+            int lastMatchPosition = 0;
+            for (int i = 0; i < matchList.size(); i++) {
+                Match match = matchList.get(i);
+                if (match.getDateAndTime().after(tomorrow.getTime())) {
+                    return lastMatchPosition;
+                }
+                else {
+                    lastMatchPosition = i;
+                }
+            }
+            return matchList.size();
+        }
+        return 0;
+    }
+
     public static Match getLastPlayedMatch(List<Match> matchList, Date serverTime) {
         if (matchList != null && matchList.size() != 0) {
             Match lastMatch = null;
@@ -164,7 +250,7 @@ public final class MatchUtils {
                     lastMatch = match;
                 }
             }
-            return matchList.get(matchList.size() - 1);
+            return lastMatch;
         }
         return null;
     }
@@ -277,7 +363,7 @@ public final class MatchUtils {
         return calendar;
     }
 
-    private static Calendar previousTwoHours(Calendar calendar) {
+    public static Calendar previousTwoHours(Calendar calendar) {
         calendar.add(Calendar.HOUR_OF_DAY, -2);
         return calendar;
     }
@@ -287,7 +373,7 @@ public final class MatchUtils {
         return calendar;
     }
 
-    private static Calendar previousThreeHours(Calendar calendar) {
+    public static Calendar previousThreeHours(Calendar calendar) {
         calendar.add(Calendar.HOUR_OF_DAY, -3);
         return calendar;
     }
@@ -317,6 +403,20 @@ public final class MatchUtils {
         List<Match> mList = new ArrayList<>();
         for (Match m : matchList) {
             if (m.getMatchNumber() >= minMatchNumber && m.getMatchNumber() <= maxMatchNumber) {
+                mList.add(m);
+            }
+        }
+        return mList;
+    }
+
+
+    public static List<Match> getPlayedMatchList(List<Match> matchList, Date serverTime, int minMatchNumber, int maxMatchNumber) {
+
+        List<Match> mList = new ArrayList<>();
+        for (Match m : matchList) {
+            if (m.getDateAndTime().before(serverTime) &&
+                    m.getMatchNumber() >= minMatchNumber &&
+                    m.getMatchNumber() <= maxMatchNumber) {
                 mList.add(m);
             }
         }
@@ -493,6 +593,36 @@ public final class MatchUtils {
                 TranslationUtils.translateCountryName(context, match.getHomeTeamName()),
                 " - ",
                 TranslationUtils.translateCountryName(context, match.getAwayTeamName())).toString();
+    }
+
+    private static final int COLOR_DEFAULT = Color.parseColor("#aaffffff");
+    private static final int COLOR_INCORRECT_PREDICTION = Color.parseColor("#aaff0000");
+    private static final int COLOR_CORRECT_OUTCOME = Color.parseColor("#aaaa7d00");
+    private static final int COLOR_CORRECT_MARGIN_OF_VICTORY = Color.parseColor("#aaAAAA00");
+    private static final int COLOR_CORRECT_PREDICTION = Color.parseColor("#aa00AA00");
+
+    public static int getCardColor(Match match, Prediction prediction) {
+        if (match == null || !match.getDateAndTime().before(GlobalData.getInstance().getServerTime().getTime()))
+            return COLOR_DEFAULT;
+
+
+        if (prediction == null) {
+            return COLOR_INCORRECT_PREDICTION;
+        }
+        else {
+            if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectMarginOfVictory()) {
+                return COLOR_CORRECT_MARGIN_OF_VICTORY;
+            }
+            else if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectOutcome()) {
+                return COLOR_CORRECT_OUTCOME;
+            }
+            else if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectPrediction()) {
+                return COLOR_CORRECT_PREDICTION;
+            }
+            else {
+                return COLOR_INCORRECT_PREDICTION;
+            }
+        }
     }
 }
 

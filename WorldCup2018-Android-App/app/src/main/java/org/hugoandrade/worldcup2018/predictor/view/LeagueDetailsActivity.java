@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -17,9 +16,9 @@ import android.widget.TextView;
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.MVP;
 import org.hugoandrade.worldcup2018.predictor.R;
+import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
 import org.hugoandrade.worldcup2018.predictor.data.LeagueWrapper;
 import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
 import org.hugoandrade.worldcup2018.predictor.data.raw.User;
 import org.hugoandrade.worldcup2018.predictor.presenter.LeagueDetailsPresenter;
@@ -28,8 +27,8 @@ import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StickyFooterUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 import org.hugoandrade.worldcup2018.predictor.view.dialog.SimpleDialog;
-import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterTheme;
+import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.helper.StageFilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.listadapter.LeagueStandingFullListAdapter;
 
@@ -187,7 +186,7 @@ public class LeagueDetailsActivity extends MainActivityBase<MVP.RequiredLeagueDe
 
         RecyclerView rvLeagueStandings = findViewById(R.id.rv_league_standings);
         rvLeagueStandings.setNestedScrollingEnabled(false);
-        rvLeagueStandings.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        rvLeagueStandings.setLayoutManager(new VerticalLinearLayoutManager(this));
         rvLeagueStandings.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
         rvLeagueStandings.setAdapter(leagueStandingListAdapter);
 
@@ -211,12 +210,12 @@ public class LeagueDetailsActivity extends MainActivityBase<MVP.RequiredLeagueDe
 
         boolean isOverall = mLeagueWrapper.getLeague().getID().equals(LeagueWrapper.OVERALL_ID);
 
-        if (isOverall) {
+        if (isOverall || currentMatchNumber <= 1) {
             tvLatestMatch.setVisibility(View.GONE);
             tvLatestMatchFixed.setVisibility(View.GONE);
         } else {
-            tvLatestMatch.setVisibility(currentMatchNumber <= 1 ? View.GONE : View.VISIBLE);
-            tvLatestMatchFixed.setVisibility(currentMatchNumber <= 1 ? View.GONE : View.VISIBLE);
+            tvLatestMatch.setVisibility(View.VISIBLE);
+            tvLatestMatchFixed.setVisibility(View.VISIBLE);
             View.OnClickListener listener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

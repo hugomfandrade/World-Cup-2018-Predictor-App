@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,7 @@ import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManager;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManagerOps;
+import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
 import org.hugoandrade.worldcup2018.predictor.data.LeagueWrapper;
 import org.hugoandrade.worldcup2018.predictor.data.raw.League;
 import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
@@ -80,7 +81,7 @@ public class LeaguesFragment extends FragmentBase<FragComm.RequiredActivityOps>
         mLeagueListAdapter.set(GlobalData.getInstance().getLeagues());
 
         RecyclerView rvLeagues = view.findViewById(R.id.rv_leagues);
-        rvLeagues.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        rvLeagues.setLayoutManager(new VerticalLinearLayoutManager(getContext()));
         rvLeagues.setNestedScrollingEnabled(false);
         rvLeagues.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
         rvLeagues.setAdapter(mLeagueListAdapter);
@@ -185,6 +186,10 @@ public class LeaguesFragment extends FragmentBase<FragComm.RequiredActivityOps>
         super.onDestroyView();
 
         GlobalData.getInstance().removeOnLeaguesChangedListener(mOnLeaguesChangedListener);
+
+        if (mServiceManager != null) {
+            mServiceManager.unsubscribeServiceCallback(mServiceCallback);
+        }
     }
 
     private GlobalData.OnLeaguesChangedListener mOnLeaguesChangedListener

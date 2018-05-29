@@ -118,6 +118,7 @@ public final class ErrorMessageUtils {
 
     private static final String sMustBeLoggedInError = "You must be logged in to use this application";
     private static final String sErrorValidatingAccessToken = "Error validating access token";
+    private static final String sErrorPredictionPastDate = "Cannot insert prediction for that Match. Match date is past";
 
     public static String genMustBeLoggedInError() {
         return sMustBeLoggedInError;
@@ -127,5 +128,8 @@ public final class ErrorMessageUtils {
     }
     public static boolean isErrorValidatingAccessTokenError(String message) {
         return sErrorValidatingAccessToken.equals(message);
+    }
+    public static boolean isErrorPredictionPastDateError(String message) {
+        return sErrorPredictionPastDate.equals(message);
     }
 }

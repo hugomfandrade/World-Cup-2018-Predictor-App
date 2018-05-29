@@ -48,6 +48,42 @@
                 android:layout_gravity="center_horizontal"
                 android:descendantFocusability="afterDescendants"/>
 
+            <android.support.v7.widget.CardView
+                android:id="@+id/wc_not_started_message_container"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                app:cardBackgroundColor="#fff"
+                app:cardCornerRadius="10dp"
+                app:contentPadding="20dp"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/wc_2018_not_started"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:text="@string/app_state_unavailable_come_back_later"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
         </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>

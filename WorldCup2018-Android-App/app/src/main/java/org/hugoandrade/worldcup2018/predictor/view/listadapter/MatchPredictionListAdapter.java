@@ -1,5 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.view.listadapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
@@ -18,6 +19,7 @@ import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
 import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 
 import java.util.List;
@@ -26,8 +28,8 @@ public class MatchPredictionListAdapter extends RecyclerView.Adapter<MatchPredic
 
     private static final int COLOR_DEFAULT = Color.parseColor("#aaffffff");
     private static final int COLOR_INCORRECT_PREDICTION = Color.parseColor("#aaff0000");
+    private static final int COLOR_CORRECT_OUTCOME = Color.parseColor("#aaaa7d00");
     private static final int COLOR_CORRECT_MARGIN_OF_VICTORY = Color.parseColor("#aaAAAA00");
-    private static final int COLOR_CORRECT_OUTCOME = Color.parseColor("#aaFF5500");
     private static final int COLOR_CORRECT_PREDICTION = Color.parseColor("#aa00AA00");
 
     private Match mMatch;
@@ -51,16 +53,15 @@ public class MatchPredictionListAdapter extends RecyclerView.Adapter<MatchPredic
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        Context context = holder.itemView.getContext();
         Prediction prediction = mPredictionList.get(holder.getAdapterPosition()).second;
         User user = mPredictionList.get(holder.getAdapterPosition()).first;
 
-        boolean isPast = mMatch.getDateAndTime().before(GlobalData.getInstance().getServerTime().getTime());
-
         holder.isBinding = true;
 
-        holder.cardView.setCardBackgroundColor(isPast? getCardColor(prediction) : COLOR_DEFAULT);
-        holder.ivHomeTeam.setImageResource(Country.getImageID(mMatch.getHomeTeam()));
-        holder.ivAwayTeam.setImageResource(Country.getImageID(mMatch.getAwayTeam()));
+        holder.cardView.setCardBackgroundColor(MatchUtils.getCardColor(mMatch, prediction));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, Country.getImageID(mMatch.getHomeTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, Country.getImageID(mMatch.getAwayTeam()));
         holder.etHomeTeamGoals.setText(MatchUtils.getAsString(prediction.getHomeTeamGoals()));
         holder.etAwayTeamGoals.setText(MatchUtils.getAsString(prediction.getAwayTeamGoals()));
         holder.tvPoints.setText(getPointsText(prediction));
@@ -105,27 +106,6 @@ public class MatchPredictionListAdapter extends RecyclerView.Adapter<MatchPredic
             tvUser = itemView.findViewById(R.id.tv_user);
         }
     }
-
-    private int getCardColor(Prediction prediction) {
-        if (prediction == null) {
-            return COLOR_INCORRECT_PREDICTION;
-        }
-        else {
-            if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectMarginOfVictory()) {
-                return COLOR_CORRECT_MARGIN_OF_VICTORY;
-            }
-            else if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectOutcome()) {
-                return COLOR_CORRECT_OUTCOME;
-            }
-            else if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectPrediction()) {
-                return COLOR_CORRECT_PREDICTION;
-            }
-            else {
-                return COLOR_INCORRECT_PREDICTION;
-            }
-        }
-    }
-
     private String getPointsText(Prediction prediction) {
         if (prediction == null || prediction.getScore() == -1) {
             return "0";

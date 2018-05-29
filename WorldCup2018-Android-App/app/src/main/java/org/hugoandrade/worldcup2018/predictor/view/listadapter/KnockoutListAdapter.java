@@ -27,6 +27,7 @@ import org.hugoandrade.worldcup2018.predictor.utils.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.TranslationUtils;
 
 import java.util.List;
+import java.util.Locale;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;

@@ -24,8 +24,10 @@ import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
 import org.hugoandrade.worldcup2018.predictor.data.raw.User;
 import org.hugoandrade.worldcup2018.predictor.presenter.MatchPredictionPresenter;
+import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.TranslationUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterTheme;
@@ -67,7 +69,7 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
     private TextView tvStage;
     private TextView tvDateAndTime;
 
-    private FilterWrapper mFilterWrapper;
+    private MatchFilterWrapper mFilterWrapper;
 
     private TextView tvMatchText;
 
@@ -80,13 +82,16 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        if (getIntent() != null && getIntent() != null) {
+
+         Match match = MatchUtils.getLastPlayedMatch(
+                GlobalData.getInstance().getMatchList(),
+                GlobalData.getInstance().getServerTime().getTime());
+
+
+        if (getIntent() != null && getIntent() != null && match != null) {
             mLeagueName = getIntent().getStringExtra(INTENT_EXTRA_LEAGUE_NAME);
             mUserList = getIntent().getParcelableArrayListExtra(INTENT_EXTRA_USER_LIST);
-            mCurrentMatchNumber = MatchUtils.getMatchNumberOfFirstNotPlayedMatch(
-                    GlobalData.getInstance().getMatchList(),
-                    GlobalData.getInstance().getServerTime().getTime()) - 1;
+            mCurrentMatchNumber = match.getMatchNumber();
         }
         else {
             finish();
@@ -112,10 +117,6 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
 
         progressBar = findViewById(R.id.progressBar_waiting);
 
-        int maxMatchNumber = MatchUtils.getMatchNumberOfFirstNotPlayedMatch(
-                GlobalData.getInstance().getMatchList(),
-                GlobalData.getInstance().getServerTime().getTime()) - 1;
-
         tvMatchText = findViewById(R.id.tv_filter_title);
 
         mFilterWrapper = MatchFilterWrapper.Builder.instance(this)
@@ -124,15 +125,14 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
                 .setPreviousButton(findViewById(R.id.iv_filter_previous))
                 .setNextButton(findViewById(R.id.iv_filter_next))
                 .setHoldEnabled(true)
-                .setInitialFilter(mCurrentMatchNumber - 1)
-                .setListener(new FilterWrapper.OnFilterSelectedListener() {
+                .setInitialFilter(mCurrentMatchNumber)
+                .setOnMatchSelectedListener(new MatchFilterWrapper.OnMatchSelectedListener() {
                     @Override
-                    public void onFilterSelected(int stage) {
-                        filterSpecificMatchNumber(stage + 1);
+                    public void onMatchSelected(Match match) {
+                        filterSpecificMatchNumber(match.getMatchNumber());
                     }
                 })
-                .setMatchList(GlobalData.getInstance().getMatchList())
-                .setMaxMatchNumber(maxMatchNumber)
+                .setMatchList(GlobalData.getInstance().getPlayedMatchList())
                 .build();
 
         // Match info
@@ -140,6 +140,22 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
         tvAwayTeam = findViewById(R.id.tv_match_away_team);
         ivHomeTeam = findViewById(R.id.iv_match_home_team);
         ivAwayTeam = findViewById(R.id.iv_match_away_team);
+        ivHomeTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Country c = GlobalData.getInstance().getMatch(mCurrentMatchNumber).getHomeTeam();
+
+                onCountryClicked(c);
+            }
+        });
+        ivAwayTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Country c = GlobalData.getInstance().getMatch(mCurrentMatchNumber).getAwayTeam();
+
+                onCountryClicked(c);
+            }
+        });
         etHomeTeamGoals = findViewById(R.id.et_home_team_goals);
         etAwayTeamGoals = findViewById(R.id.et_away_team_goals);
         detailsInfoContainer = findViewById(R.id.viewGroup_info_details_container);
@@ -194,6 +210,10 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
         super.logout();
     }
 
+    private void onCountryClicked(Country country) {
+        startActivity(CountryDetailsActivity.makeIntent(this, country));
+    }
+
     private void filterSpecificMatchNumber(int matchNumber) {
         getPresenter().getPredictions(mUserList, matchNumber);
     }
@@ -207,7 +227,7 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
     public void setMatchPredictionList(int matchNumber, List<User> userList) {
         mCurrentMatchNumber = matchNumber;
 
-        mFilterWrapper.setSelectedFilter(mCurrentMatchNumber - 1);
+        mFilterWrapper.setSelectedMatchNumber(mCurrentMatchNumber);
 
         Match match = GlobalData.getInstance().getMatch(matchNumber);
 
@@ -218,8 +238,8 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
 
         tvHomeTeam.setText(TranslationUtils.translateCountryName(this, match.getHomeTeamName()));
         tvAwayTeam.setText(TranslationUtils.translateCountryName(this, match.getAwayTeamName()));
-        ivHomeTeam.setImageResource(Country.getImageID(match.getHomeTeam()));
-        ivAwayTeam.setImageResource(Country.getImageID(match.getAwayTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivHomeTeam, Country.getImageID(match.getHomeTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivAwayTeam, Country.getImageID(match.getAwayTeam()));
 
         boolean hasHomeCountryFlag = Country.getImageID(match.getHomeTeam()) != 0;
         boolean hasAwayCountryFlag = Country.getImageID(match.getAwayTeam()) != 0;
@@ -232,7 +252,7 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
         etHomeTeamGoals.setText(MatchUtils.getScoreOfHomeTeam(match));
         etAwayTeamGoals.setText(MatchUtils.getScoreOfAwayTeam(match));
 
-        tvDateAndTime.setText(DateFormat.format(TIME_TEMPLATE, match.getDateAndTime()).toString());
+        tvDateAndTime.setText(StringUtils.capitalize(DateFormat.format(TIME_TEMPLATE, match.getDateAndTime())));
 
         tvMatchNumber.setText(TextUtils.concat(getString(R.string.match_number), ": ", String.valueOf(match.getMatchNumber())));
         detailsInfoContainer.setVisibility(View.INVISIBLE);

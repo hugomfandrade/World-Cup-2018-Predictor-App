@@ -119,7 +119,7 @@ public abstract class SimpleActivityBase extends AppCompatActivity {
 
     private Context updateBaseContextLocale(Context context) {
         Locale locale = Locale.US;
-        if (!Locale.getDefault().getLanguage().equals("pt")) {
+        if (Locale.getDefault().getLanguage().equals("pt")) {
             locale = Locale.getDefault();
         }
         Locale.setDefault(locale);

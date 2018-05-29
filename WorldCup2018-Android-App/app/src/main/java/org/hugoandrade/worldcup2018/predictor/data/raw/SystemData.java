@@ -41,6 +41,10 @@ public class SystemData implements Parcelable {
         mDateOfLastRecordedSystemDate = (Calendar) in.readSerializable();
     }
 
+    public void add(long time) {
+        mSystemDate.setTimeInMillis(mSystemDate.getTimeInMillis() + time);
+    }
+
     public static final Creator<SystemData> CREATOR = new Creator<SystemData>() {
         @Override
         public SystemData createFromParcel(Parcel in) {

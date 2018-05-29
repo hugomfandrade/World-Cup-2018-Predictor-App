@@ -3,7 +3,6 @@ package org.hugoandrade.worldcup2018.predictor.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
+import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
 import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
@@ -24,9 +24,6 @@ import org.hugoandrade.worldcup2018.predictor.view.listadapter.KnockoutListAdapt
 import java.util.List;
 
 public class CountryDetailsActivity extends SimpleActivityBase {
-
-    @SuppressWarnings("unused")
-    private final String TAG = CountryDetailsActivity.class.getSimpleName();
 
     private static final String INTENT_EXTRA_COUNTRY = "intent_extra_country";
 
@@ -66,7 +63,7 @@ public class CountryDetailsActivity extends SimpleActivityBase {
         setSupportActionBar((Toolbar) findViewById(R.id.anim_toolbar));
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(mCountry.getName());
+            getSupportActionBar().setTitle(TranslationUtils.translateCountryName(this, mCountry.getName()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -92,7 +89,7 @@ public class CountryDetailsActivity extends SimpleActivityBase {
         RecyclerView recyclerView = findViewById(R.id.rv_group);
         recyclerView.setAdapter(adapter);
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new VerticalLinearLayoutManager(this));
 
 
         // Setup recycler view
@@ -110,7 +107,7 @@ public class CountryDetailsActivity extends SimpleActivityBase {
         RecyclerView rvMatches = findViewById(R.id.rv_matches);
         rvMatches.setAdapter(knockoutListAdapter);
         rvMatches.setNestedScrollingEnabled(false);
-        rvMatches.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        rvMatches.setLayoutManager(new VerticalLinearLayoutManager(this));
     }
 
     private int getTitleResource() {
@@ -148,7 +145,13 @@ public class CountryDetailsActivity extends SimpleActivityBase {
                 }
                 // if semi final
                 if (eliminatedIn(StaticVariableUtils.SStage.semiFinals)) {
-                    return getString(R.string.eliminated_semi_finals);
+
+                    if (isPlayed(StaticVariableUtils.SStage.thirdPlacePlayOff)) {
+                        if (eliminatedIn(StaticVariableUtils.SStage.thirdPlacePlayOff))
+                            return getString(R.string.finished_in_4th_place);
+                        else
+                            return getString(R.string.finished_in_3rd_place);
+                    }
                 }
                 // if final
                 if (eliminatedIn(StaticVariableUtils.SStage.finals)) {
@@ -164,6 +167,15 @@ public class CountryDetailsActivity extends SimpleActivityBase {
             }
         }
         return null;
+    }
+
+    private boolean isPlayed(StaticVariableUtils.SStage sStage) {
+        for (Match m : mMatchList) {
+            if (m.getStage().equals(sStage.name)) {
+                return MatchUtils.isMatchPlayed(m);
+            }
+        }
+        return false;
     }
 
     private boolean eliminatedIn(StaticVariableUtils.SStage stage) {

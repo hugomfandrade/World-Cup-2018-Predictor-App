@@ -3,7 +3,6 @@ package org.hugoandrade.worldcup2018.predictor.view.helper;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
+import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
 
 import java.util.List;
 
@@ -60,14 +59,15 @@ public class FilterPopup extends PopupWindow {
     private void initializeUI(int startingPosition) {
 
         RecyclerView rvFilter = getContentView().findViewById(R.id.rv_filter);
-        rvFilter.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+        rvFilter.setLayoutManager(new VerticalLinearLayoutManager(mContext));
         rvFilter.setAdapter(new FilterListAdapter());
 
         if (mMaxRows > 0) {
+            int rows = mFilterList.size() < mMaxRows ? mFilterList.size() : mMaxRows;
             ViewGroup.LayoutParams params = rvFilter.getLayoutParams();
             params.height = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
-                    mMaxRows * 40,
+                    rows * 40,
                     mContext.getResources().getDisplayMetrics());
             rvFilter.setLayoutParams(params);
         }

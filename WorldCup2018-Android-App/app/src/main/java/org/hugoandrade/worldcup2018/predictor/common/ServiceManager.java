@@ -1,5 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.common;
 
+import android.util.Log;
+
 import org.hugoandrade.worldcup2018.predictor.model.IMobileClientService;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 
@@ -7,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ServiceManager {
+
+    private final String TAG = getClass().getSimpleName();
 
     private final IMobileClientService mService;
     private Set<MobileServiceCallback> mCallbackSet = new HashSet<>();
@@ -20,7 +24,8 @@ public class ServiceManager {
     }
 
     public void subscribeServiceCallback(MobileServiceCallback callback) {
-        mCallbackSet.add(callback);
+        if (!mCallbackSet.contains(callback))
+            mCallbackSet.add(callback);
     }
 
     public void unsubscribeServiceCallback(MobileServiceCallback callback) {

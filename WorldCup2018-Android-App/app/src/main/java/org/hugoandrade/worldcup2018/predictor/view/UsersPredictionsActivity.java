@@ -3,30 +3,33 @@ package org.hugoandrade.worldcup2018.predictor.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
+import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
+import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
 import org.hugoandrade.worldcup2018.predictor.data.raw.User;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterTheme;
 import org.hugoandrade.worldcup2018.predictor.view.helper.StageFilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.listadapter.PredictionListAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class UsersPredictionsActivity extends SimpleActivityBase
 
-        //implements FilterWrapper.OnFilterSelectedListener
-        implements FilterWrapper.OnFilterSelectedListener
-{
+        implements FilterWrapper.OnFilterSelectedListener {
 
     private static final String INTENT_EXTRA_USER = "intent_extra_user";
     private static final String INTENT_EXTRA_PREDICTION_LIST = "intent_extra_prediction_list";
@@ -74,74 +77,136 @@ public class UsersPredictionsActivity extends SimpleActivityBase
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        int maxStage = StageUtils.getStageNumber(MatchUtils.getLastPlayedMatch(
+                GlobalData.getInstance().getMatchList(),
+                GlobalData.getInstance().getServerTime().getTime()
+        ));
         mFilterWrapper = StageFilterWrapper.Builder.instance(this)
                 .setTheme(FilterTheme.LIGHT)
                 .setFilterText(findViewById(R.id.tv_filter_title))
                 .setPreviousButton(findViewById(R.id.iv_filter_previous))
                 .setNextButton(findViewById(R.id.iv_filter_next))
+                .setMaxFilter(maxStage)
                 .setListener(this)
                 .build();
+
+        View mWCNotStartedMessageContainer = findViewById(R.id.wc_not_started_message_container);
+        mWCNotStartedMessageContainer.setVisibility(hasAnyMatchBeenPlayed()? View.GONE : View.VISIBLE);
 
         rvPredictions = findViewById(R.id.rv_predictions);
         mPredictionsAdapter = new PredictionListAdapter(GlobalData.getInstance().getMatchList(),
                                                         mPredictionList,
                                                         PredictionListAdapter.VIEW_TYPE_DISPLAY_ONLY);
-        rvPredictions.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mPredictionsAdapter.setOnPredictionSetListener(new PredictionListAdapter.OnPredictionSetListener() {
+            @Override
+            public void onPredictionSet(Prediction prediction) {
+                // No-ops
+            }
+
+            @Override
+            public void onCountryClicked(Country country) {
+                startActivity(CountryDetailsActivity.makeIntent(UsersPredictionsActivity.this, country));
+            }
+        });
+        rvPredictions.setLayoutManager(new VerticalLinearLayoutManager(this));
         rvPredictions.setAdapter(mPredictionsAdapter);
 
-        int startingItemPosition =
-                MatchUtils.getPositionOfFirstNotPlayedMatch(
-                        GlobalData.getInstance().getMatchList(),
-                        GlobalData.getInstance().getServerTime().getTime(),
-                        3);
-        rvPredictions.scrollToPosition(startingItemPosition);
+        updateUI();
+    }
 
-        Match match =
-                MatchUtils.getFirstMatchOfYesterday(
-                        GlobalData.getInstance().getMatchList(),
-                        GlobalData.getInstance().getServerTime().getTime());
+    private boolean hasAnyMatchBeenPlayed() {
+        Match lastPlayedMatch = MatchUtils.getLastPlayedMatch(
+                GlobalData.getInstance().getMatchList(),
+                GlobalData.getInstance().getServerTime().getTime());
+        return lastPlayedMatch != null;
+    }
 
-        if (match == null) {
-            onFilterSelected(mFilterWrapper.getSelectedFilter());
-        }
-        else {
-            int stageNumber = StageUtils.getStageNumber(match);
+    private void updateUI() {
 
-            mFilterWrapper.setSelectedFilter(stageNumber);
-            onFilterSelected(stageNumber);
-        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                Match match = MatchUtils.getLastPlayedMatch(GlobalData.getInstance().getMatchList(),
+                                                            GlobalData.getInstance().getServerTime().getTime());
+
+                if (match == null) {// || nextMatchWithDelay == null) {
+                    onFilterSelected(mFilterWrapper.getSelectedFilter());
+                }
+                else {
+                    int stageNumber = StageUtils.getStageNumber(match);
+
+                    mFilterWrapper.setSelectedFilter(stageNumber);
+                    onFilterSelected(stageNumber);
+                }
+            }
+        }, 100L);
     }
 
     @Override
-    public void onFilterSelected(int stage) {
+    public void onFilterSelected(final int stage) {
 
         int minMatchNumber = StageUtils.getMinMatchNumber(stage);
         int maxMatchNumber = StageUtils.getMaxMatchNumber(stage);
 
+        List<Match> playedMatchList = GlobalData.getInstance().getPlayedMatchList(minMatchNumber, maxMatchNumber);
         List<Match> matchList = GlobalData.getInstance().getMatchList(minMatchNumber, maxMatchNumber);
 
-        int startingPosition = 0;
-        //if (stage == 0) {
-            startingPosition = MatchUtils.getPositionOfFirstNotPlayedMatch(
-                    matchList,
-                    GlobalData.getInstance().getServerTime().getTime(),
-                    2);
-        //}
+        Match lastPlayedMatchAll = MatchUtils.getLastPlayedMatch(
+                GlobalData.getInstance().getMatchList(),
+                GlobalData.getInstance().getServerTime().getTime());
 
-        /*if (startingPosition != 0 && startingPosition == matchList.size()) {
-            startingPosition--;
-        }/**/
+        Match lastPlayedMatch = MatchUtils.getLastPlayedMatch(
+                playedMatchList,
+                GlobalData.getInstance().getServerTime().getTime());
+
+        Calendar serverTimeWithDelay;
+        if (StageUtils.isGroupStage(lastPlayedMatch)) {
+            serverTimeWithDelay = MatchUtils.previousTwoHours((Calendar) GlobalData.getInstance().getServerTime().clone());
+        }
+        else {
+            serverTimeWithDelay = MatchUtils.previousThreeHours((Calendar) GlobalData.getInstance().getServerTime().clone());
+        }
+
+        int startingPosition = MatchUtils.getPositionOfLastPlayedPlayedMatch(
+                playedMatchList,
+                GlobalData.getInstance().getServerTime().getTime());
+
+        if (lastPlayedMatch != null &&
+                lastPlayedMatchAll != null &&
+                playedMatchList.size() > 0 &&
+                lastPlayedMatch.getID() != null &&
+                lastPlayedMatch.getDateAndTime() != null &&
+                lastPlayedMatch.getID().equals(playedMatchList.get(playedMatchList.size() - 1).getID()) &&
+                lastPlayedMatch.getID().equals(lastPlayedMatchAll.getID()) &&
+                lastPlayedMatch.getDateAndTime().after(serverTimeWithDelay.getTime())) {
+            startingPosition = playedMatchList.size() - 1;
+        }
+        else {
+            startingPosition = startingPosition == matchList.size() ? 0 : (startingPosition - 1);
+        }
+        final int finalStartingPosition = startingPosition;
+        //ViewUtils.showToast(this, "position::" + finalStartingPosition);
 
         if (mPredictionsAdapter != null) {
-            mPredictionsAdapter.setMatchList(matchList);
+            mPredictionsAdapter.setMatchList(playedMatchList);
             mPredictionsAdapter.notifyDataSetChanged();
         }
         if (rvPredictions != null) {
-            //if (stage == 0) {
-                rvPredictions.setLayoutManager(
-                        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-            //}
-            rvPredictions.scrollToPosition(startingPosition);
+            rvPredictions.setLayoutManager(new VerticalLinearLayoutManager(this));
+            //rvPredictions.scrollToPosition(0);
+            //rvPredictions.scrollToPosition(finalStartingPosition);
         }
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (rvPredictions != null) {
+                    rvPredictions.scrollToPosition(finalStartingPosition);
+                }
+            }
+        }, 10L);/**/
     }
 }

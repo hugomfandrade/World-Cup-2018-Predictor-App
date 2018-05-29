@@ -135,6 +135,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="30dp"
+            android:visibility="gone"
             app:cardBackgroundColor="#fff"
             app:cardCornerRadius="10dp"
             app:contentPadding="20dp"
@@ -159,7 +160,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:layout_marginBottom="20dp"
                     android:gravity="center"
                     android:textSize="14sp"
                     android:text="@string/app_state_unavailable_come_back_later"/>
@@ -169,6 +169,7 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     app:cardBackgroundColor="#616161"
                     app:cardCornerRadius="1dp"
                     app:contentPadding="1dp"  >

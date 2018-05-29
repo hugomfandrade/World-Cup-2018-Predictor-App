@@ -3,6 +3,7 @@ package org.hugoandrade.worldcup2018.predictor.view.helper;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -92,13 +93,17 @@ public abstract class FilterWrapper {
     void setMaxFilter(int maxFilter) {
         mMaxFilter = maxFilter;
 
-        if (mMaxFilter != -1 && currentFilter > mMaxFilter) {
+        if (mMaxFilter != -1 && currentFilter > mMaxFilter){
 
             int newFilter = mMaxFilter;
             if (mMinFilter != -1 && mMinFilter > mMaxFilter)
                 newFilter = -1;
 
             setupFilter(newFilter);
+
+        }
+        else {
+            setupFilterUI();
         }
     }
 
@@ -113,6 +118,9 @@ public abstract class FilterWrapper {
 
             setupFilter(newFilter);
         }
+        else {
+            setupFilterUI();
+        }
     }
 
     void setHoldEnabled(boolean isHoldEnabled) {
@@ -120,16 +128,6 @@ public abstract class FilterWrapper {
     }
 
     FilterPopup onCreatePopup(View view) {
-        List<String> pList = new ArrayList<>();
-        for (int i = 0 ; i < mPredictionFilter.size() ; i++) {
-            if (mMinFilter != -1 && i < mMinFilter)
-                continue;
-
-            if (mMaxFilter != -1 && i > mMaxFilter)
-                continue;
-
-            pList.add(mPredictionFilter.get(i));
-        }
         FilterPopup filterPopup = new FilterPopup(view, mPredictionFilter, currentFilter, 0, mTheme);
         filterPopup.setMax(mMaxFilter);
         filterPopup.setMin(mMinFilter);

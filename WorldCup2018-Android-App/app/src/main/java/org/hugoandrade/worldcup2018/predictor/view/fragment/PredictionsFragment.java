@@ -1,10 +1,10 @@
 package org.hugoandrade.worldcup2018.predictor.view.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
@@ -15,6 +15,7 @@ import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManager;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManagerOps;
+import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
 import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
@@ -86,41 +87,11 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
 
 
         rvPredictions = view.findViewById(R.id.rv_predictions);
-        rvPredictions.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        rvPredictions.setLayoutManager(new VerticalLinearLayoutManager(getContext()));
         rvPredictions.setAdapter(mPredictionsAdapter);
         ((SimpleItemAnimator) rvPredictions.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        /*int startingItemPosition =
-                MatchUtils.getPositionOfFirstNotPlayedMatch(
-                        GlobalData.getInstance().getMatchList(),
-                        GlobalData.getInstance().getServerTime().getTime());
-        rvPredictions.scrollToPosition(startingItemPosition);7**/
-
-        Match lastPlayedMatch = MatchUtils.getLastPlayedMatch(
-                GlobalData.getInstance().getMatchList(),
-                GlobalData.getInstance().getServerTime().getTime());
-
-        Match match;
-        if (StageUtils.isGroupStage(lastPlayedMatch)) {
-            match = MatchUtils.getFirstMatchOfPreviousTwoHours(
-                    GlobalData.getInstance().getMatchList(),
-                    GlobalData.getInstance().getServerTime().getTime());
-        }
-        else {
-            match = MatchUtils.getFirstMatchOfPreviousThreeHours(
-                    GlobalData.getInstance().getMatchList(),
-                    GlobalData.getInstance().getServerTime().getTime());
-        }
-
-        if (match == null) {
-            onFilterSelected(mFilterWrapper.getSelectedFilter());
-        }
-        else {
-            int stageNumber = StageUtils.getStageNumber(match);
-
-            mFilterWrapper.setSelectedFilter(stageNumber);
-            onFilterSelected(stageNumber);
-        }
+        updateUI();
     }
 
     private void putPrediction(Prediction prediction) {
@@ -144,6 +115,9 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
         if (operationResult) {
             updatePrediction(prediction);
         } else {
+
+            if (ErrorMessageUtils.isErrorPredictionPastDateError(message))
+                GlobalData.getInstance().updateServerTime();
 
             updateFailedPrediction(prediction);
 
@@ -169,35 +143,7 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
         @Override
         public void onMatchesChanged() {
 
-            Match lastPlayedMatch = MatchUtils.getLastPlayedMatch(
-                    GlobalData.getInstance().getMatchList(),
-                    GlobalData.getInstance().getServerTime().getTime());
-
-            Match match;
-            if (StageUtils.isGroupStage(lastPlayedMatch)) {
-                match = MatchUtils.getFirstMatchOfPreviousTwoHours(
-                        GlobalData.getInstance().getMatchList(),
-                        GlobalData.getInstance().getServerTime().getTime());
-            }
-            else {
-                match = MatchUtils.getFirstMatchOfPreviousThreeHours(
-                        GlobalData.getInstance().getMatchList(),
-                        GlobalData.getInstance().getServerTime().getTime());
-            }
-            /*Match match =
-                    MatchUtils.getFirstMatchOfYesterday(
-                            GlobalData.getInstance().getMatchList(),
-                            GlobalData.getInstance().getServerTime().getTime());/**/
-
-            if (match == null) {
-                onFilterSelected(mFilterWrapper.getSelectedFilter());
-            }
-            else {
-                int stageNumber = StageUtils.getStageNumber(match);
-
-                mFilterWrapper.setSelectedFilter(stageNumber);
-                onFilterSelected(stageNumber);
-            }
+            updateUI();
         }
     };
 
@@ -259,6 +205,38 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
         }
     };
 
+    private void updateUI() {
+
+        Match lastPlayedMatch = MatchUtils.getLastPlayedMatch(
+                GlobalData.getInstance().getMatchList(),
+                GlobalData.getInstance().getServerTime().getTime());
+
+        Match match;
+        if (lastPlayedMatch != null && StageUtils.getStageNumber(lastPlayedMatch) == StageUtils.STAGE_FINAL) {
+            match = lastPlayedMatch;
+        }
+        else if (StageUtils.isGroupStage(lastPlayedMatch)) {
+            match = MatchUtils.getFirstMatchOfPreviousTwoHours(
+                    GlobalData.getInstance().getMatchList(),
+                    GlobalData.getInstance().getServerTime().getTime());
+        }
+        else {
+            match = MatchUtils.getFirstMatchOfPreviousThreeHours(
+                    GlobalData.getInstance().getMatchList(),
+                    GlobalData.getInstance().getServerTime().getTime());
+        }
+
+        if (match == null || StageUtils.isGroupStage(match)) {
+            onFilterSelected(mFilterWrapper.getSelectedFilter());
+        }
+        else {
+            int stageNumber = StageUtils.getStageNumber(match);
+
+            mFilterWrapper.setSelectedFilter(stageNumber);
+            onFilterSelected(stageNumber);
+        }
+    }
+
     @Override
     public void onFilterSelected(int stage) {
 
@@ -267,38 +245,71 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
 
         List<Match> matchList = GlobalData.getInstance().getMatchList(minMatchNumber, maxMatchNumber);
 
-        int startingPosition = 0;
-        //if (stage == 0) {
-            startingPosition = MatchUtils.getPositionOfFirstNotPlayedMatch(
+
+        Match lastPlayedMatch = MatchUtils.getLastPlayedMatch(
+                GlobalData.getInstance().getMatchList(),
+                GlobalData.getInstance().getServerTime().getTime());
+
+        int startingPosition;
+        if (StageUtils.isGroupStage(lastPlayedMatch)) {
+            startingPosition = MatchUtils.getPositionOfFirstNotPlayedMatchOfPreviousTwoHours(
                     matchList,
                     GlobalData.getInstance().getServerTime().getTime());
-            //}
+        }
+        else {
+            startingPosition = MatchUtils.getPositionOfFirstNotPlayedMatchOfPreviousThreeHours(
+                    matchList,
+                    GlobalData.getInstance().getServerTime().getTime());
+        }
+
+        /*int startingPosition = MatchUtils.getPositionOfFirstNotPlayedMatch(
+                matchList,
+                GlobalData.getInstance().getServerTime().getTime());/**/
 
         int currentStage = StageUtils.getStageNumber(MatchUtils.getFirstMatchOfPrevious24Hours(
                 GlobalData.getInstance().getMatchList(),
-                GlobalData.getInstance().getServerTime().getTime()
-        ));
+                GlobalData.getInstance().getServerTime().getTime()));
 
         if (startingPosition == matchList.size() && stage != StageUtils.STAGE_ALL && stage != currentStage) {
             startingPosition = 0;
         }
-        else if (startingPosition != 0 && stage != StageUtils.STAGE_ALL) {
-            startingPosition--;
-        }
-        else if (stage == StageUtils.STAGE_ALL) {
+        else if (StageUtils.isGroupStage(lastPlayedMatch) || stage == currentStage) {
+            startingPosition = (startingPosition + 2) < matchList.size() ? startingPosition + 2 : matchList.size() - 1;
+        }/**/
+        else if (currentStage == StageUtils.STAGE_ALL) {
             startingPosition = matchList.size() - 1;
         }
+
+        final int finalStartingPosition = (startingPosition < 0 ? 0 : startingPosition);
 
         if (mPredictionsAdapter != null) {
             mPredictionsAdapter.setMatchList(matchList);
             mPredictionsAdapter.notifyDataSetChanged();
         }
         if (rvPredictions != null) {
-            //if (stage == 0) {
-                rvPredictions.setLayoutManager(
-                        new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-            //}
-            rvPredictions.scrollToPosition(startingPosition);
+            rvPredictions.setLayoutManager(new VerticalLinearLayoutManager(getContext()));
+            //rvPredictions.scrollToPosition(0);
+            //rvPredictions.scrollToPosition(finalStartingPosition);
         }
+
+        //if (true) return;
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (rvPredictions != null) {
+                    //android.util.Log.e(TAG, "position:: " + finalStartingPosition);
+                    int i = ((VerticalLinearLayoutManager) rvPredictions.getLayoutManager()).findLastVisibleItemPosition();
+
+                    /*if (Math.abs(finalStartingPosition - i) > 16) {
+                        rvPredictions.scrollToPosition(finalStartingPosition - 16);
+                    }
+                    rvPredictions.smoothScrollToPosition(finalStartingPosition);/**/
+                    rvPredictions.scrollToPosition(finalStartingPosition );
+                    //ViewUtils.showToast(getActivity(), "position:: " + finalStartingPosition);
+                }
+            }
+        }, 10L);
     }
 }

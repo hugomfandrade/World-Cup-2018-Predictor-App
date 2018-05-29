@@ -172,7 +172,8 @@ public abstract class ActivityBase<RequiredViewOps,
      */
     @Override
     protected void onDestroy() {
-        mPresenterInstance.onDestroy(isChangingConfigurations());
+        if (mPresenterInstance != null)
+            mPresenterInstance.onDestroy(isChangingConfigurations());
 
         if (mNetworkBroadcastReceiver != null) {
             NetworkBroadcastReceiverUtils.unregister(getActivityContext(), mNetworkBroadcastReceiver);

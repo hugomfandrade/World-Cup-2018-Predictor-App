@@ -47,12 +47,6 @@ public class PredictionListAdapter extends RecyclerView.Adapter<PredictionListAd
     public static final int VIEW_TYPE_DISPLAY_ONLY = 0;
     public static final int VIEW_TYPE_DISPLAY_AND_UPDATE = 1;
 
-    private static final int COLOR_DEFAULT = Color.parseColor("#aaffffff");
-    private static final int COLOR_INCORRECT_PREDICTION = Color.parseColor("#aaff0000");
-    private static final int COLOR_CORRECT_MARGIN_OF_VICTORY = Color.parseColor("#aaAAAA00");
-    private static final int COLOR_CORRECT_OUTCOME = Color.parseColor("#aaFF5500");
-    private static final int COLOR_CORRECT_PREDICTION = Color.parseColor("#aa00AA00");
-
     private static final int TEXT_COLOR = Color.parseColor("#222222");
     private static final int TEXT_COLOR_2 = Color.parseColor("#444444");
     private static final int TEXT_COLOR_DEFAULT = Color.WHITE;//parseColor("#c0d7ed");
@@ -111,7 +105,7 @@ public class PredictionListAdapter extends RecyclerView.Adapter<PredictionListAd
 
         holder.isBinding = true;
 
-        holder.cardView.setCardBackgroundColor(isPast? getCardColor(prediction) : COLOR_DEFAULT);
+        holder.cardView.setCardBackgroundColor(MatchUtils.getCardColor(match, prediction));
 
         holder.tvHomeTeam.setText(MatchUtils.tryGetTemporaryHomeTeam(context, mMatchSet, match));
         holder.tvAwayTeam.setText(MatchUtils.tryGetTemporaryAwayTeam(context, mMatchSet, match));
@@ -395,26 +389,6 @@ public class PredictionListAdapter extends RecyclerView.Adapter<PredictionListAd
     public interface OnPredictionSetListener {
         void onPredictionSet(Prediction prediction);
         void onCountryClicked(Country country);
-    }
-
-    private int getCardColor(Prediction prediction) {
-        if (prediction == null) {
-            return COLOR_INCORRECT_PREDICTION;
-        }
-        else {
-            if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectMarginOfVictory()) {
-                return COLOR_CORRECT_MARGIN_OF_VICTORY;
-            }
-            else if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectOutcome()) {
-                return COLOR_CORRECT_OUTCOME;
-            }
-            else if (prediction.getScore() == GlobalData.getInstance().systemData.getRules().getRuleCorrectPrediction()) {
-                return COLOR_CORRECT_PREDICTION;
-            }
-            else {
-                return COLOR_INCORRECT_PREDICTION;
-            }
-        }
     }
 
     private String getPointsText(Prediction prediction) {
