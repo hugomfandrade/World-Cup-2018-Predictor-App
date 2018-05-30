@@ -1,6 +1,9 @@
 package org.hugoandrade.worldcup2018.predictor.admin.view.main.matches;
 
+import android.app.ActivityOptions;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,20 +11,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.hugoandrade.worldcup2018.predictor.admin.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.admin.R;
+import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
 import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
+import org.hugoandrade.worldcup2018.predictor.admin.view.SetFairPlayPointsActivity;
 import org.hugoandrade.worldcup2018.predictor.admin.view.main.FragmentBase;
 import org.hugoandrade.worldcup2018.predictor.admin.view.main.MainFragComm;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MatchesFragment
         extends FragmentBase<MainFragComm.ProvidedMainActivityOps>
         implements MainFragComm.ProvidedMatchesFragmentOps {
 
-    @SuppressWarnings("unused")
-    private static final String TAG = MatchesFragment.class.getSimpleName();
+    public static final int EDIT_FAIR_PLAY_POINTS = 200;
 
     private RecyclerView rvAllMatches;
     private MatchListAdapter mAdapter;
@@ -29,15 +34,15 @@ public class MatchesFragment
     private int selection = 0;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_set_results, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        rvAllMatches = (RecyclerView) view.findViewById(R.id.rv_all_matches);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        rvAllMatches = view.findViewById(R.id.rv_all_matches);
         rvAllMatches.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
@@ -46,6 +51,20 @@ public class MatchesFragment
             @Override
             public void onClick(Match match) {
                 getParentActivity().setMatch(match);
+            }
+
+            @Override
+            public void onCountryLongClicked(Country country) {
+                Bundle options = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //noinspection unchecked
+                    options = ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle();
+                }
+
+                getActivity().startActivityForResult(SetFairPlayPointsActivity.makeIntent(
+                        getActivity(),
+                        GlobalData.getCountryList(),
+                        country), EDIT_FAIR_PLAY_POINTS, options);
             }
         });
 

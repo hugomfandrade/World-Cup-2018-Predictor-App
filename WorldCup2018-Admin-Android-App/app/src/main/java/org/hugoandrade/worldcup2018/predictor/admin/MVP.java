@@ -64,6 +64,8 @@ public interface MVP {
         void reset();
 
         void updateScoresOfPredictions();
+
+        void updateCountry(Country country);
     }
     interface RequiredPresenterOps extends RequiredPresenterBaseOps {
 

@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.admin.view.main.matches;
 
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.admin.R;
+import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
 import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
 import org.hugoandrade.worldcup2018.predictor.admin.utils.MatchUtils;
 
@@ -38,14 +40,15 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         return position;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater vi = LayoutInflater.from(parent.getContext());
         return new ViewHolder(vi.inflate(R.layout.list_item_match, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         InputMatch inputMatch = mInputMatchList.get(holder.getAdapterPosition());
         Match match = inputMatch.mMatch;
         boolean isEnabled = inputMatch.mIsEnabled;
@@ -105,9 +108,10 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
     public interface OnSetButtonClickListener {
         void onClick(Match match);
+        void onCountryLongClicked(Country country);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         TextView tvMatchNo;
         TextView tvHomeTeam;
@@ -123,16 +127,18 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         ViewHolder(View itemView) {
             super(itemView);
 
-            tvMatchNo = (TextView) itemView.findViewById(R.id.tv_match_no);
-            tvHomeTeam = (TextView) itemView.findViewById(R.id.tv_match_home_team);
-            tvAwayTeam = (TextView) itemView.findViewById(R.id.tv_match_away_team);
-            etHomeTeamGoals = (EditText) itemView.findViewById(R.id.et_match_home_team_goals);
-            etAwayTeamGoals = (EditText) itemView.findViewById(R.id.et_match_away_team_goals);
-            etHomeTeamNotes = (EditText) itemView.findViewById(R.id.ed_match_home_team_notes);
-            etAwayTeamNotes = (EditText) itemView.findViewById(R.id.et_match_away_team_notes);
+            tvMatchNo = itemView.findViewById(R.id.tv_match_no);
+            tvHomeTeam = itemView.findViewById(R.id.tv_match_home_team);
+            tvAwayTeam = itemView.findViewById(R.id.tv_match_away_team);
+            tvHomeTeam.setOnLongClickListener(this);
+            tvAwayTeam.setOnLongClickListener(this);
+            etHomeTeamGoals = itemView.findViewById(R.id.et_match_home_team_goals);
+            etAwayTeamGoals = itemView.findViewById(R.id.et_match_away_team_goals);
+            etHomeTeamNotes = itemView.findViewById(R.id.ed_match_home_team_notes);
+            etAwayTeamNotes = itemView.findViewById(R.id.et_match_away_team_notes);
 
             progressBar = itemView.findViewById(R.id.progressBar_waiting_for_response);
-            btSetResult = (Button) itemView.findViewById(R.id.bt_set_match);
+            btSetResult = itemView.findViewById(R.id.bt_set_match);
             btSetResult.setOnClickListener(this);
 
             etHomeTeamGoals.addTextChangedListener(new SimpleTextWatcher() {
@@ -200,6 +206,21 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 notifyItemChanged(getAdapterPosition());
                 mListener.onClick(match);
             }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (v == tvHomeTeam) {
+                if (mListener != null)
+                    mListener.onCountryLongClicked(mInputMatchList.get(getAdapterPosition()).mMatch.getHomeTeam());
+                return true;
+            }
+            if (v == tvAwayTeam) {
+                if (mListener != null)
+                    mListener.onCountryLongClicked(mInputMatchList.get(getAdapterPosition()).mMatch.getAwayTeam());
+                return true;
+            }
+            return false;
         }
 
         private void checkIfThereAreNewValues() {

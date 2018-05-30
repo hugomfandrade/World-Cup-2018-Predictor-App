@@ -157,6 +157,10 @@ public class Country implements Comparable<Country>, Parcelable {
         mDefeats = defeats;
     }
 
+    public void setFairPlayPoints(int fairPlayPoints) {
+        mFairPlayPoints = fairPlayPoints;
+    }
+
     public int getFairPlayPoints() {
         return mFairPlayPoints;
     }

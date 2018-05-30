@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.admin.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.hugoandrade.worldcup2018.predictor.admin.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.admin.MVP;
@@ -93,6 +94,8 @@ public class MainPresenter
                                         ArrayList<Country> countryList,
                                         ArrayList<Match> matchList) {
         if (isRetrieved) {
+            GlobalData.setCountryList(countryList);
+            GlobalData.setMatchList(matchList);
             mMatchList = matchList;
             mGroupMap = setupGroups(countryList);
 
@@ -132,7 +135,10 @@ public class MainPresenter
     public void updateCountryRequestResult(boolean isRetrieved,
                                            String message,
                                            Country country) {
+        Log.e(TAG, "updateCountryRequestResult::" + isRetrieved + "::" + country);
         if (isRetrieved) {
+
+            GlobalData.setCountry(country);
 
             // Set new country in list and set and update UI of the matches of that country
             for (Group group : mGroupMap.values()) {
@@ -178,6 +184,8 @@ public class MainPresenter
                                          Match match) {
         if (isRetrieved) {
 
+            GlobalData.setMatch(match);
+
             // Set new match in list and set countries of that match
             for (int i = 0; i < mMatchList.size() ; i++)
                 if (mMatchList.get(i).getID().equals(match.getID())) {
@@ -218,6 +226,8 @@ public class MainPresenter
                                            String message,
                                            Match match) {
         if (isRetrieved) {
+
+            GlobalData.setMatch(match);
 
             // Set new match in list and set countries of that match
             for (int i = 0; i < mMatchList.size() ; i++) {
@@ -267,8 +277,10 @@ public class MainPresenter
         getView().enableUI();
     }
 
+    // from both interfaces
     @Override
     public void updateCountry(Country country) {
+        Log.e(TAG, "updateCountry::" + country);
         getModel().updateCountry(country);
     }
 
@@ -282,7 +294,7 @@ public class MainPresenter
         // No-ops
     }
 
-    private HashMap<String, Group> setupGroups(List<Country> countryList) {
+    private static HashMap<String, Group> setupGroups(List<Country> countryList) {
         // Set groups
         HashMap<String, Group> groupsMap = new HashMap<>();
         for (Country c : countryList) {
@@ -305,7 +317,7 @@ public class MainPresenter
         return groupsMap;
     }
 
-    private List<Country> setupCountryList(HashMap<String, Group> groupsMap) {
+    private static List<Country> setupCountryList(HashMap<String, Group> groupsMap) {
         // Set groups
         List<Country> countryList = new ArrayList<>();
         for (Group group : groupsMap.values()) {

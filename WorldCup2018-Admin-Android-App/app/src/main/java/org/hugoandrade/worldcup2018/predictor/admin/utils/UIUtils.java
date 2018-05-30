@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.admin.utils;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -60,6 +61,10 @@ public final class UIUtils {
     public static void hideSoftKeyboardAndClearFocus(View view) {
         view.clearFocus();
         hideSoftKeyboard(view);
+    }
+
+    public static int setAlpha(int color, int alpha) {
+        return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));
     }
 }
 

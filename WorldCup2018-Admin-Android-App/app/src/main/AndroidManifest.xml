@@ -34,6 +34,11 @@
             android:name=".view.EditSystemDataActivity"
             android:configChanges="orientation|screenSize" />
 
+        <activity
+            android:theme="@style/AppTheme.Filter"
+            android:name=".view.SetFairPlayPointsActivity"
+            android:configChanges="orientation|screenSize" />
+
         <service
             android:name=".model.MobileService"
             android:enabled="true"/>

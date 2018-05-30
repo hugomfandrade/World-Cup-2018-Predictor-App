@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.view.View;
 import org.hugoandrade.worldcup2018.predictor.admin.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.admin.MVP;
 import org.hugoandrade.worldcup2018.predictor.admin.R;
+import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
 import org.hugoandrade.worldcup2018.predictor.admin.data.Group;
 import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
 import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
@@ -26,6 +28,7 @@ import org.hugoandrade.worldcup2018.predictor.admin.presenter.MainPresenter;
 import org.hugoandrade.worldcup2018.predictor.admin.utils.UIUtils;
 import org.hugoandrade.worldcup2018.predictor.admin.view.ActivityBase;
 import org.hugoandrade.worldcup2018.predictor.admin.view.EditSystemDataActivity;
+import org.hugoandrade.worldcup2018.predictor.admin.view.SetFairPlayPointsActivity;
 import org.hugoandrade.worldcup2018.predictor.admin.view.helper.SimpleDialog;
 import org.hugoandrade.worldcup2018.predictor.admin.view.main.matches.MatchesFragment;
 import org.hugoandrade.worldcup2018.predictor.admin.view.main.standings.StandingsFragment;
@@ -72,10 +75,10 @@ public class MainActivity extends ActivityBase<MVP.RequiredViewOps,
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
+        ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
+        TabLayout tabLayout = findViewById(R.id.tabanim_tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
 
@@ -145,6 +148,7 @@ public class MainActivity extends ActivityBase<MVP.RequiredViewOps,
         getPresenter().setMatch(match);
     }
 
+
     @Override
     public void displayMatches(List<Match> matchList) {
         for (Fragment fragment : mFragmentArray)
@@ -195,6 +199,16 @@ public class MainActivity extends ActivityBase<MVP.RequiredViewOps,
 
                 SystemData systemData = EditSystemDataActivity.extractSystemDataFromIntent(data);
                 getPresenter().updateSystemData(systemData);
+            }
+
+            return;
+        }
+        if (requestCode == MatchesFragment.EDIT_FAIR_PLAY_POINTS) {
+            Log.e(TAG, "onActivityResult::EDIT_FAIR_PLAY_POINTS" + resultCode);
+            if (resultCode == RESULT_OK) {
+
+                Country country = SetFairPlayPointsActivity.extractCountryFromIntent(data);
+                getPresenter().updateCountry(country);
             }
 
             return;
