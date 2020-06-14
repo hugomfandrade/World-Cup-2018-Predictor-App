@@ -14,16 +14,19 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceJsonTable;
 
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
 import org.hugoandrade.worldcup2018.predictor.admin.DevConstants;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.LoginData;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
-import org.hugoandrade.worldcup2018.predictor.admin.model.helper.MobileServiceJsonTableHelper;
-import org.hugoandrade.worldcup2018.predictor.admin.model.parser.MobileClientDataJsonFormatter;
-import org.hugoandrade.worldcup2018.predictor.admin.model.parser.MobileClientDataJsonParser;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.NetworkBroadcastReceiverUtils;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.NetworkUtils;
+import org.hugoandrade.worldcup2018.predictor.model.helper.MobileServiceJsonTableHelper;
+import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientDataJsonFormatter;
+import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientDataJsonParser;
+import org.hugoandrade.worldcup2018.predictor.network.HttpConstants;
+import org.hugoandrade.worldcup2018.predictor.network.MobileServiceCallback;
+import org.hugoandrade.worldcup2018.predictor.network.MobileServiceData;
+import org.hugoandrade.worldcup2018.predictor.utils.NetworkBroadcastReceiverUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.NetworkUtils;
 
 import java.net.MalformedURLException;
 
@@ -140,7 +143,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
             public void onSuccess(JsonElement jsonObject) {
                 callback.set(MobileServiceData.Builder
                         .instance(MobileServiceData.GET_SYSTEM_DATA, MobileServiceData.REQUEST_RESULT_SUCCESS)
-                        .setSystemData(parser.parseSystemData(jsonObject.getAsJsonObject()))
+                        .setSystemData(parser.parseSystemData2(jsonObject.getAsJsonObject()))
                         .create());
             }
 
@@ -225,7 +228,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
             public void onSuccess(JsonElement jsonElement) {
                 callback.set(MobileServiceData.Builder
                         .instance(MobileServiceData.UPDATE_SYSTEM_DATA, MobileServiceData.REQUEST_RESULT_SUCCESS)
-                        .setSystemData(parser.parseSystemData(jsonElement.getAsJsonObject()))
+                        .setSystemData(parser.parseSystemData2(jsonElement.getAsJsonObject()))
                         .create());
             }
 

@@ -9,10 +9,10 @@ import android.view.View;
 import android.widget.EditText;
 
 import org.hugoandrade.worldcup2018.predictor.admin.R;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
 import org.hugoandrade.worldcup2018.predictor.admin.view.helper.CountryFilterWrapper;
-import org.hugoandrade.worldcup2018.predictor.admin.view.helper.FilterTheme;
-import org.hugoandrade.worldcup2018.predictor.admin.view.helper.FilterWrapper;
+import org.hugoandrade.worldcup2018.predictor.view.helper.FilterTheme;
+import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 
 import java.util.ArrayList;
 import java.util.List;

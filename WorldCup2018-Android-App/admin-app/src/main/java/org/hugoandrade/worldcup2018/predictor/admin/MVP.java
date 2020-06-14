@@ -1,12 +1,12 @@
 package org.hugoandrade.worldcup2018.predictor.admin;
 
-import org.hugoandrade.worldcup2018.predictor.admin.common.ContextView;
-import org.hugoandrade.worldcup2018.predictor.admin.common.ModelOps;
-import org.hugoandrade.worldcup2018.predictor.admin.common.PresenterOps;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.LoginData;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.common.ContextView;
+import org.hugoandrade.worldcup2018.predictor.common.ModelOps;
+import org.hugoandrade.worldcup2018.predictor.common.PresenterOps;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
 import org.hugoandrade.worldcup2018.predictor.admin.view.main.MainFragComm;
 
 import java.util.ArrayList;

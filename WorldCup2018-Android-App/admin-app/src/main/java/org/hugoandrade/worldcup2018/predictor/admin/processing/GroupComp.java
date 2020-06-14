@@ -1,6 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.admin.processing;
 
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
 
 import java.util.ArrayList;
 import java.util.Collections;

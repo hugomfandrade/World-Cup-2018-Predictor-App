@@ -2,11 +2,11 @@ package org.hugoandrade.worldcup2018.predictor.view.helper;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.View;
 
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
+import org.hugoandrade.worldcup2018.predictor.R;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.utils.MatchAppUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,40 +16,26 @@ import java.util.List;
 public class MatchFilterWrapper extends FilterWrapper {
 
     private List<Match> mMatchList = new ArrayList<>();
-    //private SparseArray<String> predictionFilter;
     private OnMatchSelectedListener mListener;
 
     MatchFilterWrapper(Context context) {
         super(context);
+
+        setDarkColor(context.getResources().getColor(R.color.colorMain));
     }
 
     @Override
     protected List<String> buildFilter() {
         if (mMatchList == null) {
-            //predictionFilter = new SparseArray<>();
             return new ArrayList<>();
         }
-
-        /*predictionFilter = new SparseArray<>();
-        for (Match match : mMatchList) {
-
-            predictionFilter.put(match.getMatchNumber(), TextUtils.concat(
-                    String.valueOf(match.getMatchNumber()),
-                    ": ",
-                    MatchUtils.getShortMatchUp(getContext(), match)).toString());
-        }
-
-        List<String> filterList = new ArrayList<>();
-        for (int i = 0 ; i < predictionFilter.size() ; i++) {
-            filterList.add(predictionFilter.valueAt(i));
-        }/**/
         List<String> filterList = new ArrayList<>();
         for (Match match : mMatchList) {
 
             filterList.add(TextUtils.concat(
                     String.valueOf(match.getMatchNumber()),
                     ": ",
-                    MatchUtils.getShortMatchUp(getContext(), match)).toString());
+                    MatchAppUtils.getShortMatchUp(getContext(), match)).toString());
         }
         return filterList;
     }
@@ -63,7 +49,7 @@ public class MatchFilterWrapper extends FilterWrapper {
     }
 
     @Override
-    FilterPopup onCreatePopup(View view) {
+    protected FilterPopup onCreatePopup(View view) {
         FilterPopup filterPopup = super.onCreatePopup(view);
         filterPopup.setMaxRows(5);
         return filterPopup;

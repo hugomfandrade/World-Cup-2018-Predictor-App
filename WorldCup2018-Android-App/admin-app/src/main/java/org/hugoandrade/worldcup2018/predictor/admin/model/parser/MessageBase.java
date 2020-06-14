@@ -4,11 +4,11 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.Messenger;
 
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.LoginData;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
-import org.hugoandrade.worldcup2018.predictor.admin.data.User;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 
 import java.util.ArrayList;
 

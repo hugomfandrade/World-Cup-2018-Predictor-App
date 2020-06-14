@@ -3,10 +3,9 @@ package org.hugoandrade.worldcup2018.predictor.admin.view.main;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hugoandrade.worldcup2018.predictor.admin.common.ContextView;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Group;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Group;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.view.FragComm;
 
 public interface MainFragComm {
 
@@ -20,11 +19,7 @@ public interface MainFragComm {
         void updateFailedMatch(Match match);
     }
 
-    interface ProvidedMainActivityOps extends ProvidedMainActivityBaseOps {
+    interface ProvidedMainActivityOps extends FragComm.RequiredActivityBaseOps {
         void setMatch(Match match);
-    }
-
-    interface ProvidedMainActivityBaseOps extends ContextView {
-        void reportMessage(String message);
     }
 }

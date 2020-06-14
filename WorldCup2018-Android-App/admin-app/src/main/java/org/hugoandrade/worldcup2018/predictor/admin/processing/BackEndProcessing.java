@@ -4,10 +4,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.SparseArray;
 
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.MatchUtils;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.StaticVariableUtils;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.StaticVariableUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -276,9 +276,9 @@ public class BackEndProcessing {
                 teamName = "Winner Match " + Integer.toString(matchUpNumber);
             }
             else {
-                if (MatchUtils.didHomeTeamWin(match) || MatchUtils.didHomeTeamWinByPenaltyShootout(match))
+                if (MatchUtils.didHomeTeamWinRegularTime(match) || MatchUtils.didHomeTeamWinByPenaltyShootout(match))
                     teamName = match.getHomeTeamID();
-                else if (MatchUtils.didAwayTeamWin(match) || MatchUtils.didAwayTeamWinByPenaltyShootout(match))
+                else if (MatchUtils.didAwayTeamWinRegularTime(match) || MatchUtils.didAwayTeamWinByPenaltyShootout(match))
                     teamName = match.getAwayTeamID();
                 else
                     teamName = "Winner Match " + Integer.toString(matchUpNumber);
@@ -314,9 +314,9 @@ public class BackEndProcessing {
                 teamName = "Loser Match " + Integer.toString(matchUpNumber);
             }
             else {
-                if (MatchUtils.didHomeTeamWin(match) || MatchUtils.didHomeTeamWinByPenaltyShootout(match))
+                if (MatchUtils.didHomeTeamWinRegularTime(match) || MatchUtils.didHomeTeamWinByPenaltyShootout(match))
                     teamName = match.getAwayTeamID();
-                else if (MatchUtils.didAwayTeamWin(match) || MatchUtils.didAwayTeamWinByPenaltyShootout(match))
+                else if (MatchUtils.didAwayTeamWinRegularTime(match) || MatchUtils.didAwayTeamWinByPenaltyShootout(match))
                     teamName = match.getHomeTeamID();
                 else
                     teamName = "Loser Match " + Integer.toString(matchUpNumber);

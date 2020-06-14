@@ -3,8 +3,8 @@ package org.hugoandrade.worldcup2018.predictor.admin.processing;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
 
 import java.util.List;
 

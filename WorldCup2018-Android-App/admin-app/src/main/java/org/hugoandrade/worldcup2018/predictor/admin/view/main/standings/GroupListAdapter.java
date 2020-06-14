@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.admin.R;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
 
 import java.util.List;
 

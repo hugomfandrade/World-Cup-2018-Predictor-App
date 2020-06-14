@@ -1,9 +1,9 @@
 package org.hugoandrade.worldcup2018.predictor.utils;
 
-
 import android.content.Context;
 
 import org.hugoandrade.worldcup2018.predictor.R;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
 
 import java.util.Locale;
 
@@ -149,5 +149,11 @@ public final class TranslationUtils {
             else
                 return "th";
         }
+    }
+
+    public static String getAsString(Context context, Match match) {
+        return String.format("%s%s",
+                TranslationUtils.translateStage(context, match.getStage()),
+                match.getGroup() == null ? "" : (" - " + match.getGroup()));
     }
 }

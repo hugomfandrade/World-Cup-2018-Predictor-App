@@ -10,16 +10,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.admin.R;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Group;
-import org.hugoandrade.worldcup2018.predictor.admin.view.main.FragmentBase;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Group;
 import org.hugoandrade.worldcup2018.predictor.admin.view.main.MainFragComm;
+import org.hugoandrade.worldcup2018.predictor.view.FragComm;
+import org.hugoandrade.worldcup2018.predictor.view.FragmentBase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class StandingsFragment extends FragmentBase<MainFragComm.ProvidedMainActivityBaseOps>
+public class StandingsFragment extends FragmentBase<FragComm.RequiredActivityBaseOps>
 
         implements MainFragComm.ProvidedGroupsChildFragmentOps {
 

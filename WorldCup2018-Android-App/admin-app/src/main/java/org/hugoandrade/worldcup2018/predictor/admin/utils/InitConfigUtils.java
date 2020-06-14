@@ -2,9 +2,9 @@ package org.hugoandrade.worldcup2018.predictor.admin.utils;
 
 import android.util.Log;
 
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import org.hugoandrade.worldcup2018.predictor.admin.utils.StaticVariableUtils.*;
+import org.hugoandrade.worldcup2018.predictor.utils.StaticVariableUtils.*;
 
 public final class InitConfigUtils {
 
@@ -24,7 +24,7 @@ public final class InitConfigUtils {
      * Logging tag.
      */
     @SuppressWarnings("unused")
-    private static final String TAG = MatchUtils.class.getSimpleName();
+    private static final String TAG = InitConfigUtils.class.getSimpleName();
 
     /**
      * Ensure this class is only used as a utility.

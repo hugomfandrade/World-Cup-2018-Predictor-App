@@ -3,9 +3,9 @@ package org.hugoandrade.worldcup2018.predictor.admin.processing;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.MatchUtils;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,11 +110,11 @@ public class CountryComp implements Comparable<CountryComp> {
                 mGoalsFor += match.getHomeTeamGoals();
                 mGoalsAgainst += match.getAwayTeamGoals();
 
-                if (MatchUtils.didHomeTeamWin(match)) {
+                if (MatchUtils.didHomeTeamWinRegularTime(match)) {
                     mPoints = mPoints + 3;
                     mVictories += 1;
                 }
-                else if (MatchUtils.didAwayTeamWin(match)) {
+                else if (MatchUtils.didAwayTeamWinRegularTime(match)) {
                     mDefeats += 1;
                 }
                 else if (MatchUtils.didTeamsTied(match)) {
@@ -127,10 +127,10 @@ public class CountryComp implements Comparable<CountryComp> {
                 mGoalsFor += match.getAwayTeamGoals();
                 mGoalsAgainst += match.getHomeTeamGoals();
 
-                if (MatchUtils.didHomeTeamWin(match)) {
+                if (MatchUtils.didHomeTeamWinRegularTime(match)) {
                     mDefeats += 1;
                 }
-                else if (MatchUtils.didAwayTeamWin(match)) {
+                else if (MatchUtils.didAwayTeamWinRegularTime(match)) {
                     mPoints = mPoints + 3;
                     mVictories += 1;
                 }
@@ -179,10 +179,10 @@ public class CountryComp implements Comparable<CountryComp> {
                 mGoalsFor += match.getHomeTeamGoals();
                 mGoalsAgainst += match.getAwayTeamGoals();
 
-                if (MatchUtils.didHomeTeamWin(match)) {
+                if (MatchUtils.didHomeTeamWinRegularTime(match)) {
                     mPoints = mPoints + 3;
                     mVictories += 1;
-                } else if (MatchUtils.didAwayTeamWin(match)) {
+                } else if (MatchUtils.didAwayTeamWinRegularTime(match)) {
                     mDefeats += 1;
                 } else if (MatchUtils.didTeamsTied(match)) {
                     mPoints = mPoints + 1;
@@ -197,9 +197,9 @@ public class CountryComp implements Comparable<CountryComp> {
                 mGoalsFor += match.getAwayTeamGoals();
                 mGoalsAgainst += match.getHomeTeamGoals();
 
-                if (MatchUtils.didHomeTeamWin(match)) {
+                if (MatchUtils.didHomeTeamWinRegularTime(match)) {
                     mDefeats += 1;
-                } else if (MatchUtils.didAwayTeamWin(match)) {
+                } else if (MatchUtils.didAwayTeamWinRegularTime(match)) {
                     mPoints = mPoints + 3;
                     mVictories += 1;
                 } else if (MatchUtils.didTeamsTied(match)) {

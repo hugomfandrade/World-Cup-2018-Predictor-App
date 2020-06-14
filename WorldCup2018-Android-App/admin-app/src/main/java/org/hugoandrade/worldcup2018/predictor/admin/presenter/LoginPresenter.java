@@ -6,15 +6,16 @@ import android.util.Log;
 import org.hugoandrade.worldcup2018.predictor.admin.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.admin.MVP;
 import org.hugoandrade.worldcup2018.predictor.admin.model.LoginModel;
-import org.hugoandrade.worldcup2018.predictor.admin.data.LoginData;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.SharedPreferencesUtils;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.presenter.PresenterBase;
+import org.hugoandrade.worldcup2018.predictor.utils.SharedPreferencesUtils;
 
 public class LoginPresenter
         extends PresenterBase<MVP.RequiredLoginViewOps,
-                              MVP.RequiredLoginPresenterOps,
-                              MVP.ProvidedLoginModelOps,
-                              LoginModel>
+                                      MVP.RequiredLoginPresenterOps,
+                                      MVP.ProvidedLoginModelOps,
+                                      LoginModel>
 
         implements MVP.ProvidedLoginPresenterOps,
                    MVP.RequiredLoginPresenterOps {
@@ -22,7 +23,7 @@ public class LoginPresenter
     @Override
     public void onCreate(MVP.RequiredLoginViewOps view) {
 
-        super.onCreate(LoginModel.class, view, this);
+        super.onCreate(view, LoginModel.class, this);
     }
 
     @Override

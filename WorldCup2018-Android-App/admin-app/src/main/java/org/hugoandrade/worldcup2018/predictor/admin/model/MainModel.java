@@ -16,9 +16,9 @@ import java.util.concurrent.Executors;
 
 import org.hugoandrade.worldcup2018.predictor.admin.MVP;
 import org.hugoandrade.worldcup2018.predictor.admin.model.parser.MessageBase;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
 
 public class MainModel implements MVP.ProvidedModelOps {
 

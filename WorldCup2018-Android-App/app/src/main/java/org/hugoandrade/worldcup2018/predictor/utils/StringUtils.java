@@ -1,17 +1,5 @@
 package org.hugoandrade.worldcup2018.predictor.utils;
 
-import android.content.Context;
-import android.text.TextUtils;
-import android.util.SparseArray;
-
-import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 /**
  * Provides some general utility Match helper methods.
  */

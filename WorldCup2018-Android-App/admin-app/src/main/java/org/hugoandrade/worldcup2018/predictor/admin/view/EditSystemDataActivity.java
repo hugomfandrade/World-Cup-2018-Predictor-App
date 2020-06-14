@@ -13,8 +13,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.admin.R;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.ISO8601;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.utils.ISO8601;
 
 import java.util.Calendar;
 

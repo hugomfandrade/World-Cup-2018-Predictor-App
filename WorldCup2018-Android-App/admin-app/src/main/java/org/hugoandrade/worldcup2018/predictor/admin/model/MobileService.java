@@ -1,6 +1,5 @@
 package org.hugoandrade.worldcup2018.predictor.admin.model;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -17,16 +16,17 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.LoginData;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
 import org.hugoandrade.worldcup2018.predictor.admin.model.parser.MessageBase;
 import org.hugoandrade.worldcup2018.predictor.admin.network.MobileServiceAdapter;
-import org.hugoandrade.worldcup2018.predictor.admin.network.MobileServiceCallback;
-import org.hugoandrade.worldcup2018.predictor.admin.network.MobileServiceData;
-import org.hugoandrade.worldcup2018.predictor.admin.network.MultipleCloudStatus;
+import org.hugoandrade.worldcup2018.predictor.network.MobileServiceCallback;
+import org.hugoandrade.worldcup2018.predictor.network.MobileServiceData;
+import org.hugoandrade.worldcup2018.predictor.network.MultipleCloudStatus;
 import org.hugoandrade.worldcup2018.predictor.admin.utils.InitConfigUtils;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.model.LifecycleLoggingService;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MobileService extends Service {
+public class MobileService extends LifecycleLoggingService {
 
     @SuppressWarnings("unused")
     private static final String TAG = MobileService.class.getSimpleName();

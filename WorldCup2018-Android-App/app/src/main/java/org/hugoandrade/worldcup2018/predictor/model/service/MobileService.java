@@ -8,13 +8,14 @@ import android.util.Log;
 
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LoginData;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 import org.hugoandrade.worldcup2018.predictor.model.IMobileClientService;
 import org.hugoandrade.worldcup2018.predictor.model.IMobileClientServiceCallback;
+import org.hugoandrade.worldcup2018.predictor.model.LifecycleLoggingService;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 import org.hugoandrade.worldcup2018.predictor.network.MobileServiceAdapter;
 import org.hugoandrade.worldcup2018.predictor.network.MobileServiceCallback;

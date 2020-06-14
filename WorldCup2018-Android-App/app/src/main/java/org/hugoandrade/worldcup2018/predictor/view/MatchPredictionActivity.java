@@ -19,19 +19,19 @@ import android.widget.TextView;
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.MVP;
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.LeagueUser;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 import org.hugoandrade.worldcup2018.predictor.presenter.MatchPredictionPresenter;
 import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.CountryUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.TranslationUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterTheme;
-import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.helper.MatchFilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.listadapter.MatchPredictionListAdapter;
 
@@ -238,11 +238,11 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
 
         tvHomeTeam.setText(TranslationUtils.translateCountryName(this, match.getHomeTeamName()));
         tvAwayTeam.setText(TranslationUtils.translateCountryName(this, match.getAwayTeamName()));
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivHomeTeam, Country.getImageID(match.getHomeTeam()));
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivAwayTeam, Country.getImageID(match.getAwayTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivHomeTeam, CountryUtils.getImageID(match.getHomeTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivAwayTeam, CountryUtils.getImageID(match.getAwayTeam()));
 
-        boolean hasHomeCountryFlag = Country.getImageID(match.getHomeTeam()) != 0;
-        boolean hasAwayCountryFlag = Country.getImageID(match.getAwayTeam()) != 0;
+        boolean hasHomeCountryFlag = CountryUtils.getImageID(match.getHomeTeam()) != 0;
+        boolean hasAwayCountryFlag = CountryUtils.getImageID(match.getAwayTeam()) != 0;
 
         ((View) ivHomeTeam.getParent()).setVisibility(hasHomeCountryFlag ? View.VISIBLE : View.GONE);
         ((View) ivAwayTeam.getParent()).setVisibility(hasAwayCountryFlag ? View.VISIBLE : View.GONE);
@@ -256,7 +256,7 @@ public class MatchPredictionActivity extends MainActivityBase<MVP.RequiredMatchP
 
         tvMatchNumber.setText(TextUtils.concat(getString(R.string.match_number), ": ", String.valueOf(match.getMatchNumber())));
         detailsInfoContainer.setVisibility(View.INVISIBLE);
-        tvStage.setText(StageUtils.getAsString(this, match));
+        tvStage.setText(TranslationUtils.getAsString(this, match));
         tvStadium.setText(TranslationUtils.translateStadium(this, match.getStadium()));
 
     }

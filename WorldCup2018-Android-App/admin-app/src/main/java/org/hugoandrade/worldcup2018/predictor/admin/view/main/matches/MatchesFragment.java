@@ -13,11 +13,11 @@ import android.view.ViewGroup;
 
 import org.hugoandrade.worldcup2018.predictor.admin.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.admin.R;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
 import org.hugoandrade.worldcup2018.predictor.admin.view.SetFairPlayPointsActivity;
-import org.hugoandrade.worldcup2018.predictor.admin.view.main.FragmentBase;
 import org.hugoandrade.worldcup2018.predictor.admin.view.main.MainFragComm;
+import org.hugoandrade.worldcup2018.predictor.view.FragmentBase;
 
 import java.util.ArrayList;
 import java.util.List;

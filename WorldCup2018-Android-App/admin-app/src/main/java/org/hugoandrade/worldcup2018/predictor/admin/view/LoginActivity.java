@@ -8,11 +8,12 @@ import android.widget.RelativeLayout;
 
 import org.hugoandrade.worldcup2018.predictor.admin.MVP;
 import org.hugoandrade.worldcup2018.predictor.admin.R;
-import org.hugoandrade.worldcup2018.predictor.admin.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
 import org.hugoandrade.worldcup2018.predictor.admin.presenter.LoginPresenter;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.SharedPreferencesUtils;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.UIUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.UIUtils;
 import org.hugoandrade.worldcup2018.predictor.admin.view.main.MainActivity;
+import org.hugoandrade.worldcup2018.predictor.utils.SharedPreferencesUtils;
+import org.hugoandrade.worldcup2018.predictor.view.ActivityBase;
 
 public class LoginActivity extends ActivityBase<MVP.RequiredLoginViewOps,
                                                 MVP.ProvidedLoginPresenterOps,

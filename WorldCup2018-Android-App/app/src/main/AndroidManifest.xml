@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".model.service.MobileService"
+        <service android:name=".model.MobileService"
             android:process=":azureService"
             android:enabled="true"/>
 

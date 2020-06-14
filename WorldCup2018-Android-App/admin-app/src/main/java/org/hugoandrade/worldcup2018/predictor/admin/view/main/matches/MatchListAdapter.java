@@ -15,9 +15,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.admin.R;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.utils.MatchUtils;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 
 import java.util.ArrayList;
 import java.util.List;

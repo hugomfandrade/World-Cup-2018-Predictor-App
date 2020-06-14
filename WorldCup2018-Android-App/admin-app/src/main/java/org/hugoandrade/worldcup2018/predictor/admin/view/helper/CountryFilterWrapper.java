@@ -1,10 +1,12 @@
 package org.hugoandrade.worldcup2018.predictor.admin.view.helper;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
+import org.hugoandrade.worldcup2018.predictor.admin.R;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.view.helper.FilterPopup;
+import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ public class CountryFilterWrapper extends FilterWrapper {
 
     CountryFilterWrapper(Context context) {
         super(context);
+
+        setDarkColor(context.getResources().getColor(R.color.colorMain));
     }
 
     @Override
@@ -31,7 +35,7 @@ public class CountryFilterWrapper extends FilterWrapper {
     }
 
     @Override
-    FilterPopup onCreatePopup(View view) {
+    protected FilterPopup onCreatePopup(View view) {
         FilterPopup filterPopup = super.onCreatePopup(view);
         filterPopup.setMaxRows(5);
         return filterPopup;

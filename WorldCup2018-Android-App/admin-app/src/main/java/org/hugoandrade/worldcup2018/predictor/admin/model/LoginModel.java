@@ -11,8 +11,8 @@ import android.util.Log;
 
 import org.hugoandrade.worldcup2018.predictor.admin.MVP;
 import org.hugoandrade.worldcup2018.predictor.admin.model.parser.MessageBase;
-import org.hugoandrade.worldcup2018.predictor.admin.data.LoginData;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;

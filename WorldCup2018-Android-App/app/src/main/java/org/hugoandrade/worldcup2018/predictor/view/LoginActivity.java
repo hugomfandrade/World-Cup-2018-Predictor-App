@@ -18,15 +18,13 @@ import org.hugoandrade.worldcup2018.predictor.MVP;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.common.SplashScreenAnimation;
 import org.hugoandrade.worldcup2018.predictor.common.TextWatcherAdapter;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
 import org.hugoandrade.worldcup2018.predictor.presenter.LoginPresenter;
 import org.hugoandrade.worldcup2018.predictor.utils.LoginUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.SharedPreferencesUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 
-import java.util.Locale;
-
-public class LoginActivity extends ActivityBase<MVP.RequiredLoginViewOps,
+public class LoginActivity extends AppActivityBase<MVP.RequiredLoginViewOps,
                                                 MVP.ProvidedLoginPresenterOps,
                                                 LoginPresenter>
         implements MVP.RequiredLoginViewOps, SplashScreenAnimation.OnSplashScreenAnimationEndListener {

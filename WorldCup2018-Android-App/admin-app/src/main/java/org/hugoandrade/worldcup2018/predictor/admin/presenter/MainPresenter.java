@@ -3,14 +3,15 @@ package org.hugoandrade.worldcup2018.predictor.admin.presenter;
 import android.content.Context;
 import android.util.Log;
 
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Group;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
 import org.hugoandrade.worldcup2018.predictor.admin.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.admin.MVP;
 import org.hugoandrade.worldcup2018.predictor.admin.model.MainModel;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Country;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Group;
-import org.hugoandrade.worldcup2018.predictor.admin.data.Match;
-import org.hugoandrade.worldcup2018.predictor.admin.data.SystemData;
 import org.hugoandrade.worldcup2018.predictor.admin.processing.BackEndProcessing;
+import org.hugoandrade.worldcup2018.predictor.presenter.PresenterBase;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,9 +21,9 @@ import java.util.List;
 
 public class MainPresenter
         extends PresenterBase<MVP.RequiredViewOps,
-                              MVP.RequiredPresenterOps,
-                              MVP.ProvidedModelOps,
-                              MainModel>
+                                      MVP.RequiredPresenterOps,
+                                      MVP.ProvidedModelOps,
+                                      MainModel>
         implements MVP.ProvidedPresenterOps,
                    MVP.RequiredPresenterOps,
                    BackEndProcessing.OnProcessingFinished {
@@ -35,7 +36,7 @@ public class MainPresenter
     @Override
     public void onCreate(MVP.RequiredViewOps view) {
 
-        super.onCreate(MainModel.class, view, this);
+        super.onCreate(view, MainModel.class, this);
     }
 
     @Override
