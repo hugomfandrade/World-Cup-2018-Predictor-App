@@ -309,9 +309,7 @@ public final class InitConfigUtils {
         return countryList;
     }
 
-    private static Country emptyCountryInstance(String name,
-                                                String group,
-                                                int drawingOfLots) {
+    private static Country emptyCountryInstance(String name, String group, int drawingOfLots) {
         int z = 0;
         return new Country(null, name, z, z, z, z, z, z, z, group, z, z, z, drawingOfLots);
     }

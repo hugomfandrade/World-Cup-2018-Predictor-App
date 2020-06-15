@@ -143,7 +143,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
             public void onSuccess(JsonElement jsonObject) {
                 callback.set(MobileServiceData.Builder
                         .instance(MobileServiceData.GET_SYSTEM_DATA, MobileServiceData.REQUEST_RESULT_SUCCESS)
-                        .setSystemData(parser.parseSystemData2(jsonObject.getAsJsonObject()))
+                        .setSystemData(parser.parseSystemData(jsonObject.getAsJsonObject()))
                         .create());
             }
 
@@ -228,7 +228,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
             public void onSuccess(JsonElement jsonElement) {
                 callback.set(MobileServiceData.Builder
                         .instance(MobileServiceData.UPDATE_SYSTEM_DATA, MobileServiceData.REQUEST_RESULT_SUCCESS)
-                        .setSystemData(parser.parseSystemData2(jsonElement.getAsJsonObject()))
+                        .setSystemData(parser.parseSystemData(jsonElement.getAsJsonObject()))
                         .create());
             }
 

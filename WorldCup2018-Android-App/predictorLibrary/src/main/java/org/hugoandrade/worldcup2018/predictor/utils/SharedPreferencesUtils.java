@@ -80,36 +80,4 @@ public final class SharedPreferencesUtils {
                 .clear()
                 .apply();
     }
-
-    /*
-    public static void putTokenLoginData(Context context, LoginData loginData) {
-
-        context.getSharedPreferences(TOKEN_LOGIN_DATA_SHARED_PREFERENCES_NAME, 0)
-                .edit()
-                .putString(LOGIN_DATA_KEY_USER_ID, loginData.getUserID())
-                .putString(LOGIN_DATA_KEY_USERNAME, loginData.getUsername())
-                .putString(LOGIN_DATA_KEY_PASSWORD, loginData.getPassword())
-                .putString(LOGIN_DATA_KEY_TOKEN, loginData.getToken())
-                .apply();
-
-    }
-
-    public static LoginData getTokenLoginData(Context context) {
-        SharedPreferences settings = context
-                .getSharedPreferences(TOKEN_LOGIN_DATA_SHARED_PREFERENCES_NAME, 0);
-
-        return new LoginData(
-                settings.getString(LOGIN_DATA_KEY_USER_ID, null),
-                settings.getString(LOGIN_DATA_KEY_USERNAME, null),
-                settings.getString(LOGIN_DATA_KEY_PASSWORD, null),
-                settings.getString(LOGIN_DATA_KEY_TOKEN, null));
-    }
-
-    public static void resetTokenLoginData(Context context) {
-
-        context.getSharedPreferences(TOKEN_LOGIN_DATA_SHARED_PREFERENCES_NAME, 0)
-                .edit()
-                .clear()
-                .apply();
-    }/**/
 }

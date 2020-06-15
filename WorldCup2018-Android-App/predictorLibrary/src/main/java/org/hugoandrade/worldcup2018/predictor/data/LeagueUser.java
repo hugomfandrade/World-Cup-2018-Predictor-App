@@ -14,10 +14,10 @@ public class LeagueUser implements Parcelable {
 
         public static class Cols {
             public static final String ID = "id";
-            public static final String LEAGUE_ID = "LeagueID";
-            public static final String USER_ID = "UserID";
             public static final String RANK = "Rank";
         }
+        public static final String LEAGUE_ID = "LeagueID";
+        public static final String USER_ID = "UserID";
     }
 
     public LeagueUser(User user, int rank) {

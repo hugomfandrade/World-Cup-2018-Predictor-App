@@ -32,15 +32,6 @@ public class MobileClientDataJsonParser {
     public SystemData parseSystemData(JsonObject jsonObject) {
 
         return new SystemData(
-                getJsonPrimitive(jsonObject, "_" + SystemData.Entry.Cols.ID, null),
-                getJsonPrimitive(jsonObject, SystemData.Entry.Cols.RULES, null),
-                getJsonPrimitive(jsonObject, SystemData.Entry.Cols.APP_STATE, false),
-                ISO8601.toCalendar(getJsonPrimitive(jsonObject, SystemData.Entry.Cols.SYSTEM_DATE, null)));
-    }
-
-    public SystemData parseSystemData2(JsonObject jsonObject) {
-
-        return new SystemData(
                 getJsonPrimitive(jsonObject, SystemData.Entry.Cols.ID, null),
                 getJsonPrimitive(jsonObject, SystemData.Entry.Cols.RULES, null),
                 getJsonPrimitive(jsonObject, SystemData.Entry.Cols.APP_STATE, false),

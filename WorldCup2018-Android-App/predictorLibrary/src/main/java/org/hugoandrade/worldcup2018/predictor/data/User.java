@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,10 +14,10 @@ import java.util.Locale;
 
 public class User implements Parcelable {
 
-    private final String mID;
-    private final String mUsername;
-    private String mPassword;
-    private final int mScore;
+    @SerializedName(Entry.Cols.ID) private final String mID;
+    @SerializedName(Entry.Cols.USERNAME) private final String mUsername;
+    @SerializedName(Entry.Cols.PASSWORD) private String mPassword;
+    @SerializedName(Entry.Cols.SCORE) private final int mScore;
 
     public static class Entry {
 

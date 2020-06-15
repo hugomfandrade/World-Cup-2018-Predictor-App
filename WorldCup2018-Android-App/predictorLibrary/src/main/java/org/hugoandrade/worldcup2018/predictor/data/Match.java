@@ -4,46 +4,28 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 import org.hugoandrade.worldcup2018.predictor.utils.ISO8601;
 
 public class Match implements Comparable<Match>, Parcelable {
 
-    private String mID;
-    private int mMatchNo;
-    private String mHomeTeamID;
-    private String mAwayTeamID;
+    @SerializedName(Entry.Cols.ID) private String mID;
+    @SerializedName(Entry.Cols.MATCH_NUMBER) private int mMatchNo;
+    @SerializedName(Entry.Cols.HOME_TEAM_ID) private String mHomeTeamID;
+    @SerializedName(Entry.Cols.AWAY_TEAM_ID) private String mAwayTeamID;
     private Country mHomeTeam;
     private Country mAwayTeam;
-    private int mHomeTeamGoals;
-    private int mAwayTeamGoals;
-    private String mHomeTeamNotes;
-    private String mAwayTeamNotes;
-    private String mStage;
-    private String mGroup;
-    private String mStadium;
-    private Date mDateAndTime;
-
-    public static class Entry {
-
-        public static final String TABLE_NAME = "Match";
-
-        public static class Cols {
-            public static final String ID = "id";
-            public static final String MATCH_NUMBER = "MatchNumber";
-            public static final String HOME_TEAM_ID = "HomeTeamID";
-            public static final String AWAY_TEAM_ID = "AwayTeamID";
-            public static final String HOME_TEAM_GOALS = "HomeTeamGoals";
-            public static final String AWAY_TEAM_GOALS = "AwayTeamGoals";
-            public static final String HOME_TEAM_NOTES = "HomeTeamNotes";
-            public static final String AWAY_TEAM_NOTES = "AwayTeamNotes";
-            public static final String GROUP = "GroupLetter";
-            public static final String STAGE = "Stage";
-            public static final String STADIUM = "Stadium";
-            public static final String DATE_AND_TIME = "DateAndTime";
-        }
-    }
+    @SerializedName(Entry.Cols.HOME_TEAM_GOALS) private int mHomeTeamGoals;
+    @SerializedName(Entry.Cols.AWAY_TEAM_GOALS) private int mAwayTeamGoals;
+    @SerializedName(Entry.Cols.HOME_TEAM_NOTES) private String mHomeTeamNotes;
+    @SerializedName(Entry.Cols.AWAY_TEAM_NOTES) private String mAwayTeamNotes;
+    @SerializedName(Entry.Cols.STAGE) private String mStage;
+    @SerializedName(Entry.Cols.GROUP) private String mGroup;
+    @SerializedName(Entry.Cols.STADIUM) private String mStadium;
+    @SerializedName(Entry.Cols.DATE_AND_TIME) private Date mDateAndTime;
 
     public Match(String id,
                  int matchNo,
@@ -227,34 +209,20 @@ public class Match implements Comparable<Match>, Parcelable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null)
-            return false;
-        if (!(o instanceof Match))
-            return false;
-        if (((Match) o).mID != this.mID)
-            return false;
-        if (((Match) o).mMatchNo != this.mMatchNo)
-            return false;
-        if (((Match) o).mHomeTeamGoals != this.mHomeTeamGoals)
-            return false;
-        if (((Match) o).mAwayTeamGoals != this.mAwayTeamGoals)
-            return false;
-        if (!areEqual(((Match) o).mDateAndTime, this.mDateAndTime))
-            return false;
-        if (!areEqual(((Match) o).mHomeTeamID, this.mHomeTeamID))
-            return false;
-        if (!areEqual(((Match) o).mAwayTeamID, this.mAwayTeamID))
-            return false;
-        if (!areEqual(((Match) o).mHomeTeamNotes, this.mHomeTeamNotes))
-            return false;
-        if (!areEqual(((Match) o).mAwayTeamNotes, this.mAwayTeamNotes))
-            return false;
-        if (!areEqual(((Match) o).mStage, this.mStage))
-            return false;
-        if (!areEqual(((Match) o).mGroup, this.mGroup))
-            return false;
-        if (!areEqual(((Match) o).mStadium, this.mStadium))
-            return false;
+        if (o == null) return false;
+        if (!(o instanceof Match)) return false;
+        if (((Match) o).mID != this.mID) return false;
+        if (((Match) o).mMatchNo != this.mMatchNo) return false;
+        if (((Match) o).mHomeTeamGoals != this.mHomeTeamGoals) return false;
+        if (((Match) o).mAwayTeamGoals != this.mAwayTeamGoals) return false;
+        if (!areEqual(((Match) o).mDateAndTime, this.mDateAndTime)) return false;
+        if (!areEqual(((Match) o).mHomeTeamID, this.mHomeTeamID)) return false;
+        if (!areEqual(((Match) o).mAwayTeamID, this.mAwayTeamID)) return false;
+        if (!areEqual(((Match) o).mHomeTeamNotes, this.mHomeTeamNotes)) return false;
+        if (!areEqual(((Match) o).mAwayTeamNotes, this.mAwayTeamNotes)) return false;
+        if (!areEqual(((Match) o).mStage, this.mStage)) return false;
+        if (!areEqual(((Match) o).mGroup, this.mGroup)) return false;
+        if (!areEqual(((Match) o).mStadium, this.mStadium)) return false;
         return true;
     }
 
@@ -305,5 +273,25 @@ public class Match implements Comparable<Match>, Parcelable {
         p1.recycle();
         p2.recycle();
         return m;
+    }
+
+    public static class Entry {
+
+        public static final String TABLE_NAME = "Match";
+
+        public static class Cols {
+            public static final String ID = "id";
+            public static final String MATCH_NUMBER = "MatchNumber";
+            public static final String HOME_TEAM_ID = "HomeTeamID";
+            public static final String AWAY_TEAM_ID = "AwayTeamID";
+            public static final String HOME_TEAM_GOALS = "HomeTeamGoals";
+            public static final String AWAY_TEAM_GOALS = "AwayTeamGoals";
+            public static final String HOME_TEAM_NOTES = "HomeTeamNotes";
+            public static final String AWAY_TEAM_NOTES = "AwayTeamNotes";
+            public static final String GROUP = "GroupLetter";
+            public static final String STAGE = "Stage";
+            public static final String STADIUM = "Stadium";
+            public static final String DATE_AND_TIME = "DateAndTime";
+        }
     }
 }

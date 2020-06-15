@@ -3,14 +3,16 @@ package org.hugoandrade.worldcup2018.predictor.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Prediction implements Parcelable {
 
-    private String mID;
-    private String mUserID;
-    private int mMatchNo;
-    private int mHomeTeamGoals;
-    private int mAwayTeamGoals;
-    private int mScore;
+    @SerializedName(Entry.Cols.ID) private String mID;
+    @SerializedName(Entry.Cols.USER_ID) private String mUserID;
+    @SerializedName(Entry.Cols.MATCH_NO) private int mMatchNo;
+    @SerializedName(Entry.Cols.HOME_TEAM_GOALS) private int mHomeTeamGoals;
+    @SerializedName(Entry.Cols.AWAY_TEAM_GOALS) private int mAwayTeamGoals;
+    @SerializedName(Entry.Cols.SCORE) private int mScore;
 
     public static class Entry {
 
@@ -23,11 +25,7 @@ public class Prediction implements Parcelable {
             public static final String HOME_TEAM_GOALS = "HomeTeamGoals";
             public static final String AWAY_TEAM_GOALS = "AwayTeamGoals";
             public static final String SCORE = "Score";
-
-            public static final String MIN_MATCH_NUMBER = "MinMatchNumber";
-            public static final String MAX_MATCH_NUMBER = "MaxMatchNumber";
         }
-        public static String PastMatchDate = "Past match date";
     }
 
     public static Prediction emptyInstance(int matchNumber, String userID) {

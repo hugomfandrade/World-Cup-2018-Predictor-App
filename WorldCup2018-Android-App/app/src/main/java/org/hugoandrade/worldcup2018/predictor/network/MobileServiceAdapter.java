@@ -36,7 +36,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetworkBroadcastReceiver {
+public class MobileServiceAdapter implements IMobileServiceAdapter, NetworkBroadcastReceiverUtils.INetworkBroadcastReceiver {
 
     @SuppressWarnings("unused")
     private static final String TAG = MobileServiceAdapter.class.getSimpleName();
@@ -432,7 +432,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
 
         ListenableFuture<JsonElement> i = MobileServiceJsonTableHelper
                 .instance(League.Entry.TABLE_NAME, mClient)
-                .where().field(LeagueUser.Entry.Cols.USER_ID).eq(userID)
+                .where().field(LeagueUser.Entry.USER_ID).eq(userID)
                 .execute();
         Futures.addCallback(i, new FutureCallback<JsonElement>() {
 
@@ -516,8 +516,6 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
 
     public MobileServiceCallback createLeague(String userID, String leagueName) {
 
-        League league = new League(null, leagueName, userID, null, 1);
-
         final MobileServiceCallback callback = new MobileServiceCallback();
 
         if (!isNetworkAvailable(callback, MobileServiceData.CREATE_LEAGUE))
@@ -525,7 +523,10 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
 
         ListenableFuture<JsonElement> future =
                 mClient.invokeApi(League.Entry.API_NAME_CREATE_LEAGUE,
-                        formatter.getAsJsonObject(league, League.Entry.Cols.ID, League.Entry.Cols.CODE),
+                        JsonObjectBuilder.instance()
+                                .addProperty(League.Entry.Cols.NAME, leagueName)
+                                .addProperty(League.Entry.Cols.ADMIN_ID, userID)
+                                .create(),
                         HttpConstants.PostMethod,
                         null);
 
@@ -556,7 +557,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
         ListenableFuture<JsonElement> future =
                 mClient.invokeApi(League.Entry.API_NAME_JOIN_LEAGUE,
                         formatter.build()
-                                .addProperty(League.Entry.Cols.USER_ID, userID)
+                                .addProperty(League.Entry.USER_ID, userID)
                                 .addProperty(League.Entry.Cols.CODE, leagueCode)
                                 .create(),
                         HttpConstants.PostMethod,
@@ -610,7 +611,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
         ListenableFuture<JsonElement> future =
                 mClient.invokeApi(League.Entry.API_NAME_DELETE_LEAGUE,
                         formatter.build()
-                                .addProperty(League.Entry.Cols.USER_ID, userID)
+                                .addProperty(League.Entry.USER_ID, userID)
                                 .addProperty(League.Entry.Cols.ID, leagueID)
                                 .create(),
                         HttpConstants.PostMethod,
@@ -642,7 +643,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
         ListenableFuture<JsonElement> future =
                 mClient.invokeApi(League.Entry.API_NAME_LEAVE_LEAGUE,
                         formatter.build()
-                                .addProperty(League.Entry.Cols.USER_ID, userID)
+                                .addProperty(League.Entry.USER_ID, userID)
                                 .addProperty(League.Entry.Cols.ID, leagueID)
                                 .create(),
                         HttpConstants.PostMethod,
@@ -679,7 +680,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
                 .instance(User.Entry.TABLE_NAME, mClient);
 
         if (!LeagueWrapper.OVERALL_ID.equals(leagueID))
-            t.parameters(LeagueUser.Entry.Cols.LEAGUE_ID, leagueID);
+            t.parameters(LeagueUser.Entry.LEAGUE_ID, leagueID);
 
         ListenableFuture<JsonElement> i = t
                 .top(top)
@@ -728,10 +729,10 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
                 .instance(User.Entry.TABLE_NAME, mClient);
 
         if (!LeagueWrapper.OVERALL_ID.equals(leagueID))
-            t.parameters(LeagueUser.Entry.Cols.LEAGUE_ID, leagueID);
+            t.parameters(LeagueUser.Entry.LEAGUE_ID, leagueID);
 
-        t.parameters(League.Entry.Cols.MIN_MATCH_NUMBER, String.valueOf(minMatchNumber));
-        t.parameters(League.Entry.Cols.MAX_MATCH_NUMBER, String.valueOf(maxMatchNumber));
+        t.parameters(League.Entry.MIN_MATCH_NUMBER, String.valueOf(minMatchNumber));
+        t.parameters(League.Entry.MAX_MATCH_NUMBER, String.valueOf(maxMatchNumber));
 
         ListenableFuture<JsonElement> i = t
                 .top(top)
@@ -777,8 +778,8 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
 
         ListenableFuture<JsonElement> i = MobileServiceJsonTableHelper
                 .instance(League.Entry.TABLE_NAME, mClient)
-                .where().field(LeagueUser.Entry.Cols.USER_ID).eq(userID)
-                .and().field(LeagueUser.Entry.Cols.LEAGUE_ID).eq(leagueID)
+                .where().field(LeagueUser.Entry.USER_ID).eq(userID)
+                .and().field(LeagueUser.Entry.LEAGUE_ID).eq(leagueID)
                 .execute();
         Futures.addCallback(i, new FutureCallback<JsonElement>() {
 
@@ -870,7 +871,7 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
                 .instance(User.Entry.TABLE_NAME, mClient);
 
         if (!LeagueWrapper.OVERALL_ID.equals(leagueID))
-            t.parameters(LeagueUser.Entry.Cols.LEAGUE_ID, leagueID);
+            t.parameters(LeagueUser.Entry.LEAGUE_ID, leagueID);
 
         ListenableFuture<JsonElement> i = t
                 //.orderBy(User.Entry.Cols.SCORE, QueryOrder.Descending)
@@ -917,10 +918,10 @@ public class MobileServiceAdapter implements NetworkBroadcastReceiverUtils.INetw
                 .instance(User.Entry.TABLE_NAME, mClient);
 
         if (!LeagueWrapper.OVERALL_ID.equals(leagueID))
-            t.parameters(LeagueUser.Entry.Cols.LEAGUE_ID, leagueID);
+            t.parameters(LeagueUser.Entry.LEAGUE_ID, leagueID);
 
-        t.parameters(League.Entry.Cols.MIN_MATCH_NUMBER, String.valueOf(minMatchNumber));
-        t.parameters(League.Entry.Cols.MAX_MATCH_NUMBER, String.valueOf(maxMatchNumber));
+        t.parameters(League.Entry.MIN_MATCH_NUMBER, String.valueOf(minMatchNumber));
+        t.parameters(League.Entry.MAX_MATCH_NUMBER, String.valueOf(maxMatchNumber));
 
         ListenableFuture<JsonElement> i = t
                 //.orderBy(User.Entry.Cols.SCORE, QueryOrder.Descending)

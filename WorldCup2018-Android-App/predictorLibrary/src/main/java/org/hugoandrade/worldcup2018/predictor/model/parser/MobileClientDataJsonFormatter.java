@@ -8,6 +8,7 @@ import org.hugoandrade.worldcup2018.predictor.data.LoginData;
 import org.hugoandrade.worldcup2018.predictor.data.Match;
 import org.hugoandrade.worldcup2018.predictor.data.Prediction;
 import org.hugoandrade.worldcup2018.predictor.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.network.JsonObjectBuilder;
 import org.hugoandrade.worldcup2018.predictor.utils.ISO8601;
 
 /**
@@ -108,43 +109,5 @@ public class MobileClientDataJsonFormatter {
 
     public JsonObjectBuilder build() {
         return JsonObjectBuilder.instance();
-    }
-
-    public static class JsonObjectBuilder {
-
-        private final JsonObject mJsonObject;
-
-        public static JsonObjectBuilder instance() {
-            return new JsonObjectBuilder();
-        }
-
-        public JsonObjectBuilder() {
-            mJsonObject = new JsonObject();
-        }
-
-        public JsonObjectBuilder addProperty(String property, String value) {
-            mJsonObject.addProperty(property, value);
-            return this;
-        }
-
-        public JsonObjectBuilder addProperty(String property, Number value) {
-            mJsonObject.addProperty(property, value);
-            return this;
-        }
-
-        public JsonObjectBuilder addProperty(String property, Boolean value) {
-            mJsonObject.addProperty(property, value);
-            return this;
-        }
-
-        public JsonObjectBuilder removeProperties(String... properties) {
-            for (String property : properties)
-                mJsonObject.remove(property);
-            return this;
-        }
-
-        public JsonObject create() {
-            return mJsonObject;
-        }
     }
 }

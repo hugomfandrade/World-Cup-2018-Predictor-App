@@ -3,14 +3,16 @@ package org.hugoandrade.worldcup2018.predictor.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Calendar;
 
 public class SystemData implements Parcelable {
 
-    private String mID;
-    private String mRules;
-    private boolean mAppState;
-    private Calendar mSystemDate;
+    @SerializedName(Entry.Cols.ID) private String mID;
+    @SerializedName(Entry.Cols.RULES) private String mRules;
+    @SerializedName(Entry.Cols.APP_STATE) private boolean mAppState;
+    @SerializedName(Entry.Cols.SYSTEM_DATE) private Calendar mSystemDate;
     private Calendar mDateOfChange;
     private Calendar mDateOfLastRecordedSystemDate;
 

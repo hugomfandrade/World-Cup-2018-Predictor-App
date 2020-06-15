@@ -3,25 +3,14 @@ package org.hugoandrade.worldcup2018.predictor.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class LoginData implements Parcelable {
 
-    private String mUserID;
-    private String mUsername;
-    private String mPassword;
-    private String mToken;
-
-    public static class Entry {
-
-        public static final String API_NAME_LOGIN = "Login";
-        public static final String API_NAME_REGISTER = "Register";
-
-        public static class Cols {
-            public final static String USER_ID = "UserID";
-            public final static String USERNAME = "Username";
-            public final static String PASSWORD = "Password";
-            public final static String TOKEN = "Token";
-        }
-    }
+    @SerializedName(Entry.Cols.USER_ID) private String mUserID;
+    @SerializedName(Entry.Cols.USERNAME) private String mUsername;
+    @SerializedName(Entry.Cols.PASSWORD) private String mPassword;
+    @SerializedName(Entry.Cols.TOKEN) private String mToken;
 
     public LoginData(String username, String password) {
         mUsername = username;
@@ -95,5 +84,18 @@ public class LoginData implements Parcelable {
                 ", mPassword='" + mPassword + '\'' +
                 ", mToken='" + mToken + '\'' +
                 '}';
+    }
+
+    public static class Entry {
+
+        public static final String API_NAME_LOGIN = "Login";
+        public static final String API_NAME_REGISTER = "Register";
+
+        public static class Cols {
+            public final static String USER_ID = "UserID";
+            public final static String USERNAME = "Username";
+            public final static String PASSWORD = "Password";
+            public final static String TOKEN = "Token";
+        }
     }
 }

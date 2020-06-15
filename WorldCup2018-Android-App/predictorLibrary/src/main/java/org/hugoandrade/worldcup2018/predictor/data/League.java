@@ -3,35 +3,17 @@ package org.hugoandrade.worldcup2018.predictor.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class League implements Parcelable {
 
-    private String mID;
-    private String mName;
-    private String mAdminID;
-    private String mCode;
-    private int mNumberOfMembers;
+    @SerializedName(Entry.Cols.ID) private String mID;
+    @SerializedName(Entry.Cols.NAME) private String mName;
+    @SerializedName(Entry.Cols.ADMIN_ID) private String mAdminID;
+    @SerializedName(Entry.Cols.CODE) private String mCode;
+    @SerializedName(Entry.Cols.NUMBER_OF_MEMBERS) private int mNumberOfMembers;
 
-    public static class Entry {
-
-        public static final String TABLE_NAME = "League";
-        public static final String API_NAME_CREATE_LEAGUE = "CreateLeague";
-        public static final String API_NAME_JOIN_LEAGUE = "JoinLeague";
-        public static final String API_NAME_LEAVE_LEAGUE = "LeaveLeague";
-        public static final String API_NAME_DELETE_LEAGUE = "DeleteLeague";
-
-        public static class Cols {
-            public static final String ID = "id";
-            public static final String NAME = "Name";
-            public static final String ADMIN_ID = "AdminID";
-            public static final String CODE = "Code";
-            public static final String NUMBER_OF_MEMBERS = "NumberOfMembers";
-            public static final String MIN_MATCH_NUMBER = "MinMatchNumber";
-            public static final String MAX_MATCH_NUMBER = "MaxMatchNumber";
-
-            public static final String USER_ID = "UserID";
-        }
-    }
-
+    @Deprecated
     public League(String id, String name, String adminID, String code, int numberOfMembers) {
         mID = id;
         mName = name;
@@ -112,5 +94,27 @@ public class League implements Parcelable {
                 ", mCode='" + mCode + '\'' +
                 ", mNumberOfMembers=" + mNumberOfMembers +
                 '}';
+    }
+
+    public static class Entry {
+
+        public static final String TABLE_NAME = "League";
+        public static final String API_NAME_CREATE_LEAGUE = "CreateLeague";
+        public static final String API_NAME_JOIN_LEAGUE = "JoinLeague";
+        public static final String API_NAME_LEAVE_LEAGUE = "LeaveLeague";
+        public static final String API_NAME_DELETE_LEAGUE = "DeleteLeague";
+
+        // parameters
+        public static final String MIN_MATCH_NUMBER = "MinMatchNumber";
+        public static final String MAX_MATCH_NUMBER = "MaxMatchNumber";
+        public static final String USER_ID = "UserID";
+
+        public static class Cols {
+            public static final String ID = "id";
+            public static final String NAME = "Name";
+            public static final String ADMIN_ID = "AdminID";
+            public static final String CODE = "Code";
+            public static final String NUMBER_OF_MEMBERS = "NumberOfMembers";
+        }
     }
 }
