@@ -1,14 +1,22 @@
 package org.hugoandrade.worldcup2018.predictor.backend;
 
-import java.util.Arrays;
-
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.jwt.Pbkdf2PasswordEncoderCompat;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.jwt.SecurityConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Arrays;
 
 @SpringBootApplication
+@EnableAutoConfiguration
+@Configuration
 public class Application {
 
 	public static void main(String[] args) {
@@ -30,4 +38,11 @@ public class Application {
 		};
 	}
 
+	@Autowired
+	public SecurityConstants securityConstants;
+
+	@Bean
+	public PasswordEncoder bCryptPasswordEncoder() {
+		return new Pbkdf2PasswordEncoderCompat(securityConstants.iterations, securityConstants.bytes);
+	}
 }

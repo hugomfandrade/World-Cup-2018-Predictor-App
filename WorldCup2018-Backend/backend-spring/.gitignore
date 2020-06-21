@@ -1,3 +1,5 @@
 .idea
 .mvn
 *.iml
+/build
+/target

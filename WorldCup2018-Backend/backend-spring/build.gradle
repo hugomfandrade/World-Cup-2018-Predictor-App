@@ -4,7 +4,7 @@ plugins {
 	id 'java'
 }
 
-group = 'com.example'
+group = 'org.hugoandrade.worldcup2018.predictor'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
@@ -17,6 +17,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	// end::actuator[]
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	implementation "org.springframework.security.oauth:spring-security-oauth2:2.3.4.RELEASE"
 	// tag::tests[]
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
