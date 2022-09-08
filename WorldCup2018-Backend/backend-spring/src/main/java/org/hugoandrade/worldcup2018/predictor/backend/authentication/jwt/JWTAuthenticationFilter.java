@@ -1,23 +1,28 @@
 package org.hugoandrade.worldcup2018.predictor.backend.authentication.jwt;
 
+import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.hugoandrade.worldcup2018.predictor.backend.model.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.repository.AccountRepository;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.auth0.jwt.JWT;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -26,19 +31,31 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, SecurityConstants securityConstants) {
+    private final AccountRepository accountRepository;
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, SecurityConstants securityConstants, AccountRepository accountRepository) {
         this.authenticationManager = authenticationManager;
         this.securityConstants = securityConstants;
+        this.accountRepository = accountRepository;
 
-        setFilterProcessesUrl("/login");
+        this.setRequiresAuthenticationRequestMatcher(new OrRequestMatcher(
+                new AntPathRequestMatcher("/auth/login"),
+                new AntPathRequestMatcher("/auth/Login")
+        ));
+
+        this.setPostOnly(true);
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
-
+        if (!req.getMethod().equals(HttpMethod.POST.name())) {
+            throw new AuthenticationServiceException("Authentication method not supported: " + req.getMethod());
+        }
         try {
-            Account creds = new ObjectMapper().readValue(req.getInputStream(), Account.class);
+            ServletInputStream inputStream = req.getInputStream();
+            if (inputStream.available() == 0) throw new AuthenticationCredentialsNotFoundException("credentials not provided");
+            Account creds = new ObjectMapper().readValue(inputStream, Account.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -47,7 +64,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                             new ArrayList<>())
             );
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new InternalAuthenticationServiceException(e.getMessage());
         }
     }
 
@@ -57,11 +74,24 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
 
+        final String username = ((User) auth.getPrincipal()).getUsername();
+        final String userID = accountRepository.findByUsername(username).getId();
+
         String token = JWT.create()
-                .withSubject(((User) auth.getPrincipal()).getUsername())
+                .withSubject(username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + securityConstants.EXPIRATION_TIME))
                 .sign(HMAC512(securityConstants.SECRET.getBytes()));
-        res.addHeader(securityConstants.HEADER_STRING, securityConstants.TOKEN_PREFIX + " " + token);
+        res.addHeader(securityConstants.HEADER_STRING, securityConstants.TOKEN_PREFIX + "::" + token);
+
+        ObjectNode o = new ObjectMapper().createObjectNode();
+        o.put("username", ((User) auth.getPrincipal()).getUsername());
+        o.put("token", token);
+        o.put("Token", token);
+        o.put("id", userID);
+        o.put("UserID", userID);
+
+        res.resetBuffer();
+        res.getOutputStream().print(o.toString());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.hugoandrade.worldcup2018.predictor.backend;
+package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;

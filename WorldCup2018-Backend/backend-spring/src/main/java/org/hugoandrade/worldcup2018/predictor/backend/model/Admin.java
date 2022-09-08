@@ -1,4 +1,4 @@
-package org.hugoandrade.worldcup2018.predictor.backend.authentication;
+package org.hugoandrade.worldcup2018.predictor.backend.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

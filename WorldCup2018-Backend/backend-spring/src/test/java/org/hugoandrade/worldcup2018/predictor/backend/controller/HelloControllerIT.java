@@ -1,4 +1,4 @@
-package org.hugoandrade.worldcup2018.predictor.backend;
+package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -26,12 +26,12 @@ public class HelloControllerIT {
 
     @BeforeEach
     public void setUp() throws Exception {
-        this.base = new URL("http://localhost:" + port + "/");
+        this.base = new URL("http://localhost:" + port);
     }
 
     @Test
     public void getHello() throws Exception {
-        ResponseEntity<String> response = template.getForEntity(base.toString(),
+        ResponseEntity<String> response = template.getForEntity(base.toString() + "/",
                 String.class);
         assertThat(response.getBody()).isEqualTo("Greetings from Spring Boot!");
     }

@@ -1,9 +1,9 @@
 package org.hugoandrade.worldcup2018.predictor.backend.authentication.jwt;
 
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Admin;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.AdminRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.model.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.model.Admin;
+import org.hugoandrade.worldcup2018.predictor.backend.repository.AccountRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -36,11 +36,10 @@ public class UserDetailsServiceImplCompat implements UserDetailsService {
 
         final List<GrantedAuthority> authorities = new ArrayList<>();
 
-        if (admin == null) {
+        if (admin != null) {
             authorities.add(new SimpleGrantedAuthority("Admin"));
         }
 
-        // as of june 2020
         return new User(account.getUsername(), account.getSalt() + account.getPassword(), authorities);
     }
 }

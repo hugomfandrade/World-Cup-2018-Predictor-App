@@ -1,4 +1,4 @@
-package org.hugoandrade.worldcup2018.predictor.backend;
+package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;

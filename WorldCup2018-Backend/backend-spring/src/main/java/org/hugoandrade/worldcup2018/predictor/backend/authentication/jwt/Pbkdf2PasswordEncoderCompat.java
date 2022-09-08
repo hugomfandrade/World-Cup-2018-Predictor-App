@@ -39,7 +39,7 @@ public class Pbkdf2PasswordEncoderCompat extends Pbkdf2PasswordEncoder {
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
         // password includes salt
-        byte[] salt = encodedPassword.substring(0, encodedPassword.length() / 2).getBytes();
+        byte[] salt = decode(encodedPassword.substring(0, encodedPassword.length() / 2));
         encodedPassword = encodedPassword.substring(encodedPassword.length() / 2);
         byte[] digested = this.decode(encodedPassword);
         return MessageDigest.isEqual(digested, encode(rawPassword, salt));

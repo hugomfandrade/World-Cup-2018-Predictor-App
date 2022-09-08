@@ -1,4 +1,4 @@
-package org.hugoandrade.worldcup2018.predictor.backend.authentication;
+package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,12 +25,15 @@ public class AuthenticationControllerIT {
 
     @BeforeEach
     public void setUp() throws Exception {
-        this.base = new URL("http://localhost:" + port + "/");
+        this.base = new URL("http://localhost:" + port);
     }
 
     @Test
-    public void getHello() throws Exception {
-        ResponseEntity<String> response = template.getForEntity(base.toString() + "/Login", String.class);
-        assertThat(response.getBody()).isEqualTo("Login from Spring Boot!");
+    public void pingAuthService() throws Exception {
+        ResponseEntity<String> response = template.getForEntity(base.toString() + "/auth/", String.class);
+        assertThat(response.getBody()).isEqualTo("Authentication from Spring Boot!");
+
+        response = template.getForEntity(base.toString() + "/auth/login/", String.class);
+        assertThat(response.getBody()).isEqualTo("Authentication from Spring Boot!");
     }
 }

@@ -1,5 +1,7 @@
-package org.hugoandrade.worldcup2018.predictor.backend.authentication;
+package org.hugoandrade.worldcup2018.predictor.backend.repository;
 
+import org.hugoandrade.worldcup2018.predictor.backend.model.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.repository.AccountRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

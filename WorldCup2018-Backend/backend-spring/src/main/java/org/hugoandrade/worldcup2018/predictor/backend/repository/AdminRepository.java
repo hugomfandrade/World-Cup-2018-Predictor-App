@@ -1,5 +1,6 @@
-package org.hugoandrade.worldcup2018.predictor.backend.authentication;
+package org.hugoandrade.worldcup2018.predictor.backend.repository;
 
+import org.hugoandrade.worldcup2018.predictor.backend.model.Admin;
 import org.springframework.data.repository.CrudRepository;
 
 public interface AdminRepository extends CrudRepository<Admin, Long> {

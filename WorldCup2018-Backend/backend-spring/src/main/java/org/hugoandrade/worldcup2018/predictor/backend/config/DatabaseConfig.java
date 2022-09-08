@@ -1,5 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +26,10 @@ public class DatabaseConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource source = new DriverManagerDataSource();
-        source.setUrl(datasourceUrl);
-        source.setUsername(dbUsername);
-        source.setPassword(dbPassword);
-        source.setDriverClassName(dbDriverClassName);
+        if (!StringUtils.isEmpty(datasourceUrl)) source.setUrl(datasourceUrl);
+        if (!StringUtils.isEmpty(dbUsername)) source.setUsername(dbUsername);
+        if (!StringUtils.isEmpty(dbPassword)) source.setPassword(dbPassword);
+        if (!StringUtils.isEmpty(dbDriverClassName)) source.setDriverClassName(dbDriverClassName);
         return source;
     }
 }
