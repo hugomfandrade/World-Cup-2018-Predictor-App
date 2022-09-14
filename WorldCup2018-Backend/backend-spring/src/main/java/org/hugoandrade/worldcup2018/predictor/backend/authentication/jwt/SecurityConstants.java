@@ -20,6 +20,9 @@ public class SecurityConstants {
     @Value("${spring.jwt.header_string}")
     public String HEADER_STRING;
 
+    @Value("${spring.jwt.authorities_key}")
+    public String AUTHORITIES_KEY;
+
     @Value("${spring.jwt.iterations}")
     public int iterations;
 

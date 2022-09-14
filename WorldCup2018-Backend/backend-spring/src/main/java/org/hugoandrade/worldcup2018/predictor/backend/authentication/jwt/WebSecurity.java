@@ -40,7 +40,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/auth/sign-up/").permitAll()
                 .antMatchers(HttpMethod.GET, "/auth/login/").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login/").permitAll()
-                .antMatchers(HttpMethod.POST, "/accounts").hasRole("Admin")
+                .antMatchers(HttpMethod.POST, "/accounts").hasAuthority("Admin")
+
+                .antMatchers(HttpMethod.GET, "/countries").authenticated()
+                .antMatchers(HttpMethod.POST, "/countries").hasAuthority("Admin")
+                .antMatchers(HttpMethod.POST, "/countries/").hasAuthority("Admin")
+                .antMatchers(HttpMethod.DELETE, "/countries").hasAuthority("Admin")
+                .antMatchers(HttpMethod.DELETE, "/countries/").hasAuthority("Admin")
+                .antMatchers(HttpMethod.GET, "/countries/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/countries/**").hasAuthority("Admin")
+                .antMatchers(HttpMethod.DELETE, "/countries/**").hasAuthority("Admin")
+
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), securityConstants, accountRepository))

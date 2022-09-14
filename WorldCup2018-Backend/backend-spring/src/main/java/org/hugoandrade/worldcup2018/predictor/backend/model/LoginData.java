@@ -1,7 +1,10 @@
 package org.hugoandrade.worldcup2018.predictor.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LoginData {
 
+    @JsonProperty("id")
     private String mUserID;
     private String mUsername;
     private String mPassword;

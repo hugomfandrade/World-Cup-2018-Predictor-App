@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -21,7 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
@@ -75,11 +78,15 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication auth) throws IOException, ServletException {
 
         final String username = ((User) auth.getPrincipal()).getUsername();
+        final Collection<GrantedAuthority> authorities = ((User) auth.getPrincipal()).getAuthorities();
         final String userID = accountRepository.findByUsername(username).getId();
 
         String token = JWT.create()
                 .withSubject(username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + securityConstants.EXPIRATION_TIME))
+                .withClaim(securityConstants.AUTHORITIES_KEY, authorities.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(",")))
                 .sign(HMAC512(securityConstants.SECRET.getBytes()));
         res.addHeader(securityConstants.HEADER_STRING, securityConstants.TOKEN_PREFIX + "::" + token);
 

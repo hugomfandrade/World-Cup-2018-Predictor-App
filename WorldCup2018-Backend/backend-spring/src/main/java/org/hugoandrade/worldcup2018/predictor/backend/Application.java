@@ -2,6 +2,7 @@ package org.hugoandrade.worldcup2018.predictor.backend;
 
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.jwt.Pbkdf2PasswordEncoderCompat;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.jwt.SecurityConstants;
+import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -44,6 +45,9 @@ public class Application {
 		};
 	}
 
+	@Autowired
+	private StartupDatabaseScript startupScript;
+
 	@EventListener
 	public void handleContextRefresh(ContextRefreshedEvent event) {
 		ApplicationContext applicationContext = event.getApplicationContext();
@@ -52,6 +56,8 @@ public class Application {
 		Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping
 				.getHandlerMethods();
 		map.forEach((key, value) -> System.out.println("{} {} :: " + key + " , " + value));
+
+		startupScript.startup();
 	}
 
 	@Autowired
