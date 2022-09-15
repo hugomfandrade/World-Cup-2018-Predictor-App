@@ -1,113 +1,33 @@
 package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.hamcrest.*;
-import org.hamcrest.core.IsEqual;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.jwt.SecurityConstants;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
-import org.hugoandrade.worldcup2018.predictor.backend.config.StaticVariableUtils;
-import org.hugoandrade.worldcup2018.predictor.backend.model.Admin;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Country;
-import org.hugoandrade.worldcup2018.predictor.backend.model.LoginData;
-import org.hugoandrade.worldcup2018.predictor.backend.repository.AccountRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.repository.AdminRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.CountryRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.format;
 import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.parse;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CountriesControllerTest {
+class CountriesControllerTest extends BaseControllerTest {
 
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired private AdminRepository adminRepository;
-    @Autowired private AccountRepository accountRepository;
-    @Autowired private CountryRepository countryRepository;
-    @Autowired private SecurityConstants securityConstants;
-    @Autowired private StartupDatabaseScript startupScript;
-
-    private final LoginData admin = new LoginData("admin", "password");
-    private final LoginData user = new LoginData("username", "password");
-
-    @BeforeAll
-    public void setUp() throws Exception {
-
-        mvc.perform(MockMvcRequestBuilders.post("/auth/sign-up/")
-                        .content(format(admin))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", Matchers.equalTo("1")))
-                .andExpect(jsonPath("$.username", Matchers.equalTo(admin.getUsername())))
-                .andDo(mvcResult -> {
-                    LoginData loginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);
-                    Admin admin = new Admin();
-                    admin.setUserID(loginData.getUserID());
-                    adminRepository.save(admin);
-                });
-
-        mvc.perform(MockMvcRequestBuilders.post("/auth/sign-up/")
-                        .content(format(user))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", Matchers.equalTo("2")))
-                .andExpect(jsonPath("$.username", Matchers.equalTo(user.getUsername())));
-
-        mvc.perform(MockMvcRequestBuilders.post("/auth/login")
-                        .content(format(admin))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", Matchers.equalTo("1")))
-                .andExpect(jsonPath("$.username", Matchers.equalTo(admin.getUsername())))
-                .andDo(mvcResult -> {
-                    LoginData loginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);
-                    admin.setToken(securityConstants.TOKEN_PREFIX + "::" + loginData.getToken());
-                    admin.setUserID(loginData.getUserID());
-                });
-
-        mvc.perform(MockMvcRequestBuilders.post("/auth/login")
-                        .content(format(user))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", Matchers.equalTo("2")))
-                .andExpect(jsonPath("$.username", Matchers.equalTo(user.getUsername())))
-                .andDo(mvcResult -> {
-                    LoginData loginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);
-                    user.setToken(securityConstants.TOKEN_PREFIX + "::" + loginData.getToken());
-                    user.setUserID(loginData.getUserID());
-                });
-    }
-
-    @AfterAll
-    void tearDown() {
-        adminRepository.deleteAll();
-        accountRepository.deleteAll();
-    }
+    private CountryRepository countryRepository;
 
     @Test
     void all() throws Exception {

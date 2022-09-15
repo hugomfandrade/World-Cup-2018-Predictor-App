@@ -51,6 +51,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/countries/**").hasAuthority("Admin")
                 .antMatchers(HttpMethod.DELETE, "/countries/**").hasAuthority("Admin")
 
+                .antMatchers(HttpMethod.GET, "/matches").authenticated()
+                .antMatchers(HttpMethod.POST, "/matches").hasAuthority("Admin")
+                .antMatchers(HttpMethod.POST, "/matches/").hasAuthority("Admin")
+                .antMatchers(HttpMethod.DELETE, "/matches").hasAuthority("Admin")
+                .antMatchers(HttpMethod.DELETE, "/matches/").hasAuthority("Admin")
+                .antMatchers(HttpMethod.GET, "/matches/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/matches/**").hasAuthority("Admin")
+                .antMatchers(HttpMethod.DELETE, "/matches/**").hasAuthority("Admin")
+
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), securityConstants, accountRepository))
