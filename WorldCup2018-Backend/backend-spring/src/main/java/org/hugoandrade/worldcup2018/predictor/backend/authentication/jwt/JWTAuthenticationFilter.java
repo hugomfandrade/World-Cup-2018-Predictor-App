@@ -83,6 +83,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String token = JWT.create()
                 .withSubject(username)
+                .withSubject(userID)
                 .withExpiresAt(new Date(System.currentTimeMillis() + securityConstants.EXPIRATION_TIME))
                 .withClaim(securityConstants.AUTHORITIES_KEY, authorities.stream()
                         .map(GrantedAuthority::getAuthority)

@@ -55,7 +55,7 @@ public class MatchesController {
 
 	@PutMapping("/{matchNumber}")
 	public Match updateOne(@PathVariable("matchNumber") int matchNumber,
-							 @RequestBody Match match) {
+						   @RequestBody Match match) {
 
 		Match dbMatch = matchRepository.findByMatchNumber(matchNumber);
 		if (dbMatch == null) return null;

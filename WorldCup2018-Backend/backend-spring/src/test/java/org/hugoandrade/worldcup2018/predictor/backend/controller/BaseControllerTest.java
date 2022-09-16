@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.format;
@@ -36,62 +37,51 @@ abstract class BaseControllerTest {
 
     final LoginData admin = new LoginData("admin", "password");
     final LoginData user = new LoginData("username", "password");
+    final LoginData userOther = new LoginData("username-other", "password");
 
     @BeforeAll
     public void setUp() throws Exception {
 
-        mvc.perform(MockMvcRequestBuilders.post("/auth/sign-up/")
-                        .content(format(admin))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                // .andExpect(jsonPath("$.id", Matchers.equalTo("1")))
-                .andExpect(jsonPath("$.username", Matchers.equalTo(admin.getUsername())))
-                .andDo(mvcResult -> {
-                    LoginData loginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);
-                    Admin admin = new Admin();
-                    admin.setUserID(loginData.getUserID());
-                    adminRepository.save(admin);
-                });
+        doSignUp(admin).andDo(mvcResult -> {
+            LoginData loginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);
+            Admin admin = new Admin();
+            admin.setUserID(loginData.getUserID());
+            adminRepository.save(admin);
+        });
+        doSignUp(user);
+        doSignUp(userOther);
 
-        mvc.perform(MockMvcRequestBuilders.post("/auth/sign-up/")
-                        .content(format(user))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                // .andExpect(jsonPath("$.id", Matchers.equalTo("2")))
-                .andExpect(jsonPath("$.username", Matchers.equalTo(user.getUsername())));
-
-        mvc.perform(MockMvcRequestBuilders.post("/auth/login")
-                        .content(format(admin))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                // .andExpect(jsonPath("$.id", Matchers.equalTo("1")))
-                .andExpect(jsonPath("$.username", Matchers.equalTo(admin.getUsername())))
-                .andDo(mvcResult -> {
-                    LoginData loginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);
-                    admin.setToken(securityConstants.TOKEN_PREFIX + "::" + loginData.getToken());
-                    admin.setUserID(loginData.getUserID());
-                });
-
-        mvc.perform(MockMvcRequestBuilders.post("/auth/login")
-                        .content(format(user))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                // .andExpect(jsonPath("$.id", Matchers.equalTo("2")))
-                .andExpect(jsonPath("$.username", Matchers.equalTo(user.getUsername())))
-                .andDo(mvcResult -> {
-                    LoginData loginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);
-                    user.setToken(securityConstants.TOKEN_PREFIX + "::" + loginData.getToken());
-                    user.setUserID(loginData.getUserID());
-                });
+        doLogin(admin);
+        doLogin(user);
+        doLogin(userOther);
     }
 
     @AfterAll
     void tearDown() {
         adminRepository.deleteAll();
         accountRepository.deleteAll();
+    }
+
+    private ResultActions doSignUp(LoginData loginData) throws Exception {
+        return mvc.perform(MockMvcRequestBuilders.post("/auth/sign-up/")
+                        .content(format(loginData))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", Matchers.equalTo(loginData.getUsername())));
+    }
+
+    private ResultActions doLogin(LoginData loginData) throws Exception {
+        return mvc.perform(MockMvcRequestBuilders.post("/auth/login")
+                        .content(format(loginData))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", Matchers.equalTo(loginData.getUsername())))
+                .andDo(mvcResult -> {
+                    LoginData resLoginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);
+                    loginData.setToken(securityConstants.TOKEN_PREFIX + "::" + resLoginData.getToken());
+                    loginData.setUserID(resLoginData.getUserID());
+                });
     }
 }

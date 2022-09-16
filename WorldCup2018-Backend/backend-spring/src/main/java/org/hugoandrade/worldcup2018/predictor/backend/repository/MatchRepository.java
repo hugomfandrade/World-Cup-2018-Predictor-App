@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.List;
 
 public interface MatchRepository extends CrudRepository<Match, String> {
 
@@ -16,4 +18,7 @@ public interface MatchRepository extends CrudRepository<Match, String> {
     @Modifying
     @Query("DELETE FROM Match m WHERE m.mMatchNo = :matchNumber")
     void deleteByMatchNumber(int matchNumber);
+
+    @Query("FROM Match m WHERE m.mDateAndTime > :dateTime")
+    List<Match> findGreatThan(Date dateTime);
 }
