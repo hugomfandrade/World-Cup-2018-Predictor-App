@@ -1,16 +1,16 @@
 package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Country;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Prediction;
+import org.hugoandrade.worldcup2018.predictor.backend.model.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.CountryRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.MatchRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.PredictionRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,8 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PredictionsControllerTest extends BaseControllerTest {
 
+    @Autowired private SystemController systemController;
+
     @Autowired private MatchRepository matchRepository;
     @Autowired private PredictionRepository predictionRepository;
+
+    @BeforeEach
+    void beforeEach() {
+        SystemData systemData = new SystemData(null, "0,1,2,4", true, ISO8601Utils.parse("2018-06-27T12:00:00Z"));
+        systemController.postSystemData(systemData);
+    }
 
     @Test
     void enabledMatches() throws Exception {

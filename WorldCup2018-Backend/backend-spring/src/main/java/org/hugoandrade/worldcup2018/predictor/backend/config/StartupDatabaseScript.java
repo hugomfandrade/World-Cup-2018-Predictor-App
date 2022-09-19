@@ -2,15 +2,14 @@ package org.hugoandrade.worldcup2018.predictor.backend.config;
 
 import org.hugoandrade.worldcup2018.predictor.backend.model.Country;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.model.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.CountryRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.MatchRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.repository.SystemDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
@@ -23,12 +22,20 @@ import static org.hugoandrade.worldcup2018.predictor.backend.config.StaticVariab
 @Service
 public class StartupDatabaseScript {
 
+    @Autowired private SystemDataRepository systemDataRepository;
     @Autowired private CountryRepository countryRepository;
     @Autowired private MatchRepository matchRepository;
 
     public void startup() {
+        startupSystemData();
         startupCountries();
         startupMatches();
+    }
+
+    private void startupSystemData() {
+
+        systemDataRepository.deleteAll();
+        systemDataRepository.save(new SystemData(null, "0,1,2,4", true, new Date(), new Date()));
     }
 
     private void startupMatches() {

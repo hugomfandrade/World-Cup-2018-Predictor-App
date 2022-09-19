@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Prediction;
+import org.hugoandrade.worldcup2018.predictor.backend.model.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.MatchRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.PredictionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,15 @@ import java.util.List;
 @RequestMapping("/predictions")
 public class PredictionsController {
 
-	private final static Date DATE_TIME = ISO8601Utils.parse("2018-06-27T12:00:00Z");
+	@Autowired private SystemController systemController;
 
 	@Autowired private MatchRepository matchRepository;
 	@Autowired private PredictionRepository predictionRepository;
 
 	@GetMapping("/enabled-matches")
 	public List<Match> enabledMatches() {
-		return matchRepository.findGreatThan(DATE_TIME);
+		Date date = systemController.getSystemData().getDate();
+		return matchRepository.findGreatThan(date);
 	}
 
 	public int[] enabledMatchNumbers() {
