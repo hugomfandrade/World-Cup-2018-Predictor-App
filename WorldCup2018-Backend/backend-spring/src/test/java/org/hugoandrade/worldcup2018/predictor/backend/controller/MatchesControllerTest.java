@@ -17,9 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.format;
 import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.parse;
@@ -36,9 +34,7 @@ class MatchesControllerTest extends BaseControllerTest {
     @Test
     void all() throws Exception {
 
-        final List<Country> countries = StreamSupport
-                .stream(countryRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        final List<Country> countries = countryRepository.findAllAsList();
 
         mvc.perform(MockMvcRequestBuilders.get("/matches/"))
                 .andExpect(status().is4xxClientError());

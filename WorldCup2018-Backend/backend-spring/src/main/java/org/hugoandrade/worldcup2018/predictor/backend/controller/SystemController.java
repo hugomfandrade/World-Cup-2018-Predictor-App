@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.stream.StreamSupport;
 
 @RestController
 public class SystemController {
@@ -21,7 +20,7 @@ public class SystemController {
 	@GetMapping("/system-data")
 	public SystemData getSystemData() {
 
-		SystemData systemData = StreamSupport.stream(systemDataRepository.findAll().spliterator(), false)
+		SystemData systemData = systemDataRepository.findAllAsList().stream()
 				.findFirst()
 				.orElse(null);
 

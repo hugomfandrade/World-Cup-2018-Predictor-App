@@ -3,11 +3,15 @@ package org.hugoandrade.worldcup2018.predictor.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Country implements Comparable<Country> {
+public class Country implements Comparable<Country>, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -191,8 +195,16 @@ public class Country implements Comparable<Country> {
 
     @Override
     public int compareTo(Country o) {
-        if (mPosition != o.mPosition)
-            return mPoints - o.mPoints;
+        if (this.getPoints() != o.getPoints())
+            return this.getPoints() - o.getPoints();
+        if (this.getGoalsDifference() != o.getGoalsDifference())
+            return this.getGoalsDifference() - o.getGoalsDifference();
+        if (this.getGoalsFor() != o.getGoalsFor())
+            return this.getGoalsFor() - o.getGoalsFor();
+        if (this.getFairPlayPoints() != o.getFairPlayPoints())
+            return this.getFairPlayPoints() - o.getFairPlayPoints();
+        if (this.getDrawingOfLots() != o.getDrawingOfLots())
+            return -(this.getDrawingOfLots() - o.getDrawingOfLots());
         return 0;
     }
 
@@ -267,6 +279,56 @@ public class Country implements Comparable<Country> {
             public static final String COEFFICIENT = "Coefficient";
             public static final String FAIR_PLAY_POINTS = "FairPlayPoints";
             public static final String DRAWING_OF_LOTS = "DrawingOfLots";
+        }
+    }
+
+
+    public enum Tournament {
+
+        Russia("Russia"),
+        SaudiArabia("Saudi Arabia"),
+        Egypt("Egypt"),
+        Uruguay("Uruguay"),
+
+        Portugal("Portugal"),
+        Spain("Spain"),
+        Morocco("Morocco"),
+        Iran("Iran"),
+
+        France("France"),
+        Australia("Australia"),
+        Peru("Peru"),
+        Denmark("Denmark"),
+
+        Argentina("Argentina"),
+        Iceland("Iceland"),
+        Croatia("Croatia"),
+        Nigeria("Nigeria"),
+
+        Brazil("Brazil"),
+        Switzerland("Switzerland"),
+        CostaRica("Costa Rica"),
+        Serbia("Serbia"),
+
+        Germany("Germany"),
+        Mexico("Mexico"),
+        Sweden("Sweden"),
+        SouthKorea("South Korea"),
+
+        Belgium("Belgium"),
+        Panama("Panama"),
+        Tunisia("Tunisia"),
+        England("England"),
+
+        Poland("Poland"),
+        Senegal("Senegal"),
+        Colombia("Colombia"),
+        Japan("Japan");
+
+        public final String name;
+
+        Tournament(String group) {
+            name = group;
         }
     }
 }

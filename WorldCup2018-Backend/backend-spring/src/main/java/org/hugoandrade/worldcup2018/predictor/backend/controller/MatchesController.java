@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/matches")
@@ -18,9 +16,7 @@ public class MatchesController {
 
 	@GetMapping("/")
 	public List<Match> all() {
-		return StreamSupport
-				.stream(matchRepository.findAll().spliterator(), false)
-				.collect(Collectors.toList());
+		return matchRepository.findAllAsList();
 	}
 
 	@PostMapping("/")

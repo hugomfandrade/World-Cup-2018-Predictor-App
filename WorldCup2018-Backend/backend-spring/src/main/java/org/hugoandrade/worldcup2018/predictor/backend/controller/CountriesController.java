@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/countries")
@@ -18,9 +16,7 @@ public class CountriesController {
 
 	@GetMapping("/")
 	public List<Country> all() {
-		return StreamSupport
-				.stream(countryRepository.findAll().spliterator(), false)
-				.collect(Collectors.toList());
+		return countryRepository.findAllAsList();
 	}
 
 	@PostMapping("/")

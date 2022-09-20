@@ -7,6 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public interface PredictionRepository extends CrudRepository<Prediction, String> {
 
@@ -26,4 +28,10 @@ public interface PredictionRepository extends CrudRepository<Prediction, String>
     @Modifying
     @Query("DELETE FROM Prediction p WHERE p.mUserID = :userID")
     void deleteByUserID(String userID);
+
+    default List<Prediction> findAllAsList() {
+
+        return StreamSupport.stream(this.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+    }
 }

@@ -5,13 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.model.Match.Entry.Cols.*;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Match implements Comparable<Match> {
+public class Match implements Comparable<Match>, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -107,6 +108,11 @@ public class Match implements Comparable<Match> {
 
     public void setAwayTeamGoals(int awayTeamGoals) {
         mAwayTeamGoals = awayTeamGoals;
+    }
+
+    public void setScore(int homeTeamGoals, int awayTeamGoals) {
+        this.setHomeTeamGoals(homeTeamGoals);
+        this.setAwayTeamGoals(awayTeamGoals);
     }
 
     public String getHomeTeamNotes() {

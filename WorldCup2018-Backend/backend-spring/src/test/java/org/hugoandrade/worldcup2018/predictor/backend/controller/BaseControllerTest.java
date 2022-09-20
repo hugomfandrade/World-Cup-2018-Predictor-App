@@ -26,14 +26,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-abstract class BaseControllerTest {
+public abstract class BaseControllerTest {
 
     @Autowired MockMvc mvc;
 
     @Autowired AdminRepository adminRepository;
     @Autowired AccountRepository accountRepository;
     @Autowired SecurityConstants securityConstants;
-    @Autowired StartupDatabaseScript startupScript;
+    @Autowired public StartupDatabaseScript startupScript;
 
     final LoginData admin = new LoginData("admin", "password");
     final LoginData user = new LoginData("username", "password");

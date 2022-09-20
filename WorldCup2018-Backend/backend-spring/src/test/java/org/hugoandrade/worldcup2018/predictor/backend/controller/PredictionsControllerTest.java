@@ -2,15 +2,15 @@ package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
-import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
-import org.hugoandrade.worldcup2018.predictor.backend.model.Country;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.model.SystemData;
-import org.hugoandrade.worldcup2018.predictor.backend.repository.CountryRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.MatchRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.PredictionRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,11 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.format;
 import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.parse;
@@ -34,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PredictionsControllerTest extends BaseControllerTest {
 
     @Autowired private SystemController systemController;
-
     @Autowired private MatchRepository matchRepository;
     @Autowired private PredictionRepository predictionRepository;
 
@@ -165,8 +160,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                 });
 
         // assert there are two predictions in repo
-        Assertions.assertEquals(3, (int) StreamSupport
-                .stream(predictionRepository.findAll().spliterator(), false).count());
+        Assertions.assertEquals(3, (int) predictionRepository.findAllAsList().size());
 
         // make sure there is one prediction
         mvc.perform(MockMvcRequestBuilders.get("/predictions/" + user.getUserID())
@@ -192,8 +186,7 @@ class PredictionsControllerTest extends BaseControllerTest {
         predictionRepository.deleteByUserID(user.getUserID());
         predictionRepository.deleteByUserID(userOther.getUserID());
 
-        Assertions.assertEquals(0, (int) StreamSupport
-                .stream(predictionRepository.findAll().spliterator(), false).count());
+        Assertions.assertEquals(0, predictionRepository.findAllAsList().size());
     }
 
     @Test
