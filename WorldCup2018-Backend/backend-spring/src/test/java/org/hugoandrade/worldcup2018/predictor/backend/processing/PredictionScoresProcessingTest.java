@@ -93,7 +93,7 @@ class PredictionScoresProcessingTest extends BaseControllerTest {
 
         final Consumer<Match> updatePredictionScoreFunction = match -> {
 
-            final PredictionScoresProcessing scoresProcessing = new PredictionScoresProcessing(systemData, new PredictionScoresProcessing.OnProcessingListener() {
+            final PredictionScoresProcessing scoresProcessing = new PredictionScoresProcessing(new PredictionScoresProcessing.OnProcessingListener() {
 
                 @Override public void onProcessingFinished(List<Prediction> predictions) {}
 
@@ -103,7 +103,7 @@ class PredictionScoresProcessingTest extends BaseControllerTest {
                     Prediction savedPrediction = predictionRepository.save(prediction);
                 }
             });
-            scoresProcessing.startUpdatePredictionScoresSync(match, predictionRepository.findByMatchNumber(match.getMatchNumber()));
+            scoresProcessing.startUpdatePredictionScoresSync(systemData, match, predictionRepository.findByMatchNumber(match.getMatchNumber()));
         };
         // update scores
         for (Map.Entry<Integer, Integer[]> scoreEntry : SCORES_GROUP_B.entrySet()) {

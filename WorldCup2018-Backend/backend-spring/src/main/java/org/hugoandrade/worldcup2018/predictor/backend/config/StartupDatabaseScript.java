@@ -51,8 +51,8 @@ public class StartupDatabaseScript {
             @Override public void updateCountry(Country country) { }
             @Override public void updateMatchUp(Match match) { }
 
-        }, countries);
-        tournamentProcessing.startUpdateGroupsSync(matches);
+        });
+        tournamentProcessing.startUpdateGroupsSync(countries, matches);
     }
 
     private void startupSystemData() {

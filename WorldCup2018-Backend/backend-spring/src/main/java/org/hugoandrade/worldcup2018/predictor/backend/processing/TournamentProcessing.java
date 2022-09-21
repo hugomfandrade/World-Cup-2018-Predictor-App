@@ -59,21 +59,19 @@ public class TournamentProcessing {
         FINAL_MATCH_UPS.put(62, new Pair<>(64, Place.AWAY));
     }
 
-    private final WeakReference<OnProcessingListener> mOnProcessingFinished;
-    private final List<Country> mCountryList;
+    private final OnProcessingListener mOnProcessingFinished;
 
     private GroupProcessing mTask;
 
     private ExecutorService mExecutors;
 
-    public TournamentProcessing(OnProcessingListener onProcessingListener, List<Country> allCountryList) {
-        mOnProcessingFinished = new WeakReference<>(onProcessingListener);
-        mCountryList = allCountryList;
+    public TournamentProcessing(OnProcessingListener onProcessingListener) {
+        mOnProcessingFinished = onProcessingListener;
     }
 
-    public void startUpdateGroupsProcessing(List<Match> matchList) {
+    public void startUpdateGroupsProcessing(List<Country> countries, List<Match> matches) {
         // Do processing asynchronously
-        mTask = new GroupProcessing(mOnProcessingFinished.get(), mCountryList, matchList);
+        mTask = new GroupProcessing(mOnProcessingFinished, countries, matches);
         mExecutors = Executors.newCachedThreadPool();
         mExecutors.submit(mTask);
     }
@@ -84,9 +82,9 @@ public class TournamentProcessing {
         mTask = null;
     }
 
-    public void startUpdateGroupsSync(List<Match> matchList) {
+    public void startUpdateGroupsSync(List<Country> countries, List<Match> matches) {
         // Do processing synchronously
-        mTask = new GroupProcessing(mOnProcessingFinished.get(), mCountryList, matchList);
+        mTask = new GroupProcessing(mOnProcessingFinished, countries, matches);
         mTask.run();
     }
 
@@ -128,7 +126,7 @@ public class TournamentProcessing {
                 Country originalCountry = originalCountries.get(updatedCountry.getID());
                 if (!updatedCountry.equals(originalCountry))
                     Optional.ofNullable(mOnProcessingListener.get())
-                            .ifPresent(l -> l.updateCountry(originalCountry));
+                            .ifPresent(l -> l.updateCountry(updatedCountry));
             }
 
             // Put in database only the matches whose info was modified

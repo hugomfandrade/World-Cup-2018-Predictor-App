@@ -28,9 +28,8 @@ public final class StageUtils {
      * Ensure this class is only used as a utility.
      */
     private StageUtils() {
-        throw new AssertionError();
+        throw new RuntimeException("this is a utility class");
     }
-
 
     public static Stage getStage(Match match) {
 

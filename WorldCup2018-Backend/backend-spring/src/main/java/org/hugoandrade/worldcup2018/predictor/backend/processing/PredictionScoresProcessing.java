@@ -15,22 +15,19 @@ public class PredictionScoresProcessing {
 
     private final static String TAG = PredictionScoresProcessing.class.getSimpleName();
 
-    private final SystemData mSystemData;
-
-    private final WeakReference<OnProcessingListener> mOnProcessingFinished;
+    private final OnProcessingListener mOnProcessingFinished;
 
     private UpdateScoreProcessing mTask;
 
     private ExecutorService mExecutors;
 
-    public PredictionScoresProcessing(SystemData systemData, OnProcessingListener onProcessingListener) {
-        mOnProcessingFinished = new WeakReference<>(onProcessingListener);
-        mSystemData = systemData;
+    public PredictionScoresProcessing(OnProcessingListener onProcessingListener) {
+        mOnProcessingFinished = onProcessingListener;
     }
 
-    public void startUpdatePredictionScores(Match match, List<Prediction> predictions) {
+    public void startUpdatePredictionScores(SystemData systemData, Match match, List<Prediction> predictions) {
         // Do processing asynchronously
-        mTask = new UpdateScoreProcessing(mSystemData, mOnProcessingFinished.get(), match, predictions);
+        mTask = new UpdateScoreProcessing(systemData, mOnProcessingFinished, match, predictions);
         mExecutors = Executors.newCachedThreadPool();
         mExecutors.submit(mTask);
     }
@@ -41,9 +38,9 @@ public class PredictionScoresProcessing {
         mTask = null;
     }
 
-    public void startUpdatePredictionScoresSync(Match match, List<Prediction> predictions) {
+    public void startUpdatePredictionScoresSync(SystemData systemData, Match match, List<Prediction> predictions) {
         // Do processing synchronously
-        mTask = new UpdateScoreProcessing(mSystemData, mOnProcessingFinished.get(), match, predictions);
+        mTask = new UpdateScoreProcessing(systemData, mOnProcessingFinished, match, predictions);
         mTask.run();
     }
 

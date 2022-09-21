@@ -26,7 +26,7 @@ import static org.hugoandrade.worldcup2018.predictor.backend.model.Country.Tourn
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TournamentProcessingTest extends BaseControllerTest {
+public class TournamentProcessingTest extends BaseControllerTest {
 
     @Autowired CountryRepository countryRepository;
     @Autowired MatchRepository matchRepository;
@@ -77,25 +77,24 @@ class TournamentProcessingTest extends BaseControllerTest {
         final List<Country.Tournament> updatedCountries = new ArrayList<>();
         final List<Integer> updatedMatchUps = new ArrayList<>();
 
-        final TournamentProcessing tournamentProcessing = new TournamentProcessing(
-                new TournamentProcessing.OnProcessingListener() {
-                    @Override
-                    public void onProcessingFinished(List<Country> countries, List<Match> matches) {
-                        System.out.println(countries);
-                        System.out.println(matches);
-                    }
+        final TournamentProcessing tournamentProcessing = new TournamentProcessing(new TournamentProcessing.OnProcessingListener() {
+            @Override
+            public void onProcessingFinished(List<Country> countries, List<Match> matches) {
+                System.out.println(countries);
+                System.out.println(matches);
+            }
 
-                    @Override
-                    public void updateCountry(Country country) {
-                        updatedCountries.add(Country.Tournament.valueOf(country.getName()));
-                    }
+            @Override
+            public void updateCountry(Country country) {
+                updatedCountries.add(Country.Tournament.valueOf(country.getName()));
+            }
 
-                    @Override
-                    public void updateMatchUp(Match match) {
-                        updatedMatchUps.add(match.getMatchNumber());
-                    }
-                }, countries);
-        tournamentProcessing.startUpdateGroupsSync(matches);
+            @Override
+            public void updateMatchUp(Match match) {
+                updatedMatchUps.add(match.getMatchNumber());
+            }
+        });
+        tournamentProcessing.startUpdateGroupsSync(countries, matches);
 
         Assertions.assertEquals(1, countryMap.get(Spain.name).getPosition());
         Assertions.assertEquals(2, countryMap.get(Portugal.name).getPosition());
@@ -114,7 +113,7 @@ class TournamentProcessingTest extends BaseControllerTest {
         Assertions.assertEquals(matchMap.get(51).getHomeTeamID(), countryMap.get(Spain.name).getID());
     }
 
-    private static int[] standingsDetails(Country country) {
+    public static int[] standingsDetails(Country country) {
         return new int[]{
                 country.getMatchesPlayed(),
                 country.getVictories(),

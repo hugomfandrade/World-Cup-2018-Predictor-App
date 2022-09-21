@@ -64,6 +64,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/system-data/").hasAuthority("Admin")
                 .antMatchers(HttpMethod.GET, "/system-data").permitAll()
                 .antMatchers(HttpMethod.GET, "/system-data/").permitAll()
+                .antMatchers(HttpMethod.POST, "/reset-all").hasAuthority("Admin")
 
                 .anyRequest().authenticated()
                 .and()

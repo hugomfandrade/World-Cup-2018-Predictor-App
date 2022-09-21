@@ -44,6 +44,14 @@ public class Prediction {
         mScore = -1;
     }
 
+    public Prediction(int homeTeamGoals, int awayTeamGoals, int matchNo) {
+        mHomeTeamGoals = homeTeamGoals;
+        mAwayTeamGoals = awayTeamGoals;
+        mMatchNo = matchNo;
+        mUserID = null;
+        mScore = -1;
+    }
+
     //NEW
     public Prediction(String id, String userID, int matchNo, int homeTeamGoals, int awayTeamGoals, int score) {
         mID = id;

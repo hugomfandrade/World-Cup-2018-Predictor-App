@@ -1,10 +1,8 @@
 package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Prediction;
-import org.hugoandrade.worldcup2018.predictor.backend.model.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.MatchRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.PredictionRepository;
 import org.springframework.beans.factory.annotation.Autowired;

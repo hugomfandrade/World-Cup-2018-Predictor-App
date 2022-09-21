@@ -18,8 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.format;
-import static org.hugoandrade.worldcup2018.predictor.backend.controller.AuthenticationControllerTest.parse;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,12 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseControllerTest {
 
-    @Autowired MockMvc mvc;
+    @Autowired private MockMvc mvc;
 
     @Autowired AdminRepository adminRepository;
     @Autowired AccountRepository accountRepository;
-    @Autowired SecurityConstants securityConstants;
-    @Autowired public StartupDatabaseScript startupScript;
+    @Autowired protected SecurityConstants securityConstants;
+    @Autowired protected StartupDatabaseScript startupScript;
 
     protected final LoginData admin = new LoginData("admin", "password");
     protected final LoginData user = new LoginData("username", "password");

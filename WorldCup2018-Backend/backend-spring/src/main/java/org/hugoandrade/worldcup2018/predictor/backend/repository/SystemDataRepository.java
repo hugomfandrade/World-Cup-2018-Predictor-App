@@ -14,4 +14,8 @@ public interface SystemDataRepository extends CrudRepository<SystemData, String>
         return StreamSupport.stream(this.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
+
+    default SystemData findOne() {
+        return findAllAsList().stream().findAny().get();
+    }
 }

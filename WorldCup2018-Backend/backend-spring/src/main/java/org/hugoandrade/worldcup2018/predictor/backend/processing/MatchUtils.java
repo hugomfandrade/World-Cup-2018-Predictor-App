@@ -21,7 +21,7 @@ public final class MatchUtils {
      * Ensure this class is only used as a utility.
      */
     private MatchUtils() {
-        throw new AssertionError();
+        throw new RuntimeException("this is a utility class");
     }
 
     public static boolean isMatchValid(Match match) {
