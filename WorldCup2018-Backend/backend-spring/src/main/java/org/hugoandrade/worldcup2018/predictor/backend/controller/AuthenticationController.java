@@ -1,12 +1,10 @@
 package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
-import org.hugoandrade.worldcup2018.predictor.backend.repository.AccountRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.model.LoginData;
+import org.hugoandrade.worldcup2018.predictor.backend.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;

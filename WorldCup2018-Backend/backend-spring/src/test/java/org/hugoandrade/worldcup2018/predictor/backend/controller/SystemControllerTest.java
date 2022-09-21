@@ -226,7 +226,8 @@ public class SystemControllerTest extends BaseControllerTest {
 										.header(securityConstants.HEADER_STRING, loginData.getToken()))
 								.andExpect(status().isOk())
 								.andReturn().getResponse().getContentAsString(),
-						new TypeReference<List<Prediction>>(){})
+						new TypeReference<List<Prediction>>() {
+						})
 						.stream()
 						.filter(prediction -> prediction.getMatchNumber() == matchNumber)
 						.findAny()
@@ -241,6 +242,26 @@ public class SystemControllerTest extends BaseControllerTest {
 		Assertions.assertEquals(correctOutcome, getPrediction.apply(19, user).getScore());
 		Assertions.assertEquals(incorrectPrediction, getPrediction.apply(20, user).getScore());
 		Assertions.assertEquals(0, getPrediction.apply(35, user).getScore());
+		
+		int expectedScore = incorrectPrediction + correctOutcome + correctMarginOfVictory + correctPrediction;
+
+		Assertions.assertEquals(0, getAccount(admin.getUsername()).getScore());
+		Assertions.assertEquals(expectedScore, getAccount(user.getUsername()).getScore());
+		Assertions.assertEquals(0, getAccount(userOther.getUsername()).getScore());
+	}
+
+	private Account getAccount(String username) throws Exception {
+
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/auth/accounts")
+						.header(securityConstants.HEADER_STRING, admin.getToken()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Account>>() {})
+				.stream()
+				.filter(account -> username.equals(account.getUsername()))
+				.findAny()
+				.orElse(null);
 	}
 
 	private List<Match> getMatches() throws Exception {

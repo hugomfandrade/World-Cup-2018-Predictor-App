@@ -1,11 +1,10 @@
 package org.hugoandrade.worldcup2018.predictor.backend.controller;
 
-import org.hugoandrade.worldcup2018.predictor.backend.model.Country;
-import org.hugoandrade.worldcup2018.predictor.backend.model.Match;
-import org.hugoandrade.worldcup2018.predictor.backend.model.Prediction;
-import org.hugoandrade.worldcup2018.predictor.backend.model.SystemData;
+import org.hugoandrade.worldcup2018.predictor.backend.model.*;
 import org.hugoandrade.worldcup2018.predictor.backend.processing.PredictionScoresProcessing;
 import org.hugoandrade.worldcup2018.predictor.backend.processing.TournamentProcessing;
+import org.hugoandrade.worldcup2018.predictor.backend.processing.UsersScoreProcessing;
+import org.hugoandrade.worldcup2018.predictor.backend.repository.AccountRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.CountryRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.MatchRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.PredictionRepository;
@@ -22,6 +21,7 @@ public class MatchesController {
 	private MatchRepository matchRepository;
 
 	@Autowired private SystemController systemController;
+	@Autowired private AccountRepository accountRepository;
 	@Autowired private PredictionRepository predictionRepository;
 	@Autowired private CountryRepository countryRepository;
 
@@ -50,6 +50,17 @@ public class MatchesController {
 		public void updatePrediction(Prediction prediction) {
 			Prediction dbPrediction = predictionRepository.findById(prediction.getID()).get();
 			predictionRepository.save(prediction);
+		}
+	});
+
+	private final UsersScoreProcessing usersScoreProcessing = new UsersScoreProcessing(new UsersScoreProcessing.OnProcessingListener() {
+
+		@Override public void onProcessingFinished(List<Account> accounts) {}
+
+		@Override
+		public void updateAccount(Account account) {
+			Account dbAccount = accountRepository.findByUsername(account.getUsername());
+			accountRepository.save(account);
 		}
 	});
 
@@ -109,6 +120,11 @@ public class MatchesController {
 				systemController.getSystemData(),
 				matchRepository.findByMatchNumber(matchNumber),
 				predictionRepository.findByMatchNumber(matchNumber));
+
+		// update accounts
+		usersScoreProcessing.startUpdateUsersScoresSync(
+				predictionRepository.findAllAsList(),
+				accountRepository.findAllAsList().toArray(new Account[0]));
 
 		return resMatch;
 	}

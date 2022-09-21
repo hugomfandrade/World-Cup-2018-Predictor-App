@@ -7,6 +7,7 @@ import org.hugoandrade.worldcup2018.predictor.backend.model.Admin;
 import org.hugoandrade.worldcup2018.predictor.backend.model.LoginData;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.AccountRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.repository.AdminRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.repository.PredictionRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
@@ -32,6 +33,7 @@ public abstract class BaseControllerTest {
 
     @Autowired AdminRepository adminRepository;
     @Autowired AccountRepository accountRepository;
+    @Autowired PredictionRepository predictionRepository;
     @Autowired protected SecurityConstants securityConstants;
     @Autowired protected StartupDatabaseScript startupScript;
 
@@ -41,6 +43,11 @@ public abstract class BaseControllerTest {
 
     @BeforeAll
     public void setUp() throws Exception {
+
+        // clear repo
+        accountRepository.deleteAll();
+        adminRepository.deleteAll();
+        predictionRepository.deleteAll();
 
         doSignUp(admin).andDo(mvcResult -> {
             LoginData loginData = parse(mvcResult.getResponse().getContentAsString(), LoginData.class);

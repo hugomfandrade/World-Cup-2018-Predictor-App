@@ -15,6 +15,7 @@ public class Account {
     private String username;
     private String password;
     private String salt;
+    private int score;
 
     public Account() { }
 
@@ -60,6 +61,14 @@ public class Account {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     @Override
