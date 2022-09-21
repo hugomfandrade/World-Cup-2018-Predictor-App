@@ -29,16 +29,16 @@ public class Prediction {
         return new Prediction(-1, -1, matchNumber, userID);
     }
 
-    public Prediction(int awayTeamGoals, int homeTeamGoals, int matchNo, int score) {
-        mAwayTeamGoals = awayTeamGoals;
+    public Prediction(int homeTeamGoals, int awayTeamGoals, int matchNo, int score) {
         mHomeTeamGoals = homeTeamGoals;
+        mAwayTeamGoals = awayTeamGoals;
         mMatchNo = matchNo;
         mScore = score;
     }
 
-    public Prediction(int awayTeamGoals, int homeTeamGoals, int matchNo, String userID) {
-        mAwayTeamGoals = awayTeamGoals;
+    public Prediction(int homeTeamGoals, int awayTeamGoals, int matchNo, String userID) {
         mHomeTeamGoals = homeTeamGoals;
+        mAwayTeamGoals = awayTeamGoals;
         mMatchNo = matchNo;
         mUserID = userID;
         mScore = -1;
@@ -101,6 +101,10 @@ public class Prediction {
 
     public int getScore() {
         return mScore;
+    }
+
+    public void setScore(int score) {
+        this.mScore = score;
     }
 
     @Override

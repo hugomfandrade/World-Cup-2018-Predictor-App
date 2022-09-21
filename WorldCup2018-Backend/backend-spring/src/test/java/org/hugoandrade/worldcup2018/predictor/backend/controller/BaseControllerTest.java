@@ -35,9 +35,9 @@ public abstract class BaseControllerTest {
     @Autowired SecurityConstants securityConstants;
     @Autowired public StartupDatabaseScript startupScript;
 
-    final LoginData admin = new LoginData("admin", "password");
-    final LoginData user = new LoginData("username", "password");
-    final LoginData userOther = new LoginData("username-other", "password");
+    protected final LoginData admin = new LoginData("admin", "password");
+    protected final LoginData user = new LoginData("username", "password");
+    protected final LoginData userOther = new LoginData("username-other", "password");
 
     @BeforeAll
     public void setUp() throws Exception {

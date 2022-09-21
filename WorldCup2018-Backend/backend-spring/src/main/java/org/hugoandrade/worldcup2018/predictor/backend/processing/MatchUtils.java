@@ -2,6 +2,7 @@ package org.hugoandrade.worldcup2018.predictor.backend.processing;
 
 import org.hugoandrade.worldcup2018.predictor.backend.model.Country;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.model.Prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.model.Stage;
 
 import java.util.*;
@@ -507,6 +508,38 @@ public final class MatchUtils {
 
         return String.valueOf(match.getAwayTeamGoals()) +
                 (match.getAwayTeamNotes() == null ? "" : match.getAwayTeamNotes());
+    }
+
+    public static boolean isPredictionSet(Prediction prediction) {
+
+        return Integer.valueOf(prediction.getHomeTeamGoals()) != null &&
+                Integer.valueOf(prediction.getAwayTeamGoals()) != null &&
+                prediction.getHomeTeamGoals() != -1 &&
+                prediction.getAwayTeamGoals() != -1;
+    }
+
+    public static boolean didPredictHomeTeamWin(Prediction prediction) {
+        return prediction.getHomeTeamGoals() > prediction.getAwayTeamGoals();
+    }
+
+    public static boolean didPredictAwayTeamWin(Prediction prediction) {
+        return prediction.getAwayTeamGoals() > prediction.getHomeTeamGoals();
+    }
+
+    public static boolean isPredictionCorrect(Match match, Prediction prediction) {
+
+        return prediction.getHomeTeamGoals() == match.getHomeTeamGoals()
+                && prediction.getAwayTeamGoals() == match.getAwayTeamGoals();
+    }
+
+    public static boolean isMarginOfVictoryCorrect(Match match, Prediction prediction) {
+
+        return prediction.getHomeTeamGoals() - prediction.getAwayTeamGoals() ==
+                match.getHomeTeamGoals() - match.getAwayTeamGoals();
+    }
+
+    public static boolean didPredictTie(Prediction prediction) {
+        return prediction.getHomeTeamGoals() == prediction.getAwayTeamGoals();
     }
 }
 
