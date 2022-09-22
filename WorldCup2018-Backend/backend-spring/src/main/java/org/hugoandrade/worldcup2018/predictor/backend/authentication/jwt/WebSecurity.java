@@ -60,6 +60,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/matches/**").hasAuthority("Admin")
                 .antMatchers(HttpMethod.DELETE, "/matches/**").hasAuthority("Admin")
 
+                .antMatchers("/leagues/**").authenticated()
+
                 .antMatchers(HttpMethod.POST, "/system-data").hasAuthority("Admin")
                 .antMatchers(HttpMethod.POST, "/system-data/").hasAuthority("Admin")
                 .antMatchers(HttpMethod.GET, "/system-data").permitAll()

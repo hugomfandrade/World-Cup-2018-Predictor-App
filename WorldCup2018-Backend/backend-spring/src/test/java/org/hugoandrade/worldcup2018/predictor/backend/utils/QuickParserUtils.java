@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hugoandrade.worldcup2018.predictor.backend.processing.MatchUtils;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.io.UnsupportedEncodingException;
 
 public final class QuickParserUtils {
 
@@ -35,6 +38,10 @@ public final class QuickParserUtils {
         return null;
     }
 
+    public static <T> T parse(MvcResult mvcResult, Class<T> clazz) throws UnsupportedEncodingException {
+        return parse(mvcResult.getResponse().getContentAsString(), clazz);
+    }
+
     public static <T> T parse(String data, Class<T> clazz) {
         if (data == null) return null;
         ObjectMapper mapper = new ObjectMapper();
@@ -47,6 +54,10 @@ public final class QuickParserUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static <T> T parse(MvcResult mvcResult, TypeReference<T> clazz) throws UnsupportedEncodingException {
+        return parse(mvcResult.getResponse().getContentAsString(), clazz);
     }
 
     public static <T> T parse(String data, TypeReference<T> clazz) {

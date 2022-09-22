@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public interface AccountRepository extends CrudRepository<Account, Long> {
+public interface AccountRepository extends CrudRepository<Account, String> {
 
     Account findByUsername(String username);
 
