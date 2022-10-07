@@ -1,11 +1,11 @@
 package org.hugoandrade.worldcup2018.predictor.backend.config;
 
-import org.hugoandrade.worldcup2018.predictor.backend.model.*;
-import org.hugoandrade.worldcup2018.predictor.backend.model.Country.Tournament;
-import org.hugoandrade.worldcup2018.predictor.backend.processing.TournamentProcessing;
-import org.hugoandrade.worldcup2018.predictor.backend.repository.CountryRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.repository.MatchRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.repository.SystemDataRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.*;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country.Tournament;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
