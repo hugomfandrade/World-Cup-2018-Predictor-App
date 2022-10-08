@@ -34,6 +34,8 @@ class PredictionScoresProcessingTest extends BaseControllerTest {
     @Autowired MatchRepository matchRepository;
     @Autowired PredictionRepository predictionRepository;
 
+    @Autowired PredictionScoresProcessing scoresProcessing;
+
     private final static Map<Integer, Integer[]> SCORES_GROUP_B = new HashMap<>();
     static {
         SCORES_GROUP_B.put(4, new Integer[]{0, 1});
@@ -94,7 +96,7 @@ class PredictionScoresProcessingTest extends BaseControllerTest {
 
         final Consumer<Match> updatePredictionScoreFunction = match -> {
 
-            final PredictionScoresProcessing scoresProcessing = new PredictionScoresProcessing(new PredictionScoresProcessing.OnProcessingListener() {
+            scoresProcessing.setListener(new PredictionScoresProcessing.OnProcessingListener() {
 
                 @Override public void onProcessingFinished(List<Prediction> predictions) {}
 

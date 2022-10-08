@@ -1,8 +1,8 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
-import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,6 +29,8 @@ public class TournamentProcessingTest extends BaseControllerTest {
     @Autowired CountryRepository countryRepository;
     @Autowired MatchRepository matchRepository;
 
+    @Autowired TournamentProcessing tournamentProcessing;
+
     @BeforeAll
     public void setUp() throws Exception {
         super.setUp();
@@ -44,7 +46,6 @@ public class TournamentProcessingTest extends BaseControllerTest {
         SCORES_GROUP_B.put(20, new Integer[]{0, 1});
         SCORES_GROUP_B.put(35, new Integer[]{1, 1});
         SCORES_GROUP_B.put(36, new Integer[]{2, 2});
-
     }
 
     @Test
@@ -75,7 +76,7 @@ public class TournamentProcessingTest extends BaseControllerTest {
         final List<Country.Tournament> updatedCountries = new ArrayList<>();
         final List<Integer> updatedMatchUps = new ArrayList<>();
 
-        final TournamentProcessing tournamentProcessing = new TournamentProcessing(new TournamentProcessing.OnProcessingListener() {
+        tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
             @Override
             public void onProcessingFinished(List<Country> countries, List<Match> matches) {
                 System.out.println(countries);

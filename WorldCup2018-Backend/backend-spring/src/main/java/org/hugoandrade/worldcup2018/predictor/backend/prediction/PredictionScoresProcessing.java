@@ -3,6 +3,7 @@ package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
+import org.springframework.stereotype.Service;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -11,19 +12,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+@Service
 public class PredictionScoresProcessing {
 
     private final static String TAG = PredictionScoresProcessing.class.getSimpleName();
 
-    private final OnProcessingListener mOnProcessingFinished;
+    private OnProcessingListener mOnProcessingFinished;
 
     private UpdateScoreProcessing mTask;
 
     private ExecutorService mExecutors;
-
-    public PredictionScoresProcessing(OnProcessingListener onProcessingListener) {
-        mOnProcessingFinished = onProcessingListener;
-    }
 
     public void startUpdatePredictionScores(SystemData systemData, Match match, List<Prediction> predictions) {
         // Do processing asynchronously
@@ -42,6 +40,10 @@ public class PredictionScoresProcessing {
         // Do processing synchronously
         mTask = new UpdateScoreProcessing(systemData, mOnProcessingFinished, match, predictions);
         mTask.run();
+    }
+
+    public void setListener(OnProcessingListener onProcessingListener) {
+        mOnProcessingFinished = onProcessingListener;
     }
 
     public static class UpdateScoreProcessing implements Runnable {

@@ -1,16 +1,12 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
-import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionScoresProcessing;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.UsersScoreProcessing;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,6 +31,9 @@ class UsersScoreProcessingTest extends BaseControllerTest {
     @Autowired AccountRepository accountRepository;
     @Autowired MatchRepository matchRepository;
     @Autowired PredictionRepository predictionRepository;
+
+    @Autowired PredictionScoresProcessing scoresProcessing;
+    @Autowired UsersScoreProcessing usersScoreProcessing;
 
     private final static Map<Integer, Integer[]> SCORES_GROUP_B = new HashMap<>();
     static {
@@ -97,7 +96,7 @@ class UsersScoreProcessingTest extends BaseControllerTest {
 
         final Consumer<Match> updatePredictionScoreFunction = match -> {
 
-            final PredictionScoresProcessing scoresProcessing = new PredictionScoresProcessing(new PredictionScoresProcessing.OnProcessingListener() {
+            scoresProcessing.setListener(new PredictionScoresProcessing.OnProcessingListener() {
 
                 @Override public void onProcessingFinished(List<Prediction> predictions) {}
 
@@ -109,11 +108,9 @@ class UsersScoreProcessingTest extends BaseControllerTest {
             });
             scoresProcessing.startUpdatePredictionScoresSync(systemData, match, predictionRepository.findByMatchNumber(match.getMatchNumber()));
 
-            final UsersScoreProcessing usersScoreProcessing = new UsersScoreProcessing(new UsersScoreProcessing.OnProcessingListener() {
-                @Override
-                public void onProcessingFinished(List<Account> accounts) {
+            usersScoreProcessing.setListener(new UsersScoreProcessing.OnProcessingListener() {
 
-                }
+                @Override public void onProcessingFinished(List<Account> accounts) {}
 
                 @Override
                 public void updateAccount(Account account) {

@@ -14,6 +14,7 @@ import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,61 @@ import java.util.List;
 public class SystemController {
 
 	@Autowired private SystemDataRepository systemDataRepository;
+	@Autowired private AccountRepository accountRepository;
+	@Autowired private PredictionRepository predictionRepository;
+	@Autowired private CountryRepository countryRepository;
+	@Autowired private MatchRepository matchRepository;
+
+	@Autowired private PredictionScoresProcessing predictionScoresProcessing;
+	@Autowired private TournamentProcessing tournamentProcessing;
+	@Autowired private UsersScoreProcessing usersScoreProcessing;
+
+	@PostConstruct
+	private void config() {
+		predictionScoresProcessing.setListener(new PredictionScoresProcessing.OnProcessingListener() {
+
+			@Override
+			public void onProcessingFinished(List<Prediction> predictions) {
+				for (Prediction prediction : predictions) {
+					Prediction dbPrediction = predictionRepository.findById(prediction.getID()).get();
+					predictionRepository.save(prediction);
+				}
+			}
+
+			@Override public void updatePrediction(Prediction prediction) {}
+		});
+
+		tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
+
+			@Override
+			public void onProcessingFinished(List<Country> countries, List<Match> matches) {
+				for (Country country : countries) {
+					Country dbCountry = countryRepository.findCountryById(country.getID());
+					countryRepository.save(country);
+				}
+				for (Match match : matches) {
+					Match dbMatch = matchRepository.findByMatchNumber(match.getMatchNumber());
+					matchRepository.save(match);
+				}
+			}
+
+			@Override public void updateCountry(Country country) { }
+			@Override public void updateMatchUp(Match match) { }
+		});
+
+		usersScoreProcessing.setListener(new UsersScoreProcessing.OnProcessingListener() {
+
+			@Override
+			public void onProcessingFinished(List<Account> accounts) {
+				for (Account account : accounts) {
+					Account dbAccount = accountRepository.findByUsername(account.getUsername());
+					accountRepository.save(account);
+				}
+			}
+
+			@Override public void updateAccount(Account account) { }
+		});
+	}
 
 	@RequestMapping("/")
 	public String index() {
@@ -49,57 +105,6 @@ public class SystemController {
 		SystemData dbSystemData = systemDataRepository.save(systemData);
 		return dbSystemData;
 	}
-
-
-	@Autowired private AccountRepository accountRepository;
-	@Autowired private PredictionRepository predictionRepository;
-	@Autowired private CountryRepository countryRepository;
-	@Autowired private MatchRepository matchRepository;
-
-	private final TournamentProcessing tournamentProcessing = new TournamentProcessing(new TournamentProcessing.OnProcessingListener() {
-
-		@Override
-		public void onProcessingFinished(List<Country> countries, List<Match> matches) {
-			for (Country country : countries) {
-				Country dbCountry = countryRepository.findCountryById(country.getID());
-				countryRepository.save(country);
-			}
-			for (Match match : matches) {
-				Match dbMatch = matchRepository.findByMatchNumber(match.getMatchNumber());
-				matchRepository.save(match);
-			}
-		}
-
-		@Override public void updateCountry(Country country) { }
-		@Override public void updateMatchUp(Match match) { }
-	});
-
-	private final PredictionScoresProcessing predictionScoresProcessing = new PredictionScoresProcessing(new PredictionScoresProcessing.OnProcessingListener() {
-
-		@Override
-		public void onProcessingFinished(List<Prediction> predictions) {
-			for (Prediction prediction : predictions) {
-				Prediction dbPrediction = predictionRepository.findById(prediction.getID()).get();
-				predictionRepository.save(prediction);
-			}
-		}
-
-		@Override public void updatePrediction(Prediction prediction) {}
-	});
-
-	private final UsersScoreProcessing usersScoreProcessing = new UsersScoreProcessing(new UsersScoreProcessing.OnProcessingListener() {
-
-		@Override
-		public void onProcessingFinished(List<Account> accounts) {
-			for (Account account : accounts) {
-				Account dbAccount = accountRepository.findByUsername(account.getUsername());
-				accountRepository.save(account);
-			}
-		}
-
-		@Override public void updateAccount(Account account) { }
-	});
-
 
 	@PostMapping("/reset-all")
 	public String hardReset() {

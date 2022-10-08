@@ -12,6 +12,7 @@ import org.hugoandrade.worldcup2018.predictor.backend.system.SystemController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @RestController
@@ -26,44 +27,53 @@ public class MatchesController {
 	@Autowired private PredictionRepository predictionRepository;
 	@Autowired private CountryRepository countryRepository;
 
-	private final TournamentProcessing tournamentProcessing = new TournamentProcessing(new TournamentProcessing.OnProcessingListener() {
+	@Autowired private PredictionScoresProcessing predictionScoresProcessing;
+	@Autowired private TournamentProcessing tournamentProcessing;
+	@Autowired private UsersScoreProcessing usersScoreProcessing;
 
-		@Override public void onProcessingFinished(List<Country> countries, List<Match> matches) {}
+	@PostConstruct
+	private void config() {
+		predictionScoresProcessing.setListener(new PredictionScoresProcessing.OnProcessingListener() {
 
-		@Override
-		public void updateCountry(Country country) {
-			Country dbCountry = countryRepository.findCountryById(country.getID());
-			countryRepository.save(country);
-		}
+			@Override
+			public void onProcessingFinished(List<Prediction> predictions) {
+				for (Prediction prediction : predictions) {
+					Prediction dbPrediction = predictionRepository.findById(prediction.getID()).get();
+					predictionRepository.save(prediction);
+				}
+			}
 
-		@Override
-		public void updateMatchUp(Match match) {
-			Match dbMatch = matchRepository.findByMatchNumber(match.getMatchNumber());
-			matchRepository.save(match);
-		}
-	});
+			@Override public void updatePrediction(Prediction prediction) {}
+		});
 
-	private final PredictionScoresProcessing predictionScoresProcessing = new PredictionScoresProcessing(new PredictionScoresProcessing.OnProcessingListener() {
+		tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
 
-		@Override public void onProcessingFinished(List<Prediction> predictions) { }
+			@Override public void onProcessingFinished(List<Country> countries, List<Match> matches) {}
 
-		@Override
-		public void updatePrediction(Prediction prediction) {
-			Prediction dbPrediction = predictionRepository.findById(prediction.getID()).get();
-			predictionRepository.save(prediction);
-		}
-	});
+			@Override
+			public void updateCountry(Country country) {
+				Country dbCountry = countryRepository.findCountryById(country.getID());
+				countryRepository.save(country);
+			}
 
-	private final UsersScoreProcessing usersScoreProcessing = new UsersScoreProcessing(new UsersScoreProcessing.OnProcessingListener() {
+			@Override
+			public void updateMatchUp(Match match) {
+				Match dbMatch = matchRepository.findByMatchNumber(match.getMatchNumber());
+				matchRepository.save(match);
+			}
+		});
 
-		@Override public void onProcessingFinished(List<Account> accounts) {}
+		usersScoreProcessing.setListener(new UsersScoreProcessing.OnProcessingListener() {
 
-		@Override
-		public void updateAccount(Account account) {
-			Account dbAccount = accountRepository.findByUsername(account.getUsername());
-			accountRepository.save(account);
-		}
-	});
+			@Override public void onProcessingFinished(List<Account> accounts) {}
+
+			@Override
+			public void updateAccount(Account account) {
+				Account dbAccount = accountRepository.findByUsername(account.getUsername());
+				accountRepository.save(account);
+			}
+		});
+	}
 
 	@GetMapping("/")
 	public List<Match> all() {

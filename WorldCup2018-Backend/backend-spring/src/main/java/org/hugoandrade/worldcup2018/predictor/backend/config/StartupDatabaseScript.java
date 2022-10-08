@@ -19,6 +19,8 @@ public class StartupDatabaseScript {
     @Autowired private CountryRepository countryRepository;
     @Autowired private MatchRepository matchRepository;
 
+    @Autowired private TournamentProcessing tournamentProcessing;
+
     public void startup() {
         startupSystemData();
         startupCountries();
@@ -33,7 +35,7 @@ public class StartupDatabaseScript {
         final List<Country> countries = countryRepository.findAllAsList();
 
         // first update, the positions
-        final TournamentProcessing tournamentProcessing = new TournamentProcessing(new TournamentProcessing.OnProcessingListener() {
+        tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
             @Override
             public void onProcessingFinished(List<Country> countries, List<Match> matches) {
 
