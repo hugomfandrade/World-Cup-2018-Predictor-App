@@ -1,9 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.security;
 
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Admin;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.AdminRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,23 +17,18 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private AdminRepository adminRepository;
+    private AccountService accountService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findByUsername(username);
+        Account account = accountService.getByUsername(username);
         if (account == null) {
             throw new UsernameNotFoundException(username);
         }
 
-        Admin admin = adminRepository.findByUserID(account.getId());
-
         final List<GrantedAuthority> authorities = new ArrayList<>();
 
-        if (admin != null) {
+        if (accountService.isAdmin(account.getId())) {
             authorities.add(new SimpleGrantedAuthority("Admin"));
         }
 

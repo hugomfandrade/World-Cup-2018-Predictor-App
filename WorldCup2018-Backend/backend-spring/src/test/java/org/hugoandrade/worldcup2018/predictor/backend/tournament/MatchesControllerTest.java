@@ -2,9 +2,9 @@ package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountriesService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -31,12 +31,12 @@ class MatchesControllerTest extends BaseControllerTest {
     @Autowired private MockMvc mvc;
 
     @Autowired private MatchRepository matchRepository;
-    @Autowired private CountryRepository countryRepository;
+    @Autowired private CountriesService countriesService;
 
     @Test
     void all() throws Exception {
 
-        final List<Country> countries = countryRepository.findAllAsList();
+        final List<Country> countries = countriesService.getAll();
 
         mvc.perform(MockMvcRequestBuilders.get("/matches/"))
                 .andExpect(status().is4xxClientError());

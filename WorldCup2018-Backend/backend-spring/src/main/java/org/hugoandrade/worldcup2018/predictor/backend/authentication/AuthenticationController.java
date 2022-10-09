@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
 	@Autowired
-	private AccountRepository accountRepository;
+	private AccountService accountService;
 
 	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@GetMapping("/")
 	public String home() {
 		return "Authentication from Spring Boot!";
 	}
 
-	@RequestMapping(value = "/login/", method = RequestMethod.GET)
+	@GetMapping("/login/")
 	public String login() {
 		return home();
 	}
@@ -35,7 +35,7 @@ public class AuthenticationController {
 		String password = passwordAndSalt.substring(passwordAndSalt.length() / 2);
 		account.setPassword(password);
 		account.setSalt(salt);
-		accountRepository.save(account);
+		account = accountService.add(account);
 
 		// output value
 		// ObjectNode o = new ObjectNode(JsonNodeFactory.instance);
@@ -48,6 +48,6 @@ public class AuthenticationController {
 
 	@GetMapping("/accounts")
 	public Iterable<Account> getAccounts() {
-		return accountRepository.findAll();
+		return accountService.getAccounts();
 	}
 }

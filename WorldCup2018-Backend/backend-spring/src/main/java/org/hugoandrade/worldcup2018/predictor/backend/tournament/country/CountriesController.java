@@ -10,54 +10,41 @@ import java.util.List;
 public class CountriesController {
 
 	@Autowired
-	private CountryRepository countryRepository;
+	private CountriesService countriesService;
 
 	@GetMapping("/")
 	public List<Country> all() {
-		return countryRepository.findAllAsList();
+		return countriesService.getAll();
 	}
 
 	@PostMapping("/")
 	public Country addOne(@RequestBody Country country) {
-		Country resCountry = countryRepository.save(country);
+		Country resCountry = countriesService.addOne(country);
 		return resCountry;
 	}
 
 	@DeleteMapping("/")
 	public void deleteAll() {
-		countryRepository.deleteAll();
+		countriesService.deleteAll();
 	}
 
 	@GetMapping("/{countryID}")
 	public Country getOne(@PathVariable("countryID") String countryID) {
-
-		Country country = countryRepository.findCountryById(countryID);
-
-		if (country == null) return null;
-
+		Country country = countriesService.getOne(countryID);
 		return country;
 	}
 
 	@DeleteMapping("/{countryID}")
 	public Country deleteOne(@PathVariable("countryID") String countryID) {
-
-		Country country = countryRepository.findCountryById(countryID);
-		if (country == null) return null;
-		countryRepository.deleteById(countryID);
+		Country country = countriesService.deleteOne(countryID);
 		return country;
 	}
 
 	@PutMapping("/{countryID}")
 	public Country updateOne(@PathVariable("countryID") String countryID,
 							 @RequestBody Country country) {
-
-		Country dbCountry = countryRepository.findCountryById(countryID);
-		if (dbCountry == null) return null;
-
-		country.setID(countryID);
-
-		Country resCountry = countryRepository.save(country);
-		return resCountry;
+		Country dbCountry = countriesService.updateOne(countryID, country);
+		return dbCountry;
 	}
 
 }

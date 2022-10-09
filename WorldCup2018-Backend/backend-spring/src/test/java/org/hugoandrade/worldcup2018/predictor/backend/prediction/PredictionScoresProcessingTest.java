@@ -1,14 +1,11 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionScoresProcessing;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,11 +27,11 @@ import java.util.stream.Collectors;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PredictionScoresProcessingTest extends BaseControllerTest {
 
-    @Autowired SystemDataRepository systemDataRepository;
+    @Autowired SystemDataService systemDataService;
     @Autowired MatchRepository matchRepository;
     @Autowired PredictionRepository predictionRepository;
 
-    @Autowired PredictionScoresProcessing scoresProcessing;
+    PredictionScoresProcessing scoresProcessing = new PredictionScoresProcessing();
 
     private final static Map<Integer, Integer[]> SCORES_GROUP_B = new HashMap<>();
     static {
@@ -82,7 +79,7 @@ class PredictionScoresProcessingTest extends BaseControllerTest {
     @Test
     void startUpdatePredictionScoreProcessing_GroupB() {
 
-        final SystemData systemData = systemDataRepository.findAllAsList().stream().findFirst().get();
+        final SystemData systemData = systemDataService.getSystemData();
         final SystemData.Rules rules = systemData.getRules();
 
         int incorrectPrediction = rules.getRuleIncorrectPrediction();

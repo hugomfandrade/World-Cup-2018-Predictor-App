@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountService;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
@@ -35,12 +35,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
 
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, SecurityConstants securityConstants, AccountRepository accountRepository) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, SecurityConstants securityConstants, AccountService accountService) {
         this.authenticationManager = authenticationManager;
         this.securityConstants = securityConstants;
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
 
         this.setRequiresAuthenticationRequestMatcher(new OrRequestMatcher(
                 new AntPathRequestMatcher("/auth/login"),
@@ -80,7 +80,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         final String username = ((User) auth.getPrincipal()).getUsername();
         final Collection<GrantedAuthority> authorities = ((User) auth.getPrincipal()).getAuthorities();
-        final String userID = accountRepository.findByUsername(username).getId();
+        final String userID = accountService.getByUsername(username).getId();
 
         String token = JWT.create()
                 .withSubject(username)

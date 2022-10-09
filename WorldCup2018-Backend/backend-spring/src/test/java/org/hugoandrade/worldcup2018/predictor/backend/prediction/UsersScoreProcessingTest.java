@@ -3,7 +3,7 @@ package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
-import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
@@ -27,13 +27,14 @@ import java.util.stream.Collectors;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UsersScoreProcessingTest extends BaseControllerTest {
 
-    @Autowired SystemDataRepository systemDataRepository;
+    @Autowired SystemDataService systemDataService;
     @Autowired AccountRepository accountRepository;
     @Autowired MatchRepository matchRepository;
     @Autowired PredictionRepository predictionRepository;
 
-    @Autowired PredictionScoresProcessing scoresProcessing;
-    @Autowired UsersScoreProcessing usersScoreProcessing;
+    PredictionScoresProcessing scoresProcessing = new PredictionScoresProcessing();
+
+    UsersScoreProcessing usersScoreProcessing = new UsersScoreProcessing();
 
     private final static Map<Integer, Integer[]> SCORES_GROUP_B = new HashMap<>();
     static {
@@ -81,7 +82,7 @@ class UsersScoreProcessingTest extends BaseControllerTest {
     @Test
     void startUpdatePredictionScoreProcessing_GroupB() {
 
-        final SystemData systemData = systemDataRepository.findAllAsList().stream().findFirst().get();
+        final SystemData systemData = systemDataService.getSystemData();
         final SystemData.Rules rules = systemData.getRules();
 
         int incorrectPrediction = rules.getRuleIncorrectPrediction();
@@ -118,7 +119,7 @@ class UsersScoreProcessingTest extends BaseControllerTest {
                     Account savedAccount = accountRepository.save(account);
                 }
             });
-            usersScoreProcessing.startUpdateUsersScoresAsync(predictionRepository.findAllAsList(),
+            usersScoreProcessing.startUpdateUsersScoresSync(predictionRepository.findAllAsList(),
                     accountRepository.findAllAsList().toArray(new Account[0]));
         };
 

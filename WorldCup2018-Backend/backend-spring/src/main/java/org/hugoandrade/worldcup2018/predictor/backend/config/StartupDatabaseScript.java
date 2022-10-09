@@ -1,11 +1,11 @@
 package org.hugoandrade.worldcup2018.predictor.backend.config;
 
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.*;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country.Tournament;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
-import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +15,11 @@ import java.util.stream.IntStream;
 @Service
 public class StartupDatabaseScript {
 
-    @Autowired private SystemDataRepository systemDataRepository;
+    @Autowired private SystemDataService systemDataService;
     @Autowired private CountryRepository countryRepository;
     @Autowired private MatchRepository matchRepository;
 
-    @Autowired private TournamentProcessing tournamentProcessing;
+    @Autowired private TournamentProcessingService tournamentProcessing;
 
     public void startup() {
         startupSystemData();
@@ -30,37 +30,12 @@ public class StartupDatabaseScript {
     }
 
     private void updateOrder() {
-
-        final List<Match> matches = matchRepository.findAllAsList();
-        final List<Country> countries = countryRepository.findAllAsList();
-
-        // first update, the positions
-        tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
-            @Override
-            public void onProcessingFinished(List<Country> countries, List<Match> matches) {
-
-                for (Country country : countries) {
-                    Country dbCountry = countryRepository.findCountryById(country.getID());
-                    countryRepository.save(country);
-                }
-
-                for (Match match : matches) {
-                    Match dbMatch = matchRepository.findByMatchNumber(match.getMatchNumber());
-                    matchRepository.save(match);
-                }
-            }
-
-            @Override public void updateCountry(Country country) { }
-            @Override public void updateMatchUp(Match match) { }
-
-        });
-        tournamentProcessing.startUpdateGroupsSync(countries, matches);
+        tournamentProcessing.resetOrder();
     }
 
     private void startupSystemData() {
 
-        systemDataRepository.deleteAll();
-        systemDataRepository.save(new SystemData(null, "0,1,2,4", true, new Date(), new Date()));
+        systemDataService.setSystemData(new SystemData(null, "0,1,2,4", true, new Date(), new Date()));
     }
 
     private void startupMatches() {

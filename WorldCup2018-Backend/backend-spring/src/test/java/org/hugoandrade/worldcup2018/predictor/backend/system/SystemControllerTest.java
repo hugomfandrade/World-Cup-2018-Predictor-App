@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
+import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionsService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
 import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;

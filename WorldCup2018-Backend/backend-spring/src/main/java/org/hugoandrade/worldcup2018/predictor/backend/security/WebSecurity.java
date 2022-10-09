@@ -1,6 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.security;
 
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountService;
 import org.hugoandrade.worldcup2018.predictor.backend.security.jwt.JWTAuthenticationFilter;
 import org.hugoandrade.worldcup2018.predictor.backend.security.jwt.JWTAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private SecurityConstants securityConstants;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -72,7 +72,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), securityConstants, accountRepository))
+                .addFilter(new JWTAuthenticationFilter(authenticationManager(), securityConstants, accountService))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), securityConstants))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

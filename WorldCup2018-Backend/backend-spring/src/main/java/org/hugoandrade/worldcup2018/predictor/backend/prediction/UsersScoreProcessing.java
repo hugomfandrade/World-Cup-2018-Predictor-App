@@ -1,7 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
-import org.springframework.stereotype.Service;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -10,7 +9,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Service
 public class UsersScoreProcessing {
 
     private final static String TAG = UsersScoreProcessing.class.getSimpleName();

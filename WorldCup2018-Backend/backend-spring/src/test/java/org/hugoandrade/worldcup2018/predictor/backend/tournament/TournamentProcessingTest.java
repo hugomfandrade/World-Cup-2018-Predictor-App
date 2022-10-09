@@ -1,7 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountriesService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,10 +26,10 @@ import static org.hugoandrade.worldcup2018.predictor.backend.tournament.country.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TournamentProcessingTest extends BaseControllerTest {
 
-    @Autowired CountryRepository countryRepository;
-    @Autowired MatchRepository matchRepository;
+    @Autowired CountriesService countriesService;
+    @Autowired MatchesService matchesService;
 
-    @Autowired TournamentProcessing tournamentProcessing;
+    TournamentProcessing tournamentProcessing = new TournamentProcessing();
 
     @BeforeAll
     public void setUp() throws Exception {
@@ -51,8 +51,9 @@ public class TournamentProcessingTest extends BaseControllerTest {
     @Test
     void startUpdateGroupsProcessing_GroupB() {
 
-        final List<Match> matches = matchRepository.findAllAsList();
-        final List<Country> countries = countryRepository.findAllAsList();
+        final List<Match> matches = matchesService.getAll();
+        final List<Country> countries = countriesService.getAll();
+
         final Map<Integer, Match> matchMap = matches.stream()
                 .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
         final Map<String, Country> countryMap = countries.stream()
@@ -77,11 +78,7 @@ public class TournamentProcessingTest extends BaseControllerTest {
         final List<Integer> updatedMatchUps = new ArrayList<>();
 
         tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
-            @Override
-            public void onProcessingFinished(List<Country> countries, List<Match> matches) {
-                System.out.println(countries);
-                System.out.println(matches);
-            }
+            @Override public void onProcessingFinished(List<Country> countries, List<Match> matches) { }
 
             @Override
             public void updateCountry(Country country) {

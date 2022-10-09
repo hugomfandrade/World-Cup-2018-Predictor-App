@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.assertj.core.util.Lists;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemController;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
@@ -36,14 +37,14 @@ class LeaguesControllerTest extends BaseControllerTest {
 
     @Autowired private MockMvc mvc;
 
-    @Autowired private SystemController systemController;
+    @Autowired private SystemDataService systemDataService;
     @Autowired private LeagueUserRepository leagueUserRepository;
     @Autowired private LeagueRepository leagueRepository;
 
     @BeforeEach
     void beforeEach() {
         SystemData systemData = new SystemData(null, "0,1,2,4", true, ISO8601Utils.parse("2018-06-27T12:00:00Z"));
-        systemController.postSystemData(systemData);
+        systemDataService.setSystemData(systemData);
 
         leagueRepository.deleteAll();
         leagueUserRepository.deleteAll();

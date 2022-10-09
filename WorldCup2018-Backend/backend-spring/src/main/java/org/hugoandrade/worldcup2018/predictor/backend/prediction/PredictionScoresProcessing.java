@@ -1,9 +1,8 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchUtils;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
-import org.springframework.stereotype.Service;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-@Service
 public class PredictionScoresProcessing {
 
     private final static String TAG = PredictionScoresProcessing.class.getSimpleName();

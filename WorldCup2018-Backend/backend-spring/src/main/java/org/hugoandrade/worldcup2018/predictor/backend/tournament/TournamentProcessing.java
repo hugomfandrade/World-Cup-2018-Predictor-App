@@ -3,7 +3,6 @@ package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 import javafx.util.Pair;
 import org.apache.commons.lang3.SerializationUtils;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
-import org.springframework.stereotype.Service;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -12,7 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Service
 public class TournamentProcessing {
 
     private final static String TAG = TournamentProcessing.class.getSimpleName();
