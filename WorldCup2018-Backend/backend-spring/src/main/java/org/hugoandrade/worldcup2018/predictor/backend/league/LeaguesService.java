@@ -1,8 +1,9 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import org.apache.commons.lang.StringUtils;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,8 @@ import java.util.stream.StreamSupport;
 public class LeaguesService {
 
 	@Autowired private AccountService accountService;
+
+	@Autowired private ModelMapper modelMapper;
 
 	@Autowired private LeagueRepository leagueRepository;
 	@Autowired private LeagueUserRepository leagueUserRepository;
@@ -85,7 +88,7 @@ public class LeaguesService {
 	}
 
 	@Deprecated
-	public List<Account> getLeagueUsers(String userID, String leagueID) {
+	public List<AccountDto> getLeagueUsers(String userID, String leagueID) {
 
 		LeagueUser leagueUser = leagueUserRepository.findByUserID(leagueID, userID);
 
@@ -94,7 +97,7 @@ public class LeaguesService {
 		return this.getLeagueUsers(leagueID);
 	}
 
-	public List<Account> getLeagueUsers(String leagueID) {
+	public List<AccountDto> getLeagueUsers(String leagueID) {
 
 		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByLeagueID(leagueID);
 
@@ -102,7 +105,10 @@ public class LeaguesService {
 				.map(LeagueUser::getUserID)
 				.collect(Collectors.toList());
 
-		return accountService.getAccounts(accountIDs);
+		return accountService.getAccounts(accountIDs)
+				.stream()
+				.map(account -> modelMapper.map(account, AccountDto.class))
+				.collect(Collectors.toList());
 	}
 
 	public void deleteLeague(String userID, String leagueID) {

@@ -59,7 +59,6 @@ public class AuthenticationControllerTest {
 				// .andExpect(jsonPath("$.id", Matchers.equalTo("1")))
 				// .andExpect(jsonPath("$.UserID", Matchers.equalTo("1")))
 				.andExpect(jsonPath("$.username", Matchers.equalTo(loginData.getUsername())))
-				.andExpect(jsonPath("$.token", Matchers.notNullValue()))
-				.andExpect(jsonPath("$.Token", Matchers.notNullValue()));
+				.andExpect(jsonPath("$.token", Matchers.notNullValue()));
 	}
 }

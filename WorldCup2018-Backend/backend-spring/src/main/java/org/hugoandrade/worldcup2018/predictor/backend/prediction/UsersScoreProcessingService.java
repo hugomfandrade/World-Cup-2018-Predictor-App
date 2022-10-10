@@ -1,7 +1,9 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,15 +15,24 @@ public class UsersScoreProcessingService {
     @Autowired private AccountRepository accountRepository;
     @Autowired private PredictionsService predictionsService;
 
+    @Autowired private ModelMapper modelMapper;
+
     private final UsersScoreProcessing usersScoreProcessing
             = new UsersScoreProcessing();
+
+    private AccountDto[] getAccounts() {
+        return accountRepository.findAllAsList()
+                .stream()
+                .map(account -> modelMapper.map(account, AccountDto.class))
+                .toArray(AccountDto[]::new);
+    }
 
     public void resetScores() {
 
         this.setResetListener();
 
         final List<Prediction> predictions = predictionsService.getAll();
-        final Account[] accounts = accountRepository.findAllAsList().toArray(new Account[0]);
+        final AccountDto[] accounts = getAccounts();
 
         usersScoreProcessing.startUpdateUsersScoresSync(predictions, accounts);
     }
@@ -31,7 +42,7 @@ public class UsersScoreProcessingService {
         this.setResetListener();
 
         final List<Prediction> predictions = predictionsService.getAll();
-        final Account[] accounts = accountRepository.findAllAsList().toArray(new Account[0]);
+        final AccountDto[] accounts = getAccounts();
 
         usersScoreProcessing.startUpdateUsersScoresAsync(predictions, accounts);
     }
@@ -41,7 +52,7 @@ public class UsersScoreProcessingService {
         this.setUpdateListener();
 
         final List<Prediction> predictions = predictionsService.getAll();
-        final Account[] accounts = accountRepository.findAllAsList().toArray(new Account[0]);
+        final AccountDto[] accounts = getAccounts();
 
         usersScoreProcessing.startUpdateUsersScoresSync(predictions, accounts);
     }
@@ -51,7 +62,7 @@ public class UsersScoreProcessingService {
         this.setUpdateListener();
 
         final List<Prediction> predictions = predictionsService.getAll();
-        final Account[] accounts = accountRepository.findAllAsList().toArray(new Account[0]);
+        final AccountDto[] accounts = getAccounts();
 
         usersScoreProcessing.startUpdateUsersScoresAsync(predictions, accounts);
     }
@@ -61,15 +72,16 @@ public class UsersScoreProcessingService {
         usersScoreProcessing.setListener(new UsersScoreProcessing.OnProcessingListener() {
 
             @Override
-            public void onProcessingFinished(List<Account> accounts) {
+            public void onProcessingFinished(List<AccountDto> accounts) {
 
-                for (Account account : accounts) {
+                for (AccountDto account : accounts) {
                     Account dbAccount = accountRepository.findByUsername(account.getUsername());
-                    accountRepository.save(account);
+                    dbAccount.setScore(account.getScore());
+                    accountRepository.save(dbAccount);
                 }
             }
 
-            @Override public void updateAccount(Account account) { }
+            @Override public void updateAccount(AccountDto account) { }
         });
     }
 
@@ -77,12 +89,13 @@ public class UsersScoreProcessingService {
 
         usersScoreProcessing.setListener(new UsersScoreProcessing.OnProcessingListener() {
 
-            @Override public void onProcessingFinished(List<Account> accounts) {}
+            @Override public void onProcessingFinished(List<AccountDto> accounts) {}
 
             @Override
-            public void updateAccount(Account account) {
+            public void updateAccount(AccountDto account) {
                 Account dbAccount = accountRepository.findByUsername(account.getUsername());
-                accountRepository.save(account);
+                dbAccount.setScore(account.getScore());
+                accountRepository.save(dbAccount);
             }
         });
     }

@@ -2,9 +2,8 @@ package org.hugoandrade.worldcup2018.predictor.backend.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountService;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
@@ -59,7 +58,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             ServletInputStream inputStream = req.getInputStream();
             if (inputStream.available() == 0) throw new AuthenticationCredentialsNotFoundException("credentials not provided");
-            Account creds = new ObjectMapper().readValue(inputStream, Account.class);
+            LoginData creds = new ObjectMapper().readValue(inputStream, LoginData.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -92,15 +91,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .sign(HMAC512(securityConstants.SECRET.getBytes()));
         res.addHeader(securityConstants.HEADER_STRING, securityConstants.TOKEN_PREFIX + "::" + token);
 
-        ObjectNode o = new ObjectMapper().createObjectNode();
-        o.put("username", ((User) auth.getPrincipal()).getUsername());
-        o.put("token", token);
-        o.put("Token", token);
-        o.put("id", userID);
-        o.put("UserID", userID);
+        LoginData loginData = new LoginData();
+        loginData.setUsername(((User) auth.getPrincipal()).getUsername());
+        loginData.setToken(token);
+        loginData.setUserID(userID);
 
         res.resetBuffer();
-        res.getOutputStream().print(o.toString());
+        res.getOutputStream()
+                .print(new ObjectMapper().writeValueAsString(loginData));
     }
 
     @Override

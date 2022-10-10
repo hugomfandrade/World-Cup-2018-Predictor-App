@@ -1,7 +1,8 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import org.apache.commons.lang.StringUtils;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -9,12 +10,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/leagues")
 public class LeaguesController {
 
 	@Autowired private LeaguesService leaguesService;
+
+	@Autowired private ModelMapper modelMapper;
 
 	@GetMapping("/")
 	public List<League> getMyLeagues(Principal principal) {
@@ -53,14 +57,17 @@ public class LeaguesController {
 	}
 
 	@GetMapping("/{leagueID}/users")
-	public List<Account> getLeagueUsers(Principal principal, @PathVariable("leagueID") String leagueID) {
+	public List<AccountDto> getLeagueUsers(Principal principal, @PathVariable("leagueID") String leagueID) {
 		String userID = principal.getName();
 
 		boolean belongsToLeague = leaguesService.belongsToLeague(userID, leagueID);
 
 		if (!belongsToLeague) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you do not belong to this league");
 
-		return leaguesService.getLeagueUsers(leagueID);
+		return leaguesService.getLeagueUsers(leagueID)
+				.stream()
+				.map(account -> modelMapper.map(account, AccountDto.class))
+				.collect(Collectors.toList());
 	}
 
 	@DeleteMapping("/{leagueID}")
@@ -118,16 +125,5 @@ public class LeaguesController {
 		if (!belongsToLeague) return;
 
 		leaguesService.removeLeagueUser(userID, leagueID);
-	}
-
-	public static class JoinRequestBody {
-
-		public String code;
-
-		public JoinRequestBody() { }
-
-		public JoinRequestBody(String code) {
-			this.code = code;
-		}
 	}
 }

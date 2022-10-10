@@ -2,7 +2,7 @@ package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
@@ -160,14 +160,14 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
         return parse(mvcResult.getResponse().getContentAsString(), SystemData.class);
     }
 
-    private Account getAccount(String username) throws Exception {
+    private AccountDto getAccount(String username) throws Exception {
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/auth/accounts")
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Account>>() {})
+        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<AccountDto>>() {})
                 .stream()
                 .filter(account -> username.equals(account.getUsername()))
                 .findAny()

@@ -2,9 +2,8 @@ package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
-import org.hugoandrade.worldcup2018.predictor.backend.league.LeaguesController.JoinRequestBody;
 import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
@@ -206,9 +205,9 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
                 .get("/auth/accounts")
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Account> accounts = parse(mvcResult, new TypeReference<List<Account>>() {});
-                    List<Account> expectedAccounts = Stream.of(user, userOther, admin)
-                            .map(account -> new Account(account.getUserID(), account.getUsername(), expectedScores.get(account.getUserID())))
+                    List<AccountDto> accounts = parse(mvcResult, new TypeReference<List<AccountDto>>() {});
+                    List<AccountDto> expectedAccounts = Stream.of(user, userOther, admin)
+                            .map(account -> new AccountDto(account.getUserID(), account.getUsername(), expectedScores.get(account.getUserID())))
                             .collect(Collectors.toList());
 
                     Assertions.assertEquals(3, accounts.size());
@@ -225,9 +224,9 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
                 .get("/leagues/" + league.getID() + "/users/")
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Account> accounts = parse(mvcResult, new TypeReference<List<Account>>() {});
-                    List<Account> expectedAccounts = Stream.of(user, userOther)
-                            .map(account -> new Account(account.getUserID(), account.getUsername(), expectedScores.get(account.getUserID())))
+                    List<AccountDto> accounts = parse(mvcResult, new TypeReference<List<AccountDto>>() {});
+                    List<AccountDto> expectedAccounts = Stream.of(user, userOther)
+                            .map(account -> new AccountDto(account.getUserID(), account.getUsername(), expectedScores.get(account.getUserID())))
                             .collect(Collectors.toList());
 
                     Assertions.assertEquals(2, accounts.size());

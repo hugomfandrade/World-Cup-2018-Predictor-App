@@ -3,6 +3,7 @@ package org.hugoandrade.worldcup2018.predictor.backend;
 import org.hugoandrade.worldcup2018.predictor.backend.security.Pbkdf2PasswordEncoderImpl;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -66,5 +67,10 @@ public class Application {
 	@Bean
 	public PasswordEncoder bCryptPasswordEncoder() {
 		return new Pbkdf2PasswordEncoderImpl(securityConstants.iterations, securityConstants.bytes);
+	}
+
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 }

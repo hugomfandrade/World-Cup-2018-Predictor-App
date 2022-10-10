@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -111,16 +113,21 @@ class UsersScoreProcessingTest extends BaseControllerTest {
 
             usersScoreProcessing.setListener(new UsersScoreProcessing.OnProcessingListener() {
 
-                @Override public void onProcessingFinished(List<Account> accounts) {}
+                @Override public void onProcessingFinished(List<AccountDto> accounts) {}
 
                 @Override
-                public void updateAccount(Account account) {
+                public void updateAccount(AccountDto account) {
                     Account dbAccount = accountRepository.findByUsername(account.getUsername());
-                    Account savedAccount = accountRepository.save(account);
+                    dbAccount.setScore(account.getScore());
+                    Account savedAccount = accountRepository.save(dbAccount);
                 }
             });
+            final ModelMapper modelMapper = new ModelMapper();
             usersScoreProcessing.startUpdateUsersScoresSync(predictionRepository.findAllAsList(),
-                    accountRepository.findAllAsList().toArray(new Account[0]));
+                    accountRepository.findAllAsList()
+                            .stream()
+                            .map(account -> modelMapper.map(account, AccountDto.class))
+                            .toArray(AccountDto[]::new));
         };
 
         // update scores

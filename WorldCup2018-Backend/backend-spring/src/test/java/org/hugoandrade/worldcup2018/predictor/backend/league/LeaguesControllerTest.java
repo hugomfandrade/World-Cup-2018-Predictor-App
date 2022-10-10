@@ -3,8 +3,7 @@ package org.hugoandrade.worldcup2018.predictor.backend.league;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.assertj.core.util.Lists;
 import org.codehaus.jackson.map.util.ISO8601Utils;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
-import org.hugoandrade.worldcup2018.predictor.backend.league.LeaguesController.JoinRequestBody;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
@@ -245,13 +244,13 @@ class LeaguesControllerTest extends BaseControllerTest {
 
         // check two members
         final ResultMatcher checkEqualAccounts = mvcResult -> {
-            List<Account> accounts = parse(mvcResult, new TypeReference<List<Account>>() {});
-            List<Account> expectedAccounts = Stream.of(user, userOther)
-                    .map(account -> new Account(account.getUserID(), account.getUsername(), null, null))
+            List<AccountDto> accounts = parse(mvcResult, new TypeReference<List<AccountDto>>() {});
+            List<AccountDto> expectedAccounts = Stream.of(user, userOther)
+                    .map(account -> new AccountDto(account.getUserID(), account.getUsername()))
                     .collect(Collectors.toList());
 
-            accounts.sort(Comparator.comparing(Account::getUsername));
-            expectedAccounts.sort(Comparator.comparing(Account::getUsername));
+            accounts.sort(Comparator.comparing(AccountDto::getUsername));
+            expectedAccounts.sort(Comparator.comparing(AccountDto::getUsername));
 
             Assertions.assertEquals(2, accounts.size());
 
@@ -400,8 +399,7 @@ class LeaguesControllerTest extends BaseControllerTest {
 
         League league = parse(postLeaguesRes, League.class);
 
-        LeaguesController.JoinRequestBody joinRequest = new LeaguesController.JoinRequestBody();
-        joinRequest.code = league.getCode();
+        JoinRequestBody joinRequest = new JoinRequestBody(league.getCode());
 
         // join, successful
         mvc.perform(MockMvcRequestBuilders.post("/leagues/" + league.getID() + "/join")
@@ -436,7 +434,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, userOther.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Assertions.assertEquals(3, parse(mvcResult, new TypeReference<List<Account>>() {}).size());
+                    Assertions.assertEquals(3, parse(mvcResult, new TypeReference<List<AccountDto>>() {}).size());
                 });
 
         // leave as member
@@ -452,7 +450,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Assertions.assertEquals(2, parse(mvcResult, new TypeReference<List<Account>>() {}).size());
+                    Assertions.assertEquals(2, parse(mvcResult, new TypeReference<List<AccountDto>>() {}).size());
                 });
 
         // leave as admin, should delete league, no longer available
