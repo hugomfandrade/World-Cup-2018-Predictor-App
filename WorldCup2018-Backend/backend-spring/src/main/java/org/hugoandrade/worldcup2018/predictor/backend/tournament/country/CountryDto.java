@@ -1,64 +1,63 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament.country;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 
-@Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Country implements Comparable<Country>, Serializable {
+import static org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryDto.Entry.Cols.*;
+
+public class CountryDto implements Comparable<CountryDto>, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String mID;
-    private String mName;
-    private String mGroup;
-    private float mCoefficient;
-    private int mMatchesPlayed;
-    private int mGoalsFor;
-    private int mGoalsAgainst;
-    private int mGoalsDifference;
-    private int mPoints;
-    private int mPosition;
-    private int mVictories;
-    private int mDraws;
-    private int mDefeats;
-    private int mFairPlayPoints;
-    private int mDrawingOfLots;
+    @JsonProperty(ID) private String mID;
+    @JsonProperty(NAME) private String mName;
+    @JsonProperty(GROUP) private String mGroup;
+    @JsonProperty(COEFFICIENT) private float mCoefficient;
+    @JsonProperty(MATCHES_PLAYED) private int mMatchesPlayed;
+    @JsonProperty(GOALS_FOR) private int mGoalsFor;
+    @JsonProperty(GOALS_AGAINST) private int mGoalsAgainst;
+    @JsonProperty(GOALS_DIFFERENCE) private int mGoalsDifference;
+    @JsonProperty(POINTS) private int mPoints;
+    @JsonProperty(POSITION) private int mPosition;
+    @JsonProperty(VICTORIES) private int mVictories;
+    @JsonProperty(DRAWS) private int mDraws;
+    @JsonProperty(DEFEATS) private int mDefeats;
+    @JsonProperty(FAIR_PLAY_POINTS) private int mFairPlayPoints;
+    @JsonProperty(DRAWING_OF_LOTS) private int mDrawingOfLots;
 
     private boolean mHasAdvancedGroupStage;
 
-    public Country() {
+    public CountryDto() {
     }
 
-    public Country(String name, String group, int drawingOfLots) {
+    public CountryDto(String name, String group, int drawingOfLots) {
         mName = name;
         mGroup = group;
         mDrawingOfLots = drawingOfLots;
     }
 
-    public Country(String id, String name,
-                   int matchesPlayed,
-                   int victories, int draws, int defeats,
-                   int goalsFor, int goalsAgainst, int goalsDifference,
-                   String group,
-                   int points, int position,
-                   int fairPlayPoints, int drawingOfLots) {
+    public CountryDto(String id, String name,
+                      int matchesPlayed,
+                      int victories, int draws, int defeats,
+                      int goalsFor, int goalsAgainst, int goalsDifference,
+                      String group,
+                      int points, int position,
+                      int fairPlayPoints, int drawingOfLots) {
         this(id, name, matchesPlayed, victories, draws, defeats, goalsFor, goalsAgainst, goalsDifference, group, points, position, 0, fairPlayPoints, drawingOfLots);
     }
 
     @Deprecated
-    public Country(String id, String name,
-                   int matchesPlayed,
-                   int victories, int draws, int defeats,
-                   int goalsFor, int goalsAgainst, int goalsDifference,
-                   String group,
-                   int points, int position,
-                   float coefficient, int fairPlayPoints, int drawingOfLots) {
+    public CountryDto(String id, String name,
+                      int matchesPlayed,
+                      int victories, int draws, int defeats,
+                      int goalsFor, int goalsAgainst, int goalsDifference,
+                      String group,
+                      int points, int position,
+                      float coefficient, int fairPlayPoints, int drawingOfLots) {
         mID = id;
         mName = name;
         mMatchesPlayed = matchesPlayed;
@@ -201,7 +200,7 @@ public class Country implements Comparable<Country>, Serializable {
     }
 
     @Override
-    public int compareTo(Country o) {
+    public int compareTo(CountryDto o) {
         if (this.getPoints() != o.getPoints())
             return this.getPoints() - o.getPoints();
         if (this.getGoalsDifference() != o.getGoalsDifference())
@@ -227,7 +226,7 @@ public class Country implements Comparable<Country>, Serializable {
                 + ", G: " + this.mGroup;
     }
 
-    public void set(Country o) {
+    public void set(CountryDto o) {
         if (!this.mName.equals(o.mName) || !this.mGroup.equals(o.mGroup))
             return;
 
@@ -245,8 +244,8 @@ public class Country implements Comparable<Country>, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Country) {
-            Country c = (Country) o;
+        if (o instanceof CountryDto) {
+            CountryDto c = (CountryDto) o;
             if (!mID.equals(c.mID)) return false;
             if (!mName.equals(c.mName)) return false;
             if (mMatchesPlayed != c.mMatchesPlayed) return false;
@@ -266,52 +265,26 @@ public class Country implements Comparable<Country>, Serializable {
         return false;
     }
 
-    public enum Tournament {
+    public static class Entry {
 
-        Russia("Russia"),
-        SaudiArabia("Saudi Arabia"),
-        Egypt("Egypt"),
-        Uruguay("Uruguay"),
+        public static final String TABLE_NAME = "Country";
 
-        Portugal("Portugal"),
-        Spain("Spain"),
-        Morocco("Morocco"),
-        Iran("Iran"),
-
-        France("France"),
-        Australia("Australia"),
-        Peru("Peru"),
-        Denmark("Denmark"),
-
-        Argentina("Argentina"),
-        Iceland("Iceland"),
-        Croatia("Croatia"),
-        Nigeria("Nigeria"),
-
-        Brazil("Brazil"),
-        Switzerland("Switzerland"),
-        CostaRica("Costa Rica"),
-        Serbia("Serbia"),
-
-        Germany("Germany"),
-        Mexico("Mexico"),
-        Sweden("Sweden"),
-        SouthKorea("South Korea"),
-
-        Belgium("Belgium"),
-        Panama("Panama"),
-        Tunisia("Tunisia"),
-        England("England"),
-
-        Poland("Poland"),
-        Senegal("Senegal"),
-        Colombia("Colombia"),
-        Japan("Japan");
-
-        public final String name;
-
-        Tournament(String group) {
-            name = group;
+        public static class Cols {
+            public static final String ID = "id";
+            public static final String NAME = "Name";
+            public static final String MATCHES_PLAYED = "MatchesPlayed";
+            public static final String VICTORIES = "Victories";
+            public static final String DRAWS = "Draws";
+            public static final String DEFEATS = "Defeats";
+            public static final String GOALS_FOR = "GoalsFor";
+            public static final String GOALS_AGAINST = "GoalsAgainst";
+            public static final String GOALS_DIFFERENCE = "GoalsDifference";
+            public static final String GROUP = "GroupLetter";
+            public static final String POSITION = "Position";
+            public static final String POINTS = "Points";
+            public static final String COEFFICIENT = "Coefficient";
+            public static final String FAIR_PLAY_POINTS = "FairPlayPoints";
+            public static final String DRAWING_OF_LOTS = "DrawingOfLots";
         }
     }
 }

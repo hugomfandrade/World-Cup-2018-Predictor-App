@@ -2,6 +2,7 @@ package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountriesService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryDto;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,13 +55,11 @@ public class TournamentProcessingTest extends BaseControllerTest {
     @Test
     void startUpdateGroupsProcessing_GroupB() {
 
-        final List<MatchDto> matches = matchesService.getAll().stream()
-                .map(m -> modelMapper.map(m, MatchDto.class))
-                .collect(Collectors.toList());
+        final List<Match> matches = matchesService.getAll();
         final List<Country> countries = countriesService.getAll();
 
-        final Map<Integer, MatchDto> matchMap = matches.stream()
-                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
+        final Map<Integer, Match> matchMap = matches.stream()
+                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
         final Map<String, Country> countryMap = countries.stream()
                 .collect(Collectors.toMap(Country::getName, Function.identity()));
 
@@ -83,7 +82,7 @@ public class TournamentProcessingTest extends BaseControllerTest {
         final List<Integer> updatedMatchUps = new ArrayList<>();
 
         tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
-            @Override public void onProcessingFinished(List<Country> countries, List<MatchDto> matches) { }
+            @Override public void onProcessingFinished(List<Country> countries, List<Match> matches) { }
 
             @Override
             public void updateCountry(Country country) {
@@ -91,7 +90,7 @@ public class TournamentProcessingTest extends BaseControllerTest {
             }
 
             @Override
-            public void updateMatchUp(MatchDto match) {
+            public void updateMatchUp(Match match) {
                 updatedMatchUps.add(match.getMatchNumber());
             }
         });
@@ -102,10 +101,10 @@ public class TournamentProcessingTest extends BaseControllerTest {
         Assertions.assertEquals(3, countryMap.get(Iran.name).getPosition());
         Assertions.assertEquals(4, countryMap.get(Morocco.name).getPosition());
 
-        Assertions.assertArrayEquals(new int[]{3, 1, 2, 0, 6, 5, 1, 5}, standingsDetails(countryMap.get(Spain.name)));
-        Assertions.assertArrayEquals(new int[]{3, 1, 2, 0, 5, 4, 1, 5}, standingsDetails(countryMap.get(Portugal.name)));
-        Assertions.assertArrayEquals(new int[]{3, 1, 1, 1, 2, 2, 0, 4}, standingsDetails(countryMap.get(Iran.name)));
-        Assertions.assertArrayEquals(new int[]{3, 0, 1, 2, 2, 4, -2, 1}, standingsDetails(countryMap.get(Morocco.name)));
+        Assertions.assertArrayEquals(new int[]{3, 1, 2, 0, 6, 5, 1, 5}, standingsDetails(modelMapper, countryMap.get(Spain.name)));
+        Assertions.assertArrayEquals(new int[]{3, 1, 2, 0, 5, 4, 1, 5}, standingsDetails(modelMapper, countryMap.get(Portugal.name)));
+        Assertions.assertArrayEquals(new int[]{3, 1, 1, 1, 2, 2, 0, 4}, standingsDetails(modelMapper, countryMap.get(Iran.name)));
+        Assertions.assertArrayEquals(new int[]{3, 0, 1, 2, 2, 4, -2, 1}, standingsDetails(modelMapper, countryMap.get(Morocco.name)));
 
         Assertions.assertArrayEquals(expectedUpdatedCountries, updatedCountries.stream().sorted().toArray(Country.Tournament[]::new));
         Assertions.assertArrayEquals(expectedUpdatedMatchUps, updatedMatchUps.stream().mapToInt(i -> i).sorted().toArray());
@@ -114,7 +113,7 @@ public class TournamentProcessingTest extends BaseControllerTest {
         Assertions.assertEquals(matchMap.get(51).getHomeTeamID(), countryMap.get(Spain.name).getID());
     }
 
-    public static int[] standingsDetails(Country country) {
+    public static int[] standingsDetails(CountryDto country) {
         return new int[]{
                 country.getMatchesPlayed(),
                 country.getVictories(),
@@ -125,5 +124,13 @@ public class TournamentProcessingTest extends BaseControllerTest {
                 country.getGoalsDifference(),
                 country.getPoints()
         };
+    }
+
+    private static int[] standingsDetails(ModelMapper modelMapper, Country country) {
+        return standingsDetails(modelMapper.map(country, CountryDto.class));
+    }
+
+    public int[] standingsDetails(Country country) {
+        return standingsDetails(modelMapper, country);
     }
 }

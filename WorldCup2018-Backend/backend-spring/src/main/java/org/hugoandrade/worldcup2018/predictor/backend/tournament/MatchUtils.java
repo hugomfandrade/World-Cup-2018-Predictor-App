@@ -22,43 +22,43 @@ public final class MatchUtils {
         throw new RuntimeException("this is a utility class");
     }
 
-    public static boolean isMatchValid(MatchDto match) {
+    public static boolean isMatchValid(Match match) {
         return match != null;
     }
 
-    public static boolean isMatchPlayed(MatchDto match) {
+    public static boolean isMatchPlayed(Match match) {
         return isMatchValid(match) && match.getHomeTeamGoals() != -1 && match.getAwayTeamGoals() != -1;
     }
 
-    public static boolean didHomeTeamWin(MatchDto match) {
+    public static boolean didHomeTeamWin(Match match) {
         return didHomeTeamWinRegularTime(match) || didHomeTeamWinByPenaltyShootout(match);
     }
 
-    public static boolean didAwayTeamWin(MatchDto match) {
+    public static boolean didAwayTeamWin(Match match) {
         return didAwayTeamWinRegularTime(match) || didAwayTeamWinByPenaltyShootout(match);
     }
 
-    public static boolean didHomeTeamWinRegularTime(MatchDto match) {
+    public static boolean didHomeTeamWinRegularTime(Match match) {
         return match.getHomeTeamGoals() > match.getAwayTeamGoals();
     }
 
-    public static boolean didAwayTeamWinRegularTime(MatchDto match) {
+    public static boolean didAwayTeamWinRegularTime(Match match) {
         return match.getAwayTeamGoals() > match.getHomeTeamGoals();
     }
 
-    public static boolean didTeamsTied(MatchDto match) {
+    public static boolean didTeamsTied(Match match) {
         return isMatchValid(match) && match.getHomeTeamGoals() == match.getAwayTeamGoals();
     }
 
-    public static boolean didHomeTeamWinByPenaltyShootout(MatchDto match) {
+    public static boolean didHomeTeamWinByPenaltyShootout(Match match) {
         return isMatchValid(match) && "p".equals(match.getHomeTeamNotes());
     }
 
-    public static boolean didAwayTeamWinByPenaltyShootout(MatchDto match) {
+    public static boolean didAwayTeamWinByPenaltyShootout(Match match) {
         return isMatchValid(match) && "p".equals(match.getAwayTeamNotes());
     }
 
-    public static boolean wasThereAPenaltyShootout(MatchDto match) {
+    public static boolean wasThereAPenaltyShootout(Match match) {
         return isMatchValid(match) &&
                 ("p".equals(match.getHomeTeamNotes()) || "p".equals(match.getAwayTeamNotes()));
     }
@@ -159,13 +159,13 @@ public final class MatchUtils {
         return prediction.getAwayTeamGoals() > prediction.getHomeTeamGoals();
     }
 
-    public static boolean isPredictionCorrect(MatchDto match, Prediction prediction) {
+    public static boolean isPredictionCorrect(Match match, Prediction prediction) {
 
         return prediction.getHomeTeamGoals() == match.getHomeTeamGoals()
                 && prediction.getAwayTeamGoals() == match.getAwayTeamGoals();
     }
 
-    public static boolean isMarginOfVictoryCorrect(MatchDto match, Prediction prediction) {
+    public static boolean isMarginOfVictoryCorrect(Match match, Prediction prediction) {
 
         return prediction.getHomeTeamGoals() - prediction.getAwayTeamGoals() ==
                 match.getHomeTeamGoals() - match.getAwayTeamGoals();

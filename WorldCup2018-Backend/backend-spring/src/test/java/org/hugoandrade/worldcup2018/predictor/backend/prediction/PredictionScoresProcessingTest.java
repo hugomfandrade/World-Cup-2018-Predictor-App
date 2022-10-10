@@ -4,7 +4,6 @@ import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
 import org.junit.jupiter.api.Assertions;
@@ -91,13 +90,11 @@ class PredictionScoresProcessingTest extends BaseControllerTest {
         int correctMarginOfVictory = rules.getRuleCorrectMarginOfVictory();
         int correctPrediction = rules.getRuleCorrectPrediction();
 
-        final List<MatchDto> matches = matchRepository.findAllAsList().stream()
-                .map(match -> modelMapper.map(match, MatchDto.class))
-                .collect(Collectors.toList());
-        final Map<Integer, MatchDto> matchMap = matches.stream()
-                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
+        final List<Match> matches = matchRepository.findAllAsList();
+        final Map<Integer, Match> matchMap = matches.stream()
+                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
 
-        final Consumer<MatchDto> updatePredictionScoreFunction = match -> {
+        final Consumer<Match> updatePredictionScoreFunction = match -> {
 
             scoresProcessing.setListener(new PredictionScoresProcessing.OnProcessingListener() {
 
@@ -114,7 +111,7 @@ class PredictionScoresProcessingTest extends BaseControllerTest {
         // update scores
         for (Map.Entry<Integer, Integer[]> scoreEntry : SCORES_GROUP_B.entrySet()) {
 
-            final MatchDto match = matchMap.get(scoreEntry.getKey());
+            final Match match = matchMap.get(scoreEntry.getKey());
 
             match.setScore(scoreEntry.getValue()[0], scoreEntry.getValue()[1]);
 

@@ -2,12 +2,13 @@ package org.hugoandrade.worldcup2018.predictor.backend.tournament.group;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
@@ -34,6 +36,9 @@ class CountriesControllerTest extends BaseControllerTest {
     @Autowired
     private CountryRepository countryRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Test
     void all() throws Exception {
 
@@ -44,25 +49,29 @@ class CountriesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Country> countries = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Country>>(){});
+                    List<CountryDto> countries = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<CountryDto>>(){});
 
-                    Assertions.assertTrue(areEqual(countries, StartupDatabaseScript.configCountries()));
+                    Assertions.assertTrue(areEqual(countries, StartupDatabaseScript.configCountries()
+                            .stream().map(country -> modelMapper.map(country, CountryDto.class))
+                            .collect(Collectors.toList())));
                 });
 
         mvc.perform(MockMvcRequestBuilders.get("/countries/")
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Country> countries = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Country>>(){});
+                    List<CountryDto> countries = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<CountryDto>>(){});
 
-                    Assertions.assertTrue(areEqual(countries, StartupDatabaseScript.configCountries()));
+                    Assertions.assertTrue(areEqual(countries, StartupDatabaseScript.configCountries()
+                            .stream().map(country -> modelMapper.map(country, CountryDto.class))
+                            .collect(Collectors.toList())));
                 });
     }
 
     @Test
     void addOne() throws Exception {
 
-        Country country = new Country("Country", "I", 1);
+        CountryDto country = new CountryDto("Country", "I", 1);
 
         mvc.perform(MockMvcRequestBuilders.post("/countries/")
                         .content(format(country))
@@ -84,7 +93,7 @@ class CountriesControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Country resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Country>(){});
+                    CountryDto resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<CountryDto>(){});
 
                     Assertions.assertEquals(country.getName(), resCountry.getName());
                     Assertions.assertEquals(country.getGroup(), resCountry.getGroup());
@@ -119,7 +128,7 @@ class CountriesControllerTest extends BaseControllerTest {
     @Test
     void getOne() throws Exception {
 
-        Country country = countryRepository.findAll().iterator().next();
+        CountryDto country = modelMapper.map(countryRepository.findAll().iterator().next(), CountryDto.class);
 
         mvc.perform(MockMvcRequestBuilders.get("/countries/" + country.getID()))
                 .andExpect(status().is4xxClientError());
@@ -128,7 +137,7 @@ class CountriesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Country resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Country>(){});
+                    CountryDto resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<CountryDto>(){});
 
                     Assertions.assertEquals(country.getName(), resCountry.getName());
                     Assertions.assertEquals(country.getGroup(), resCountry.getGroup());
@@ -140,7 +149,7 @@ class CountriesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Country resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Country>(){});
+                    CountryDto resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<CountryDto>(){});
 
                     Assertions.assertEquals(country.getName(), resCountry.getName());
                     Assertions.assertEquals(country.getGroup(), resCountry.getGroup());
@@ -152,7 +161,7 @@ class CountriesControllerTest extends BaseControllerTest {
     @Test
     void deleteOne() throws Exception {
 
-        Country country = countryRepository.findAll().iterator().next();
+        CountryDto country = modelMapper.map(countryRepository.findAll().iterator().next(), CountryDto.class);
 
         mvc.perform(MockMvcRequestBuilders.delete("/countries/" + country.getID()))
                 .andExpect(status().is4xxClientError());
@@ -165,7 +174,7 @@ class CountriesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Country resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Country>(){});
+                    CountryDto resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<CountryDto>(){});
 
                     Assertions.assertEquals(country.getName(), resCountry.getName());
                     Assertions.assertEquals(country.getGroup(), resCountry.getGroup());
@@ -180,7 +189,7 @@ class CountriesControllerTest extends BaseControllerTest {
     @Test
     void updateOne() throws Exception {
 
-        Country country = countryRepository.findAll().iterator().next();
+        CountryDto country = modelMapper.map(countryRepository.findAll().iterator().next(), CountryDto.class);
         country.setName("another name");
 
         mvc.perform(MockMvcRequestBuilders.put("/countries/" + country.getID())
@@ -203,7 +212,7 @@ class CountriesControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Country resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Country>(){});
+                    CountryDto resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<CountryDto>(){});
 
                     Assertions.assertEquals(country.getName(), resCountry.getName());
                     Assertions.assertEquals(country.getGroup(), resCountry.getGroup());
@@ -217,7 +226,7 @@ class CountriesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Country resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Country>(){});
+                    CountryDto resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<CountryDto>(){});
 
                     Assertions.assertEquals(country.getName(), resCountry.getName());
                     Assertions.assertEquals(country.getGroup(), resCountry.getGroup());
@@ -229,7 +238,7 @@ class CountriesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Country resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Country>(){});
+                    CountryDto resCountry = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<CountryDto>(){});
 
                     Assertions.assertEquals(country.getName(), resCountry.getName());
                     Assertions.assertEquals(country.getGroup(), resCountry.getGroup());
@@ -240,14 +249,14 @@ class CountriesControllerTest extends BaseControllerTest {
         startupScript.startup();
     }
 
-    public static boolean areEqual(List<Country> countries1, List<Country> countries2) {
+    public static boolean areEqual(List<CountryDto> countries1, List<CountryDto> countries2) {
 
-        final Comparator<Country> countrySorter = (o1, o2) -> {
+        final Comparator<CountryDto> countrySorter = (o1, o2) -> {
             if (o1.getName() == null) return -1;
             if (o2.getName() == null) return 1;
             return o1.getName().compareTo(o2.getName());
         };
-        final Comparator<Country> countryComparator = (o1, o2) -> {
+        final Comparator<CountryDto> countryComparator = (o1, o2) -> {
             if (o1.getName() == null) return -1;
             if (o2.getName() == null) return 1;
             int name = o1.getName().compareTo(o2.getName());

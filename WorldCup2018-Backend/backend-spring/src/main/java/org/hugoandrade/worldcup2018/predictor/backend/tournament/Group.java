@@ -128,8 +128,7 @@ public class Group {
         int mPoints = 0;
 
         // Set \"Matches Played\"
-        for (Match mmatch : mMatches) {
-            MatchDto match = new ModelMapper().map(mmatch, MatchDto.class);
+        for (Match match : mMatches) {
             if (!MatchUtils.isMatchPlayed(match)) continue;
 
             if (match.getHomeTeamID().equals(country.getID())) {

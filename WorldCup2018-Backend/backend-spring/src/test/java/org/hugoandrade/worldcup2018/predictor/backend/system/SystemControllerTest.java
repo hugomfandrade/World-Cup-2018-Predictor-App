@@ -6,7 +6,7 @@ import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryDto;
 import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
@@ -195,9 +195,9 @@ public class SystemControllerTest extends BaseControllerTest {
 		// verify
 
 		// get again from rest api
-		final List<Country> countries = getCountries();
-		final Map<String, Country> countryMap = countries.stream()
-				.collect(Collectors.toMap(Country::getName, Function.identity()));
+		final List<CountryDto> countries = getCountries();
+		final Map<String, CountryDto> countryMap = countries.stream()
+				.collect(Collectors.toMap(CountryDto::getName, Function.identity()));
 
 		matches.clear();
 		matches.addAll(getMatches());
@@ -284,13 +284,13 @@ public class SystemControllerTest extends BaseControllerTest {
 		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>() {});
 	}
 
-	private List<Country> getCountries() throws Exception {
+	private List<CountryDto> getCountries() throws Exception {
 
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/countries/")
 						.header(securityConstants.HEADER_STRING, admin.getToken()))
 				.andExpect(status().isOk())
 				.andReturn();
 
-		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Country>>() {});
+		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<CountryDto>>() {});
 	}
 }

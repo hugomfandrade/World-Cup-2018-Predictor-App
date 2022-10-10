@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TournamentProcessingService {
@@ -19,21 +18,13 @@ public class TournamentProcessingService {
 
     private final TournamentProcessing tournamentProcessing = new TournamentProcessing();
 
-    private List<MatchDto> getMatches() {
-        List<Match> m1 = matchRepository.findAllAsList();
-        List<MatchDto> m2 = matchRepository.findAllAsList()
-                .stream()
-                .map(match -> modelMapper.map(match, MatchDto.class))
-                .collect(Collectors.toList());
-        return matchRepository.findAllAsList()
-                .stream()
-                .map(match -> modelMapper.map(match, MatchDto.class))
-                .collect(Collectors.toList());
+    private List<Match> getMatches() {
+        return matchRepository.findAllAsList();
     }
 
     public void resetOrder() {
 
-        final List<MatchDto> matches = getMatches();
+        final List<Match> matches = getMatches();
         final List<Country> countries = countryRepository.findAllAsList();
 
         this.setResetListener();
@@ -43,7 +34,7 @@ public class TournamentProcessingService {
 
     public void resetOrderAsync() {
 
-        final List<MatchDto> matches = getMatches();
+        final List<Match> matches = getMatches();
         final List<Country> countries = countryRepository.findAllAsList();
 
         this.setResetListener();
@@ -53,7 +44,7 @@ public class TournamentProcessingService {
 
     public void updateOrder() {
 
-        final List<MatchDto> matches = getMatches();
+        final List<Match> matches = getMatches();
         final List<Country> countries = countryRepository.findAllAsList();
 
         this.setUpdateListener();
@@ -63,7 +54,7 @@ public class TournamentProcessingService {
 
     public void updateOrderAsync() {
 
-        final List<MatchDto> matches = getMatches();
+        final List<Match> matches = getMatches();
         final List<Country> countries = countryRepository.findAllAsList();
 
         this.setUpdateListener();
@@ -77,7 +68,7 @@ public class TournamentProcessingService {
         // first update, the positions
         tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
 
-            @Override public void onProcessingFinished(List<Country> countries, List<MatchDto> matches) {}
+            @Override public void onProcessingFinished(List<Country> countries, List<Match> matches) {}
 
             @Override
             public void updateCountry(Country country) {
@@ -86,14 +77,9 @@ public class TournamentProcessingService {
             }
 
             @Override
-            public void updateMatchUp(MatchDto match) {
+            public void updateMatchUp(Match match) {
                 Match dbMatch = matchRepository.findByMatchNumber(match.getMatchNumber());
-                dbMatch.setHomeTeamID(match.getHomeTeamID());
-                dbMatch.setAwayTeamID(match.getAwayTeamID());
-                dbMatch.setScore(match.getHomeTeamGoals(), match.getAwayTeamGoals());
-                dbMatch.setHomeTeamNotes(match.getHomeTeamNotes());
-                dbMatch.setAwayTeamNotes(match.getHomeTeamNotes());
-                matchRepository.save(dbMatch);
+                matchRepository.save(match);
             }
         });
     }
@@ -103,21 +89,21 @@ public class TournamentProcessingService {
         // first update, the positions
         tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
             @Override
-            public void onProcessingFinished(List<Country> countries, List<MatchDto> matches) {
+            public void onProcessingFinished(List<Country> countries, List<Match> matches) {
 
                 for (Country country : countries) {
                     Country dbCountry = countryRepository.findCountryById(country.getID());
                     countryRepository.save(country);
                 }
 
-                for (MatchDto match : matches) {
+                for (Match match : matches) {
                     Match dbMatch = matchRepository.findByMatchNumber(match.getMatchNumber());
-                    matchRepository.save(modelMapper.map(dbMatch, Match.class));
+                    matchRepository.save(match);
                 }
             }
 
             @Override public void updateCountry(Country country) { }
-            @Override public void updateMatchUp(MatchDto match) { }
+            @Override public void updateMatchUp(Match match) { }
 
         });
     }

@@ -66,7 +66,7 @@ public class TournamentProcessing {
         mOnProcessingFinished = onProcessingListener;
     }
 
-    public void startUpdateGroupsProcessing(List<Country> countries, List<MatchDto> matches) {
+    public void startUpdateGroupsProcessing(List<Country> countries, List<Match> matches) {
         // Do processing asynchronously
         mTask = new GroupProcessing(mOnProcessingFinished, countries, matches);
         mExecutors = Executors.newCachedThreadPool();
@@ -79,7 +79,7 @@ public class TournamentProcessing {
         mTask = null;
     }
 
-    public void startUpdateGroupsSync(List<Country> countries, List<MatchDto> matches) {
+    public void startUpdateGroupsSync(List<Country> countries, List<Match> matches) {
         // Do processing synchronously
         mTask = new GroupProcessing(mOnProcessingFinished, countries, matches);
         mTask.run();
@@ -88,15 +88,15 @@ public class TournamentProcessing {
     public static class GroupProcessing implements Runnable {
 
         private final WeakReference<OnProcessingListener> mOnProcessingListener;
-        private final Map<Integer, MatchDto> mMatchMap;
+        private final Map<Integer, Match> mMatchMap;
         private final Map<String, Country> mCountryMap;
 
-        GroupProcessing(OnProcessingListener onProcessingListener, List<Country> countries, List<MatchDto> matches) {
+        GroupProcessing(OnProcessingListener onProcessingListener, List<Country> countries, List<Match> matches) {
             mOnProcessingListener = new WeakReference<>(onProcessingListener);
             mCountryMap = countries.stream()
                     .collect(Collectors.toMap(Country::getID, Function.identity()));
             mMatchMap = matches.stream()
-                    .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
+                    .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
         }
 
         @Override
@@ -130,12 +130,12 @@ public class TournamentProcessing {
             // Check if all matches of each group have been played. If yes, update the matches
             // of the knockout stage appropriately (The first- and second-place teams in each group)
             for (Group group : groups.values()) {
-                for (MatchDto match : updateRoundOf16WhenGroupWasPlayed(group))
+                for (Match match : updateRoundOf16WhenGroupWasPlayed(group))
                     Optional.ofNullable(mOnProcessingListener.get())
                             .ifPresent(l -> l.updateMatchUp(match));
             }
 
-            for (MatchDto match : updateRemainingKnockOutMatchUps())
+            for (Match match : updateRemainingKnockOutMatchUps())
                 Optional.ofNullable(mOnProcessingListener.get())
                         .ifPresent(l -> l.updateMatchUp(match));
 
@@ -145,7 +145,7 @@ public class TournamentProcessing {
 
         private Map<String, Group> setupGroups() {
 
-            final List<MatchDto> groupStageMatches = Stage.GROUP_STAGE.filterDto(mMatchMap.values());
+            final List<Match> groupStageMatches = Stage.GROUP_STAGE.filter(mMatchMap.values());
 
             final HashMap<String, Group> groups = new HashMap<>();
 
@@ -166,7 +166,7 @@ public class TournamentProcessing {
 
                 group.add(country);
 
-                for (MatchDto match : groupStageMatches) {
+                for (Match match : groupStageMatches) {
                     if (match.getHomeTeamID().equals(countryID) || match.getAwayTeamID().equals(countryID)) {
                         group.addMatch(match);
                     }
@@ -176,7 +176,7 @@ public class TournamentProcessing {
             return groups;
         }
 
-        private List<MatchDto> updateRoundOf16WhenGroupWasPlayed(Group group) {
+        private List<Match> updateRoundOf16WhenGroupWasPlayed(Group group) {
             String groupLetter = group.getGroupLetter();
 
             // Update knockout mStage matches only if necessary
@@ -192,16 +192,16 @@ public class TournamentProcessing {
             final String runnerUpTeamID = areAllMatchesPlayed ? group.getCountries().get(1).getID() :
                     "Runner-up Group " + groupLetter;
 
-            final List<MatchDto> roundOf16Matches = new NullAvoidList<>();
+            final List<Match> roundOf16Matches = new NullAvoidList<>();
             roundOf16Matches.add(updateRoundOf16MatchUp(winnerMatchUp, winnerTeamID, Place.HOME));
             roundOf16Matches.add(updateRoundOf16MatchUp(runnerUpMatchUp, runnerUpTeamID, Place.AWAY));
             return roundOf16Matches;
         }
 
-        private MatchDto updateRoundOf16MatchUp(int matchNumber, String teamID, Place place) {
+        private Match updateRoundOf16MatchUp(int matchNumber, String teamID, Place place) {
 
             // Check if there is any need to update match-up
-            final MatchDto match = mMatchMap.get(matchNumber);
+            final Match match = mMatchMap.get(matchNumber);
             if (match == null) return null;
             if (place == Place.HOME && match.getHomeTeamID().equals(teamID)) return null;
             if (place == Place.AWAY && match.getAwayTeamID().equals(teamID)) return null;
@@ -220,15 +220,15 @@ public class TournamentProcessing {
             return match;
         }
 
-        private List<MatchDto> updateRemainingKnockOutMatchUps() {
+        private List<Match> updateRemainingKnockOutMatchUps() {
 
-            List<MatchDto> knockOutMatchUps = new NullAvoidList<>();
+            List<Match> knockOutMatchUps = new NullAvoidList<>();
             // Quarter Finals
             for (Map.Entry<Integer, Pair<Integer, Place>> knockOutMatchUpEntry : QUARTER_FINALS_MATCH_UPS.entrySet()) {
                 final int matchUp = knockOutMatchUpEntry.getKey();
                 final int quarterFinalMatchUp = knockOutMatchUpEntry.getValue().getKey();
                 final Place quarterFinalPlace = knockOutMatchUpEntry.getValue().getValue();
-                final MatchDto match = updateKnockOutMatchUp(matchUp, quarterFinalMatchUp, quarterFinalPlace);
+                final Match match = updateKnockOutMatchUp(matchUp, quarterFinalMatchUp, quarterFinalPlace);
                 knockOutMatchUps.add(match);
             }
 
@@ -237,7 +237,7 @@ public class TournamentProcessing {
                 final int matchUp = knockOutMatchUpEntry.getKey();
                 final int semiFinalMatchUp = knockOutMatchUpEntry.getValue().getKey();
                 final Place semiFinalPlace = knockOutMatchUpEntry.getValue().getValue();
-                final MatchDto match = updateKnockOutMatchUp(matchUp, semiFinalMatchUp, semiFinalPlace);
+                final Match match = updateKnockOutMatchUp(matchUp, semiFinalMatchUp, semiFinalPlace);
                 knockOutMatchUps.add(match);
             }
 
@@ -246,7 +246,7 @@ public class TournamentProcessing {
                 final int matchUp = knockOutMatchUpEntry.getKey();
                 final int thirdPlaceMatchUp = knockOutMatchUpEntry.getValue().getKey();
                 final Place thirdPlacePlace = knockOutMatchUpEntry.getValue().getValue();
-                final MatchDto match = updateKnockOutMatchUpFor3rdPlace(matchUp, thirdPlaceMatchUp, thirdPlacePlace);
+                final Match match = updateKnockOutMatchUpFor3rdPlace(matchUp, thirdPlaceMatchUp, thirdPlacePlace);
                 knockOutMatchUps.add(match);
             }
 
@@ -255,16 +255,16 @@ public class TournamentProcessing {
                 final int matchUp = knockOutMatchUpEntry.getKey();
                 final int finalMatchUp = knockOutMatchUpEntry.getValue().getKey();
                 final Place finalPlace = knockOutMatchUpEntry.getValue().getValue();
-                final MatchDto match = updateKnockOutMatchUp(matchUp, finalMatchUp, finalPlace);
+                final Match match = updateKnockOutMatchUp(matchUp, finalMatchUp, finalPlace);
                 knockOutMatchUps.add(match);
             }
 
             return knockOutMatchUps;
         }
 
-        private MatchDto updateKnockOutMatchUp(int matchUp, int matchUpToUpdate, Place place) {
+        private Match updateKnockOutMatchUp(int matchUp, int matchUpToUpdate, Place place) {
 
-            final MatchDto match = mMatchMap.get(matchUp);
+            final Match match = mMatchMap.get(matchUp);
 
             String teamName;
             if (!MatchUtils.isMatchPlayed(match) && MatchUtils.didTeamsTied(match)) {
@@ -279,7 +279,7 @@ public class TournamentProcessing {
                     teamName = "Winner Match " + Integer.toString(matchUp);
             }
 
-            MatchDto matchToUpdate = mMatchMap.get(matchUpToUpdate);
+            Match matchToUpdate = mMatchMap.get(matchUpToUpdate);
 
             if (matchToUpdate == null) return null;
 
@@ -298,9 +298,9 @@ public class TournamentProcessing {
             return null;
         }
 
-        private MatchDto updateKnockOutMatchUpFor3rdPlace(int matchUp, int matchUpToUpdate, Place place) {
+        private Match updateKnockOutMatchUpFor3rdPlace(int matchUp, int matchUpToUpdate, Place place) {
 
-            final MatchDto match = mMatchMap.get(matchUp);
+            final Match match = mMatchMap.get(matchUp);
 
             String teamName;
             if (!MatchUtils.isMatchPlayed(match) && MatchUtils.didTeamsTied(match)) {
@@ -315,7 +315,7 @@ public class TournamentProcessing {
                     teamName = "Loser Match " + Integer.toString(matchUp);
             }
 
-            MatchDto matchToUpdate = mMatchMap.get(matchUpToUpdate);
+            Match matchToUpdate = mMatchMap.get(matchUpToUpdate);
 
             if (matchToUpdate == null)
                 return null;
@@ -338,9 +338,9 @@ public class TournamentProcessing {
     }
 
     public interface OnProcessingListener {
-        void onProcessingFinished(List<Country> countries, List<MatchDto> matches);
+        void onProcessingFinished(List<Country> countries, List<Match> matches);
         void updateCountry(Country country);
-        void updateMatchUp(MatchDto match);
+        void updateMatchUp(Match match);
     }
 
     private static <T> List<T> toList(Map<?, T> tMap) {

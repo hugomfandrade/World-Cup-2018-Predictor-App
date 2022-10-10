@@ -1,8 +1,8 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryDto;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country.Tournament.*;
 import static org.hugoandrade.worldcup2018.predictor.backend.tournament.TournamentProcessingTest.standingsDetails;
+import static org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country.Tournament.*;
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,9 +76,9 @@ class TournamentProcessingRestAPITest extends BaseControllerTest {
         }
 
         // get again from rest api
-        final List<Country> countries = getCountries();
-        final Map<String, Country> countryMap = countries.stream()
-                .collect(Collectors.toMap(Country::getName, Function.identity()));
+        final List<CountryDto> countries = getCountries();
+        final Map<String, CountryDto> countryMap = countries.stream()
+                .collect(Collectors.toMap(CountryDto::getName, Function.identity()));
 
         matches.clear();
         matches.addAll(getMatches());
@@ -111,14 +111,14 @@ class TournamentProcessingRestAPITest extends BaseControllerTest {
         return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>() {});
     }
 
-    private List<Country> getCountries() throws Exception {
+    private List<CountryDto> getCountries() throws Exception {
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/countries/")
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Country>>() {});
+        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<CountryDto>>() {});
     }
 
 
