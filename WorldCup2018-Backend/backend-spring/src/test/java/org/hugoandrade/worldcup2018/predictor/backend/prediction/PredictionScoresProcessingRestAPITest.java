@@ -4,8 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -111,20 +110,20 @@ class PredictionScoresProcessingRestAPITest extends BaseControllerTest {
     @Test
     void startUpdatePredictionScoreProcessing_GroupB_RestAPI() throws Exception {
 
-        final List<Match> matches = parse(
+        final List<MatchDto> matches = parse(
                 mvc.perform(MockMvcRequestBuilders.get("/matches/")
                                 .header(securityConstants.HEADER_STRING, user.getToken()))
                         .andExpect(status().isOk())
                         .andReturn().getResponse().getContentAsString(),
-                new TypeReference<List<Match>>() {});
+                new TypeReference<List<MatchDto>>() {});
 
-        final Map<Integer, Match> matchMap = matches.stream()
-                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
+        final Map<Integer, MatchDto> matchMap = matches.stream()
+                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
 
         // update scores
         for (Map.Entry<Integer, Integer[]> scoreEntry : SCORES_GROUP_B.entrySet()) {
 
-            final Match match = matchMap.get(scoreEntry.getKey());
+            final MatchDto match = matchMap.get(scoreEntry.getKey());
 
             match.setScore(scoreEntry.getValue()[0], scoreEntry.getValue()[1]);
 

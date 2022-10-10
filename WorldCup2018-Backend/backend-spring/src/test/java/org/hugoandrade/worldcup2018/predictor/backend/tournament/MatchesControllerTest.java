@@ -8,6 +8,7 @@ import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
@@ -33,6 +35,8 @@ class MatchesControllerTest extends BaseControllerTest {
     @Autowired private MatchRepository matchRepository;
     @Autowired private CountriesService countriesService;
 
+    @Autowired private ModelMapper modelMapper;
+
     @Test
     void all() throws Exception {
 
@@ -45,25 +49,28 @@ class MatchesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Match> matches = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Match>>(){});
+                    List<MatchDto> matches = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>(){});
 
-                    Assertions.assertTrue(areEqual(matches, StartupDatabaseScript.configMatches(countries)));
+                    Assertions.assertTrue(areEqual(matches, StartupDatabaseScript.configMatches(countries)
+                            .stream().map(m -> modelMapper.map(m, MatchDto.class)).collect(Collectors.toList())));
                 });
 
         mvc.perform(MockMvcRequestBuilders.get("/matches/")
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Match> matches = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Match>>(){});
+                    List<MatchDto> matches = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>(){});
 
-                    Assertions.assertTrue(areEqual(matches, StartupDatabaseScript.configMatches(countries)));
+                    Assertions.assertTrue(areEqual(matches, StartupDatabaseScript.configMatches(countries)
+                            .stream().map(m -> modelMapper.map(m, MatchDto.class)).collect(Collectors.toList())));
+
                 });
     }
 
     @Test
     void addOne() throws Exception {
 
-        Match match = new Match(1000, "1000", "1000", null, null, null, null);
+        MatchDto match = new MatchDto(1000, "1000", "1000", null, null, null, null);
 
         mvc.perform(MockMvcRequestBuilders.post("/matches/")
                         .content(format(match))
@@ -85,10 +92,10 @@ class MatchesControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Match resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Match>(){});
+                    MatchDto resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<MatchDto>(){});
 
-                    Assertions.assertEquals(match.getHomeTeam(), resMatch.getHomeTeam());
-                    Assertions.assertEquals(match.getAwayTeam(), resMatch.getAwayTeam());
+                    Assertions.assertEquals(match.getHomeTeamID(), resMatch.getHomeTeamID());
+                    Assertions.assertEquals(match.getAwayTeamID(), resMatch.getAwayTeamID());
                     Assertions.assertEquals(match.getMatchNumber(), resMatch.getMatchNumber());
                 })
                 .andDo(mvcResult -> {
@@ -119,7 +126,7 @@ class MatchesControllerTest extends BaseControllerTest {
     @Test
     void getOne() throws Exception {
 
-        Match match = matchRepository.findAll().iterator().next();
+        MatchDto match = modelMapper.map(matchRepository.findAll().iterator().next(), MatchDto.class);
 
         mvc.perform(MockMvcRequestBuilders.get("/matches/" + match.getMatchNumber()))
                 .andExpect(status().is4xxClientError());
@@ -128,10 +135,10 @@ class MatchesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Match resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Match>(){});
+                    MatchDto resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<MatchDto>(){});
 
-                    Assertions.assertEquals(match.getHomeTeam(), resMatch.getHomeTeam());
-                    Assertions.assertEquals(match.getAwayTeam(), resMatch.getAwayTeam());
+                    Assertions.assertEquals(match.getHomeTeamID(), resMatch.getHomeTeamID());
+                    Assertions.assertEquals(match.getAwayTeamID(), resMatch.getAwayTeamID());
                     Assertions.assertEquals(match.getMatchNumber(), resMatch.getMatchNumber());
                     Assertions.assertEquals(match, resMatch);
                 });
@@ -140,10 +147,10 @@ class MatchesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Match resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Match>(){});
+                    MatchDto resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<MatchDto>(){});
 
-                    Assertions.assertEquals(match.getHomeTeam(), resMatch.getHomeTeam());
-                    Assertions.assertEquals(match.getAwayTeam(), resMatch.getAwayTeam());
+                    Assertions.assertEquals(match.getHomeTeamID(), resMatch.getHomeTeamID());
+                    Assertions.assertEquals(match.getAwayTeamID(), resMatch.getAwayTeamID());
                     Assertions.assertEquals(match.getMatchNumber(), resMatch.getMatchNumber());
                     Assertions.assertEquals(match, resMatch);
                 });
@@ -152,7 +159,7 @@ class MatchesControllerTest extends BaseControllerTest {
     @Test
     void deleteOne() throws Exception {
 
-        Match match = matchRepository.findAll().iterator().next();
+        MatchDto match = modelMapper.map(matchRepository.findAll().iterator().next(), MatchDto.class);
 
         mvc.perform(MockMvcRequestBuilders.delete("/matches/" + match.getMatchNumber()))
                 .andExpect(status().is4xxClientError());
@@ -165,10 +172,10 @@ class MatchesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Match resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Match>(){});
+                    MatchDto resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<MatchDto>(){});
 
-                    Assertions.assertEquals(match.getHomeTeam(), resMatch.getHomeTeam());
-                    Assertions.assertEquals(match.getAwayTeam(), resMatch.getAwayTeam());
+                    Assertions.assertEquals(match.getHomeTeamID(), resMatch.getHomeTeamID());
+                    Assertions.assertEquals(match.getAwayTeamID(), resMatch.getAwayTeamID());
                     Assertions.assertEquals(match.getMatchNumber(), resMatch.getMatchNumber());
                     Assertions.assertEquals(match, resMatch);
 
@@ -180,7 +187,7 @@ class MatchesControllerTest extends BaseControllerTest {
     @Test
     void updateOne() throws Exception {
 
-        Match match = matchRepository.findAll().iterator().next();
+        MatchDto match = modelMapper.map(matchRepository.findAll().iterator().next(), MatchDto.class);
         match.setHomeTeamGoals(1);
         match.setAwayTeamGoals(2);
         match.setAwayTeamNotes("p");
@@ -205,10 +212,10 @@ class MatchesControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Match resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Match>(){});
+                    MatchDto resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<MatchDto>(){});
 
-                    Assertions.assertEquals(match.getHomeTeam(), resMatch.getHomeTeam());
-                    Assertions.assertEquals(match.getAwayTeam(), resMatch.getAwayTeam());
+                    Assertions.assertEquals(match.getHomeTeamID(), resMatch.getHomeTeamID());
+                    Assertions.assertEquals(match.getAwayTeamID(), resMatch.getAwayTeamID());
                     Assertions.assertEquals(match.getMatchNumber(), resMatch.getMatchNumber());
                     Assertions.assertEquals(match, resMatch);
                 })
@@ -219,10 +226,10 @@ class MatchesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Match resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Match>(){});
+                    MatchDto resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<MatchDto>(){});
 
-                    Assertions.assertEquals(match.getHomeTeam(), resMatch.getHomeTeam());
-                    Assertions.assertEquals(match.getAwayTeam(), resMatch.getAwayTeam());
+                    Assertions.assertEquals(match.getHomeTeamID(), resMatch.getHomeTeamID());
+                    Assertions.assertEquals(match.getAwayTeamID(), resMatch.getAwayTeamID());
                     Assertions.assertEquals(match.getMatchNumber(), resMatch.getMatchNumber());
                     Assertions.assertEquals(match, resMatch);
                 });
@@ -231,10 +238,10 @@ class MatchesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Match resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Match>(){});
+                    MatchDto resMatch = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<MatchDto>(){});
 
-                    Assertions.assertEquals(match.getHomeTeam(), resMatch.getHomeTeam());
-                    Assertions.assertEquals(match.getAwayTeam(), resMatch.getAwayTeam());
+                    Assertions.assertEquals(match.getHomeTeamID(), resMatch.getHomeTeamID());
+                    Assertions.assertEquals(match.getAwayTeamID(), resMatch.getAwayTeamID());
                     Assertions.assertEquals(match.getMatchNumber(), resMatch.getMatchNumber());
                     Assertions.assertEquals(match, resMatch);
                 });
@@ -242,10 +249,10 @@ class MatchesControllerTest extends BaseControllerTest {
         startupScript.startup();
     }
 
-    public static boolean areEqual(List<Match> matches1, List<Match> matches2) {
+    public static boolean areEqual(List<MatchDto> matches1, List<MatchDto> matches2) {
 
-        final Comparator<Match> matchSorter = Comparator.comparingInt(Match::getMatchNumber);
-        final Comparator<Match> matchComparator = (o1, o2) -> {
+        final Comparator<MatchDto> matchSorter = Comparator.comparingInt(MatchDto::getMatchNumber);
+        final Comparator<MatchDto> matchComparator = (o1, o2) -> {
             int matchNumber = o1.getMatchNumber() - o2.getMatchNumber();
             if (matchNumber != 0) return matchNumber;
 

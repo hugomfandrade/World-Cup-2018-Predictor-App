@@ -56,13 +56,13 @@ class TournamentProcessingRestAPITest extends BaseControllerTest {
     @Test
     void startUpdateGroupsProcessing_GroupB() throws Exception {
 
-        final List<Match> matches = getMatches();
-        final Map<Integer, Match> matchMap = matches.stream()
-                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
+        final List<MatchDto> matches = getMatches();
+        final Map<Integer, MatchDto> matchMap = matches.stream()
+                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
 
         for (Map.Entry<Integer, Integer[]> scoreEntry : SCORES_GROUP_B.entrySet()) {
 
-            final Match match = matchMap.get(scoreEntry.getKey());
+            final MatchDto match = matchMap.get(scoreEntry.getKey());
 
             match.setScore(scoreEntry.getValue()[0], scoreEntry.getValue()[1]);
 
@@ -84,7 +84,7 @@ class TournamentProcessingRestAPITest extends BaseControllerTest {
         matches.addAll(getMatches());
         matchMap.clear();
         matchMap.putAll(matches.stream()
-                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity())));
+                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity())));
 
 
         Assertions.assertEquals(1, countryMap.get(Spain.name).getPosition());
@@ -101,14 +101,14 @@ class TournamentProcessingRestAPITest extends BaseControllerTest {
         Assertions.assertEquals(matchMap.get(51).getHomeTeamID(), countryMap.get(Spain.name).getID());
     }
 
-    private List<Match> getMatches() throws Exception {
+    private List<MatchDto> getMatches() throws Exception {
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/matches/")
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Match>>() {});
+        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>() {});
     }
 
     private List<Country> getCountries() throws Exception {

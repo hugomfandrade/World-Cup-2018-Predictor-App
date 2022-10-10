@@ -6,7 +6,8 @@ import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepo
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchesService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,8 +32,10 @@ class UsersScoreProcessingTest extends BaseControllerTest {
 
     @Autowired SystemDataService systemDataService;
     @Autowired AccountRepository accountRepository;
-    @Autowired MatchRepository matchRepository;
+    @Autowired MatchesService matchesService;
     @Autowired PredictionRepository predictionRepository;
+
+    @Autowired ModelMapper modelMapper;
 
     PredictionScoresProcessing scoresProcessing = new PredictionScoresProcessing();
 
@@ -93,11 +96,13 @@ class UsersScoreProcessingTest extends BaseControllerTest {
         int correctPrediction = rules.getRuleCorrectPrediction();
         int expectedScore = incorrectPrediction + correctOutcome + correctMarginOfVictory + correctPrediction;
 
-        final List<Match> matches = matchRepository.findAllAsList();
-        final Map<Integer, Match> matchMap = matches.stream()
-                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
+        final List<MatchDto> matches = matchesService.getAll().stream()
+                .map(match -> modelMapper.map(match, MatchDto.class))
+                .collect(Collectors.toList());
+        final Map<Integer, MatchDto> matchMap = matches.stream()
+                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
 
-        final Consumer<Match> updatePredictionScoreFunction = match -> {
+        final Consumer<MatchDto> updatePredictionScoreFunction = match -> {
 
             scoresProcessing.setListener(new PredictionScoresProcessing.OnProcessingListener() {
 
@@ -133,11 +138,11 @@ class UsersScoreProcessingTest extends BaseControllerTest {
         // update scores
         for (Map.Entry<Integer, Integer[]> scoreEntry : SCORES_GROUP_B.entrySet()) {
 
-            final Match match = matchMap.get(scoreEntry.getKey());
+            final MatchDto match = matchMap.get(scoreEntry.getKey());
 
             match.setScore(scoreEntry.getValue()[0], scoreEntry.getValue()[1]);
 
-            matchRepository.save(match);
+            matchesService.updateOne(match.getMatchNumber(), modelMapper.map(match, Match.class));
 
             updatePredictionScoreFunction.accept(match);
         }

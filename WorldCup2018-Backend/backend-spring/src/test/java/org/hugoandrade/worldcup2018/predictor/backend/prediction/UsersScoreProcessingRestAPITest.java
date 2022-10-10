@@ -5,7 +5,7 @@ import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -117,13 +117,13 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
 
         //
         // update matches
-        final List<Match> matches = getMatches();
-        final Map<Integer, Match> matchMap = matches.stream()
-                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
+        final List<MatchDto> matches = getMatches();
+        final Map<Integer, MatchDto> matchMap = matches.stream()
+                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
 
         for (Map.Entry<Integer, Integer[]> scoreEntry : SCORES_GROUP_B.entrySet()) {
 
-            final Match match = matchMap.get(scoreEntry.getKey());
+            final MatchDto match = matchMap.get(scoreEntry.getKey());
 
             match.setScore(scoreEntry.getValue()[0], scoreEntry.getValue()[1]);
 
@@ -174,13 +174,13 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
                 .orElse(null);
     }
 
-    private List<Match> getMatches() throws Exception {
+    private List<MatchDto> getMatches() throws Exception {
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/matches/")
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Match>>() {});
+        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>() {});
     }
 }

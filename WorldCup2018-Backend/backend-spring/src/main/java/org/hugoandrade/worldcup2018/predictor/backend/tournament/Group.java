@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
+import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,10 @@ public class Group {
     public void addMatch(Match match) {
         if (!mMatches.contains(match))
             mMatches.add(match);
+    }
+
+    public void addMatch(MatchDto match) {
+        this.addMatch(new ModelMapper().map(match, Match.class));
     }
 
     public String getGroupLetter() {
@@ -123,7 +128,8 @@ public class Group {
         int mPoints = 0;
 
         // Set \"Matches Played\"
-        for (Match match : mMatches) {
+        for (Match mmatch : mMatches) {
+            MatchDto match = new ModelMapper().map(mmatch, MatchDto.class);
             if (!MatchUtils.isMatchPlayed(match)) continue;
 
             if (match.getHomeTeamID().equals(country.getID())) {

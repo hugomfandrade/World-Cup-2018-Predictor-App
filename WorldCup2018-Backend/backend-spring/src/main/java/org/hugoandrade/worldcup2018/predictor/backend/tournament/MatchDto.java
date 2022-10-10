@@ -1,53 +1,54 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.codehaus.jackson.map.util.ISO8601Utils;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Match implements Comparable<Match>, Serializable {
+import static org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto.Entry.Cols.*;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String mID;
-    @Column(unique = true)
-    private int mMatchNo;
-    private String mHomeTeamID;
-    private String mAwayTeamID;
-    private int mHomeTeamGoals;
-    private int mAwayTeamGoals;
-    private String mHomeTeamNotes;
-    private String mAwayTeamNotes;
-    private String mStage;
-    private String mGroup;
-    private String mStadium;
-    private Date mDateAndTime;
+public class MatchDto implements Comparable<MatchDto>, Serializable {
 
-    public Match() { }
+    @JsonProperty(ID) private String mID;
+    @JsonProperty(MATCH_NUMBER) private int mMatchNo;
+    @JsonProperty(HOME_TEAM_ID) private String mHomeTeamID;
+    @JsonProperty(AWAY_TEAM_ID) private String mAwayTeamID;
+    @Transient private Country mHomeTeam;
+    @Transient private Country mAwayTeam;
+    @JsonProperty(HOME_TEAM_GOALS) private int mHomeTeamGoals;
+    @JsonProperty(AWAY_TEAM_GOALS) private int mAwayTeamGoals;
+    @JsonProperty(HOME_TEAM_NOTES) private String mHomeTeamNotes;
+    @JsonProperty(AWAY_TEAM_NOTES) private String mAwayTeamNotes;
+    @JsonProperty(STAGE) private String mStage;
+    @JsonProperty(GROUP) private String mGroup;
+    @JsonProperty(STADIUM) private String mStadium;
+    @JsonProperty(DATE_AND_TIME) private Date mDateAndTime;
 
-    public Match(int matchNumber, String homeTeamID, String awayTeamID,
-                 String date, String stadium, String group, String stage) {
+    public MatchDto() { }
+
+    public MatchDto(int matchNumber, String homeTeamID, String awayTeamID,
+                    String date, String stadium, String group, String stage) {
         this(null, matchNumber, homeTeamID, awayTeamID,
                 -1, -1, null, null,
                 group, stage, stadium, ISO8601UtilsWrapper_parse(date));
     }
 
-    public Match(String id,
-                 int matchNo,
-                 String homeTeamID,
-                 String awayTeamID,
-                 int homeGoals,
-                 int awayGoals,
-                 String homeTeamNotes,
-                 String awayTeamNotes,
-                 String group,
-                 String stage,
-                 String stadium,
-                 Date dateAndTime) {
+    public MatchDto(String id,
+                    int matchNo,
+                    String homeTeamID,
+                    String awayTeamID,
+                    int homeGoals,
+                    int awayGoals,
+                    String homeTeamNotes,
+                    String awayTeamNotes,
+                    String group,
+                    String stage,
+                    String stadium,
+                    Date dateAndTime) {
         mID = id;
         mMatchNo = matchNo;
         mHomeTeamID = homeTeamID;
@@ -62,8 +63,8 @@ public class Match implements Comparable<Match>, Serializable {
         mDateAndTime = dateAndTime;
     }
 
-    public void setID(String id) {
-        this.mID = id;
+    public void setID(String mID) {
+        this.mID = mID;
     }
 
     public String getID() {
@@ -164,26 +165,26 @@ public class Match implements Comparable<Match>, Serializable {
     }
 
     @Override
-    public int compareTo(Match o) {
+    public int compareTo(MatchDto o) {
         return this.mMatchNo - o.mMatchNo;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
-        if (!(o instanceof Match)) return false;
-        if (!areEqual(((Match) o).mID, this.mID)) return false;
-        if (((Match) o).mMatchNo != this.mMatchNo) return false;
-        if (((Match) o).mHomeTeamGoals != this.mHomeTeamGoals) return false;
-        if (((Match) o).mAwayTeamGoals != this.mAwayTeamGoals) return false;
-        if (!areEqual(((Match) o).mDateAndTime, this.mDateAndTime)) return false;
-        if (!areEqual(((Match) o).mHomeTeamID, this.mHomeTeamID)) return false;
-        if (!areEqual(((Match) o).mAwayTeamID, this.mAwayTeamID)) return false;
-        if (!areEqual(((Match) o).mHomeTeamNotes, this.mHomeTeamNotes)) return false;
-        if (!areEqual(((Match) o).mAwayTeamNotes, this.mAwayTeamNotes)) return false;
-        if (!areEqual(((Match) o).mStage, this.mStage)) return false;
-        if (!areEqual(((Match) o).mGroup, this.mGroup)) return false;
-        if (!areEqual(((Match) o).mStadium, this.mStadium)) return false;
+        if (!(o instanceof MatchDto)) return false;
+        if (!areEqual(((MatchDto) o).mID, this.mID)) return false;
+        if (((MatchDto) o).mMatchNo != this.mMatchNo) return false;
+        if (((MatchDto) o).mHomeTeamGoals != this.mHomeTeamGoals) return false;
+        if (((MatchDto) o).mAwayTeamGoals != this.mAwayTeamGoals) return false;
+        if (!areEqual(((MatchDto) o).mDateAndTime, this.mDateAndTime)) return false;
+        if (!areEqual(((MatchDto) o).mHomeTeamID, this.mHomeTeamID)) return false;
+        if (!areEqual(((MatchDto) o).mAwayTeamID, this.mAwayTeamID)) return false;
+        if (!areEqual(((MatchDto) o).mHomeTeamNotes, this.mHomeTeamNotes)) return false;
+        if (!areEqual(((MatchDto) o).mAwayTeamNotes, this.mAwayTeamNotes)) return false;
+        if (!areEqual(((MatchDto) o).mStage, this.mStage)) return false;
+        if (!areEqual(((MatchDto) o).mGroup, this.mGroup)) return false;
+        if (!areEqual(((MatchDto) o).mStadium, this.mStadium)) return false;
         return true;
     }
 
@@ -221,6 +222,26 @@ public class Match implements Comparable<Match>, Serializable {
             return date1.equals(date2);
 
         return false;
+    }
+
+    public static class Entry {
+
+        public static final String TABLE_NAME = "Match";
+
+        public static class Cols {
+            public static final String ID = "id";
+            public static final String MATCH_NUMBER = "MatchNumber";
+            public static final String HOME_TEAM_ID = "HomeTeamID";
+            public static final String AWAY_TEAM_ID = "AwayTeamID";
+            public static final String HOME_TEAM_GOALS = "HomeTeamGoals";
+            public static final String AWAY_TEAM_GOALS = "AwayTeamGoals";
+            public static final String HOME_TEAM_NOTES = "HomeTeamNotes";
+            public static final String AWAY_TEAM_NOTES = "AwayTeamNotes";
+            public static final String GROUP = "GroupLetter";
+            public static final String STAGE = "Stage";
+            public static final String STADIUM = "Stadium";
+            public static final String DATE_AND_TIME = "DateAndTime";
+        }
     }
 
     private static Date ISO8601UtilsWrapper_parse(String originalDate) {

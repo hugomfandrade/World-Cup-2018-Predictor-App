@@ -3,14 +3,15 @@ package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchesService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +37,8 @@ class PredictionsControllerTest extends BaseControllerTest {
     @Autowired private MatchesService matchesService;
     @Autowired private PredictionRepository predictionRepository;
 
+    @Autowired private ModelMapper modelMapper;
+
     @BeforeEach
     void beforeEach() {
         SystemData systemData = new SystemData("0,1,2,4", true, ISO8601Utils.parse("2018-06-27T12:00:00Z"));
@@ -49,7 +52,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Match> matches = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Match>>(){});
+                    List<MatchDto> matches = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>(){});
 
                     Assertions.assertEquals(24, matches.size());
                 });
@@ -71,16 +74,16 @@ class PredictionsControllerTest extends BaseControllerTest {
     @Test
     void insertOne() throws Exception {
 
-        Match match;
+        MatchDto match;
 
         // get first
-        match = matchesService.getAll().iterator().next();
+        match = modelMapper.map(matchesService.getAll().iterator().next(), MatchDto.class);
 
         // get first enabled
         MvcResult matchesMvcResult = mvc.perform(MockMvcRequestBuilders.get("/predictions/enabled-matches")
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andReturn();
-        List<Match> enabledMatches = parse(matchesMvcResult.getResponse().getContentAsString(), new TypeReference<List<Match>>(){});
+        List<MatchDto> enabledMatches = parse(matchesMvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>(){});
         match = enabledMatches.get(0);
 
         Prediction prediction = Prediction.emptyInstance(match.getMatchNumber(), user.getUserID());

@@ -6,7 +6,7 @@ import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
 import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BiConsumerException;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BiFunctionException;
@@ -128,21 +128,21 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         // get matches
 
         final String matchesUrl = "/matches/";
-        final List<Match> matches = parse(new TypeReference<List<Match>>() {},
+        final List<MatchDto> matches = parse(new TypeReference<List<MatchDto>>() {},
                 doOn(mvc).withHeader(user.getToken())
                         .get(matchesUrl)
                         .andExpect(status().isOk())
                         .andReturn());
 
-        final Map<Integer, Match> matchMap = matches.stream()
-                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
+        final Map<Integer, MatchDto> matchMap = matches.stream()
+                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
 
         // update scores, as admin
         for (Map.Entry<Integer, Integer[]> scoreEntry : SCORES_GROUP_B.entrySet()) {
 
             final int matchNumber = scoreEntry.getKey();
             final Integer[] score = scoreEntry.getValue();
-            final Match match = matchMap.get(matchNumber);
+            final MatchDto match = matchMap.get(matchNumber);
             match.setScore(score[0], score[1]);
 
             doOn(mvc).withHeader(admin.getToken())

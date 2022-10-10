@@ -3,7 +3,13 @@ package org.hugoandrade.worldcup2018.predictor.backend;
 import org.hugoandrade.worldcup2018.predictor.backend.security.Pbkdf2PasswordEncoderImpl;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.DestinationSetter;
+import org.modelmapper.spi.SourceGetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -71,6 +77,8 @@ public class Application {
 
 	@Bean
 	public ModelMapper modelMapper() {
-		return new ModelMapper();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		return modelMapper;
 	}
 }

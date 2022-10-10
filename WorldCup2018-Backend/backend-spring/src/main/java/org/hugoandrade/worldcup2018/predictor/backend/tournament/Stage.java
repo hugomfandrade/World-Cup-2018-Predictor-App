@@ -36,7 +36,18 @@ public enum Stage {
         return this.name.equals(match.getStage());
     }
 
+    public boolean is(MatchDto match) {
+        if (match == null) return false;
+        return this.name.equals(match.getStage());
+    }
+
     public List<Match> filter(Collection<Match> matches) {
+        return matches.stream()
+                .filter(Stage.this::is)
+                .collect(Collectors.toList());
+    }
+
+    public List<MatchDto> filterDto(Collection<MatchDto> matches) {
         return matches.stream()
                 .filter(Stage.this::is)
                 .collect(Collectors.toList());

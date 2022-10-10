@@ -3,12 +3,15 @@ package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchesService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PredictionScoresProcessingService {
@@ -18,31 +21,39 @@ public class PredictionScoresProcessingService {
     @Autowired MatchesService matchesService;
     @Autowired SystemDataService systemDataService;
 
+    @Autowired ModelMapper modelMapper;
+
     private final PredictionScoresProcessing predictionScoresProcessing
             = new PredictionScoresProcessing();
 
-    public void resetScores(Match match) {
+    private List<MatchDto> getMatches() {
+        return matchesService.getAll().stream()
+                .map(match -> modelMapper.map(match, MatchDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public void resetScores(MatchDto match) {
         this.resetScores(Collections.singletonList(match));
     }
 
     public void resetScores(int matchNumber) {
         Match match = matchesService.getOne(matchNumber);
         if (match == null) this.resetScores(Collections.emptyList());
-        this.resetScores(match);
+        this.resetScores(modelMapper.map(match, MatchDto.class));
     }
 
     public void resetScores() {
-        this.resetScores(matchesService.getAll());
+        this.resetScores(getMatches());
     }
 
-    private void resetScores(List<Match> matches) {
+    private void resetScores(List<MatchDto> matches) {
 
         this.setResetListener();
 
         final SystemData systemData = systemDataService.getSystemData();
         final List<Prediction> predictions = predictionRepository.findAllAsList();
 
-        for (Match match : matches) {
+        for (MatchDto match : matches) {
             predictionScoresProcessing.startUpdatePredictionScoresSync(systemData, match, predictions);
         }
     }
@@ -52,10 +63,10 @@ public class PredictionScoresProcessingService {
         this.setResetListener();
 
         final SystemData systemData = systemDataService.getSystemData();
-        final List<Match> matches = matchesService.getAll();
+        final List<MatchDto> matches = getMatches();
         final List<Prediction> predictions = predictionRepository.findAllAsList();
 
-        for (Match match : matches) {
+        for (MatchDto match : matches) {
             predictionScoresProcessing.startUpdatePredictionScores(systemData, match, predictions);
         }
     }
@@ -65,10 +76,10 @@ public class PredictionScoresProcessingService {
         this.setUpdateListener();
 
         final SystemData systemData = systemDataService.getSystemData();
-        final List<Match> matches = matchesService.getAll();
+        final List<MatchDto> matches = getMatches();
         final List<Prediction> predictions = predictionRepository.findAllAsList();
 
-        for (Match match : matches) {
+        for (MatchDto match : matches) {
             predictionScoresProcessing.startUpdatePredictionScoresSync(systemData, match, predictions);
         }
     }
@@ -78,10 +89,10 @@ public class PredictionScoresProcessingService {
         this.setUpdateListener();
 
         final SystemData systemData = systemDataService.getSystemData();
-        final List<Match> matches = matchesService.getAll();
+        final List<MatchDto> matches = getMatches();
         final List<Prediction> predictions = predictionRepository.findAllAsList();
 
-        for (Match match : matches) {
+        for (MatchDto match : matches) {
             predictionScoresProcessing.startUpdatePredictionScores(systemData, match, predictions);
         }
     }

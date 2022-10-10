@@ -4,14 +4,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
 import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class SystemControllerTest extends BaseControllerTest {
 
 	@Autowired private MockMvc mvc;
+
+	@Autowired private ModelMapper modelMapper;
 
 	@Test
 	public void getHello() throws Exception {
@@ -146,9 +150,9 @@ public class SystemControllerTest extends BaseControllerTest {
 	@Test
 	void hardReset_GroupB() throws Exception {
 
-		final List<Match> matches = getMatches();
-		final Map<Integer, Match> matchMap = matches.stream()
-				.collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
+		final List<MatchDto> matches = getMatches();
+		final Map<Integer, MatchDto> matchMap = matches.stream()
+				.collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
 
 		// put predictions, in repository
 		final BiConsumer<LoginData, Prediction> putPrediction = (loginData, prediction) -> {
@@ -171,11 +175,11 @@ public class SystemControllerTest extends BaseControllerTest {
 		// insert matches, in repository
 		for (Map.Entry<Integer, Integer[]> scoreEntry : SCORES_GROUP_B.entrySet()) {
 
-			final Match match = matchMap.get(scoreEntry.getKey());
+			final MatchDto match = matchMap.get(scoreEntry.getKey());
 
 			match.setScore(scoreEntry.getValue()[0], scoreEntry.getValue()[1]);
 
-			matchRepository.save(match);
+			matchRepository.save(modelMapper.map(match, Match.class));
 		}
 
 		// hard-reset
@@ -199,7 +203,7 @@ public class SystemControllerTest extends BaseControllerTest {
 		matches.addAll(getMatches());
 		matchMap.clear();
 		matchMap.putAll(matches.stream()
-				.collect(Collectors.toMap(Match::getMatchNumber, Function.identity())));
+				.collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity())));
 
 
 		Assertions.assertEquals(1, countryMap.get(Spain.name).getPosition());
@@ -270,14 +274,14 @@ public class SystemControllerTest extends BaseControllerTest {
 				.orElse(null);
 	}
 
-	private List<Match> getMatches() throws Exception {
+	private List<MatchDto> getMatches() throws Exception {
 
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/matches/")
 						.header(securityConstants.HEADER_STRING, admin.getToken()))
 				.andExpect(status().isOk())
 				.andReturn();
 
-		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Match>>() {});
+		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>() {});
 	}
 
 	private List<Country> getCountries() throws Exception {

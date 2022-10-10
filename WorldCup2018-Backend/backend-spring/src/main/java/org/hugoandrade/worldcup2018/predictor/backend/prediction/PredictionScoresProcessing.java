@@ -1,7 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchUtils;
 
 import java.lang.ref.WeakReference;
@@ -21,7 +21,7 @@ public class PredictionScoresProcessing {
 
     private ExecutorService mExecutors;
 
-    public void startUpdatePredictionScores(SystemData systemData, Match match, List<Prediction> predictions) {
+    public void startUpdatePredictionScores(SystemData systemData, MatchDto match, List<Prediction> predictions) {
         // Do processing asynchronously
         mTask = new UpdateScoreProcessing(systemData, mOnProcessingFinished, match, predictions);
         mExecutors = Executors.newCachedThreadPool();
@@ -34,7 +34,7 @@ public class PredictionScoresProcessing {
         mTask = null;
     }
 
-    public void startUpdatePredictionScoresSync(SystemData systemData, Match match, List<Prediction> predictions) {
+    public void startUpdatePredictionScoresSync(SystemData systemData, MatchDto match, List<Prediction> predictions) {
         // Do processing synchronously
         mTask = new UpdateScoreProcessing(systemData, mOnProcessingFinished, match, predictions);
         mTask.run();
@@ -47,11 +47,11 @@ public class PredictionScoresProcessing {
     public static class UpdateScoreProcessing implements Runnable {
 
         private final WeakReference<OnProcessingListener> mOnProcessingListener;
-        private final Match mMatch;
+        private final MatchDto mMatch;
         private final List<Prediction> mPredictions;
         private final SystemData mSystemData;
 
-        UpdateScoreProcessing(SystemData systemData, OnProcessingListener onProcessingListener, Match match, List<Prediction> predictions) {
+        UpdateScoreProcessing(SystemData systemData, OnProcessingListener onProcessingListener, MatchDto match, List<Prediction> predictions) {
             mSystemData = systemData;
             mOnProcessingListener = new WeakReference<>(onProcessingListener);
             mMatch = match;
@@ -85,7 +85,7 @@ public class PredictionScoresProcessing {
 
         private int computeScore(Prediction prediction) {
 
-            final Match match = mMatch;
+            final MatchDto match = mMatch;
             final SystemData.Rules rules = mSystemData.getRules();
 
             int incorrectPrediction = rules.getRuleIncorrectPrediction();

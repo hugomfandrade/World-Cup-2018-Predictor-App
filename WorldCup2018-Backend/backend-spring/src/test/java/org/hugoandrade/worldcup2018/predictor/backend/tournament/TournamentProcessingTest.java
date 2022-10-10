@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +29,8 @@ public class TournamentProcessingTest extends BaseControllerTest {
 
     @Autowired CountriesService countriesService;
     @Autowired MatchesService matchesService;
+
+    @Autowired ModelMapper modelMapper;
 
     TournamentProcessing tournamentProcessing = new TournamentProcessing();
 
@@ -51,11 +54,13 @@ public class TournamentProcessingTest extends BaseControllerTest {
     @Test
     void startUpdateGroupsProcessing_GroupB() {
 
-        final List<Match> matches = matchesService.getAll();
+        final List<MatchDto> matches = matchesService.getAll().stream()
+                .map(m -> modelMapper.map(m, MatchDto.class))
+                .collect(Collectors.toList());
         final List<Country> countries = countriesService.getAll();
 
-        final Map<Integer, Match> matchMap = matches.stream()
-                .collect(Collectors.toMap(Match::getMatchNumber, Function.identity()));
+        final Map<Integer, MatchDto> matchMap = matches.stream()
+                .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
         final Map<String, Country> countryMap = countries.stream()
                 .collect(Collectors.toMap(Country::getName, Function.identity()));
 
@@ -78,7 +83,7 @@ public class TournamentProcessingTest extends BaseControllerTest {
         final List<Integer> updatedMatchUps = new ArrayList<>();
 
         tournamentProcessing.setListener(new TournamentProcessing.OnProcessingListener() {
-            @Override public void onProcessingFinished(List<Country> countries, List<Match> matches) { }
+            @Override public void onProcessingFinished(List<Country> countries, List<MatchDto> matches) { }
 
             @Override
             public void updateCountry(Country country) {
@@ -86,7 +91,7 @@ public class TournamentProcessingTest extends BaseControllerTest {
             }
 
             @Override
-            public void updateMatchUp(Match match) {
+            public void updateMatchUp(MatchDto match) {
                 updatedMatchUps.add(match.getMatchNumber());
             }
         });
