@@ -38,7 +38,7 @@ class PredictionsControllerTest extends BaseControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        SystemData systemData = new SystemData(null, "0,1,2,4", true, ISO8601Utils.parse("2018-06-27T12:00:00Z"));
+        SystemData systemData = new SystemData("0,1,2,4", true, ISO8601Utils.parse("2018-06-27T12:00:00Z"));
         systemDataService.setSystemData(systemData);
     }
 

@@ -38,6 +38,10 @@ public class League {
         mAdminID = adminID;
     }
 
+    public League(String name) {
+        mName = name;
+    }
+
     public String getID() {
         return mID;
     }

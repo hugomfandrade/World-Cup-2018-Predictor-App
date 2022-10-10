@@ -123,5 +123,11 @@ public class LeaguesController {
 	public static class JoinRequestBody {
 
 		public String code;
+
+		public JoinRequestBody() { }
+
+		public JoinRequestBody(String code) {
+			this.code = code;
+		}
 	}
 }

@@ -31,6 +31,12 @@ public class Account {
         this.salt = salt;
     }
 
+    public Account(String id, String username, int score) {
+        this.id = id;
+        this.username = username;
+        this.score = score;
+    }
+
     public String getId() {
         return id;
     }

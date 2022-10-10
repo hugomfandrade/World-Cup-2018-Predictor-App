@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.utils;
 
 import org.hamcrest.Matchers;
+import org.hugoandrade.worldcup2018.predictor.backend.league.League;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Admin;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
@@ -90,5 +92,75 @@ public abstract class BaseControllerTest {
                     loginData.setToken(securityConstants.TOKEN_PREFIX + "::" + resLoginData.getToken());
                     loginData.setUserID(resLoginData.getUserID());
                 });
+    }
+
+
+
+    protected RequestBuilder doOn(MockMvc mvc) {
+        return new RequestBuilder(mvc);
+    }
+
+    protected class RequestBuilder {
+
+        private final MockMvc mvc;
+
+        private String token;
+
+        protected RequestBuilder(MockMvc mvc) {
+            this.mvc = mvc;
+        }
+
+        public RequestBuilder withHeader(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public ResultActions post(String url, Object body) throws Exception {
+            MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(url);
+
+            if (token != null) {
+                builder.header(securityConstants.HEADER_STRING, token);
+            }
+
+            builder.content(format(body))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON);
+
+            return mvc.perform(builder);
+        }
+
+        public ResultActions get(String url) throws Exception {
+            MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(url);
+
+            if (token != null) {
+                builder.header(securityConstants.HEADER_STRING, token);
+            }
+
+            return mvc.perform(builder);
+        }
+
+        public ResultActions put(String url, Object body) throws Exception {
+            MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(url);
+
+            if (token != null) {
+                builder.header(securityConstants.HEADER_STRING, token);
+            }
+
+            builder.content(format(body))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON);
+
+            return mvc.perform(builder);
+        }
+
+        public ResultActions delete(String url) throws Exception {
+            MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.delete(url);
+
+            if (token != null) {
+                builder.header(securityConstants.HEADER_STRING, token);
+            }
+
+            return mvc.perform(builder);
+        }
     }
 }

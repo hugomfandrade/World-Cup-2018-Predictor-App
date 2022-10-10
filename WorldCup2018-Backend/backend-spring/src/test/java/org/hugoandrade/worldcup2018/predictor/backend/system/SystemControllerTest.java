@@ -96,7 +96,7 @@ public class SystemControllerTest extends BaseControllerTest {
 
 		final Date date = ISO8601Utils.parse("2018-06-27T12:00:00Z");
 
-		final SystemData expectedSystemData = new SystemData(null, "0,1,2,4", true, date);
+		final SystemData expectedSystemData = new SystemData("0,1,2,4", true, date);
 
 		mvc.perform(MockMvcRequestBuilders.post("/system-data/")
 						.content(format(expectedSystemData))

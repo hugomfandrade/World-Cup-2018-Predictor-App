@@ -25,6 +25,10 @@ public class SystemData {
 
     public SystemData() { }
 
+    public SystemData(String rules, boolean appState, Date systemDate) {
+        this(null, rules, appState, systemDate, new Date());
+    }
+
     public SystemData(String id, String rules, boolean appState, Date systemDate) {
         this(id, rules, appState, systemDate, new Date());
     }

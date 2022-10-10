@@ -18,13 +18,11 @@ public class AccountService {
 	}
 
 	public List<Account> getAccounts() {
-		return StreamSupport.stream(accountRepository.findAll().spliterator(), false)
-				.collect(Collectors.toList());
+		return accountRepository.findAllByOrderByScoreDesc();
 	}
 
 	public List<Account> getAccounts(List<String> accountIDs) {
-		return StreamSupport.stream(accountRepository.findAllById(accountIDs).spliterator(), false)
-				.collect(Collectors.toList());
+		return accountRepository.findAllByIdInOrderByScoreDesc(accountIDs);
 	}
 
 	public Account getByUsername(String username) {

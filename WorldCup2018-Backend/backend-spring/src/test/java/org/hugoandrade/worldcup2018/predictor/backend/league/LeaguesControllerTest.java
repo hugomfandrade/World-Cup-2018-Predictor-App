@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.assertj.core.util.Lists;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.league.LeaguesController.JoinRequestBody;
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
-import org.hugoandrade.worldcup2018.predictor.backend.system.SystemController;
-import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -43,7 +44,7 @@ class LeaguesControllerTest extends BaseControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        SystemData systemData = new SystemData(null, "0,1,2,4", true, ISO8601Utils.parse("2018-06-27T12:00:00Z"));
+        SystemData systemData = new SystemData("0,1,2,4", true, ISO8601Utils.parse("2018-06-27T12:00:00Z"));
         systemDataService.setSystemData(systemData);
 
         leagueRepository.deleteAll();
@@ -76,7 +77,7 @@ class LeaguesControllerTest extends BaseControllerTest {
     @Test
     void createLeagues() throws Exception {
 
-        League newLeague = new League("League Name", null);
+        League newLeague = new League("League Name");
 
         mvc.perform(MockMvcRequestBuilders.post("/leagues/")
                         .content(format(newLeague))
@@ -134,8 +135,8 @@ class LeaguesControllerTest extends BaseControllerTest {
     @Test
     void createLeagues_Multiple() throws Exception {
 
-        League newLeague01 = new League("League Name 01", null);
-        League newLeague02 = new League("League Name 02", null);
+        League newLeague01 = new League("League Name 01");
+        League newLeague02 = new League("League Name 02");
 
 
         mvc.perform(MockMvcRequestBuilders.post("/leagues/")
@@ -195,56 +196,41 @@ class LeaguesControllerTest extends BaseControllerTest {
     @Test
     void leagueLifecycle() throws Exception {
 
-        League newLeague = new League("League Name", null);
+        League newLeague = new League("League Name");
 
-        MvcResult postLeaguesRes = mvc.perform(MockMvcRequestBuilders.post("/leagues/")
-                        .header(securityConstants.HEADER_STRING, user.getToken())
-                        .content(format(newLeague))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        final String leaguesUrl = "/leagues/";
+
+        MvcResult postLeaguesRes = doOn(mvc).withHeader(user.getToken())
+                .post(leaguesUrl, newLeague)
                 .andExpect(status().isOk())
                 .andReturn();
 
         League league = parse(postLeaguesRes, League.class);
 
-        LeaguesController.JoinRequestBody joinRequest = new LeaguesController.JoinRequestBody();
-        joinRequest.code = league.getCode();
-        LeaguesController.JoinRequestBody wrongCodeJoinRequest = new LeaguesController.JoinRequestBody();
-        wrongCodeJoinRequest.code = league.getCode() + "-WRONG";
+        final String joinUrl = "/leagues/" + league.getID() + "/join";
+        final JoinRequestBody joinRequest = new JoinRequestBody(league.getCode());
 
-        mvc.perform(MockMvcRequestBuilders.post("/leagues/" + league.getID() + "/join")
-                        .content(format(joinRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        final String wrongJoinUrl = "/leagues/" + league.getID() + "-INVALID" + "/join";
+        final JoinRequestBody wrongCodeJoinRequest = new JoinRequestBody(league.getCode() + "-WRONG");
+
+        doOn(mvc).post(joinUrl, joinRequest)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.post("/leagues/" + league.getID() + "/join")
-                        .header(securityConstants.HEADER_STRING, user.getToken())
-                        .content(format(joinRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(user.getToken())
+                .post(joinUrl, joinRequest)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.post("/leagues/" + league.getID() + "/join")
-                        .header(securityConstants.HEADER_STRING, userOther.getToken())
-                        .content(format(wrongCodeJoinRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(userOther.getToken())
+                .post(joinUrl, wrongCodeJoinRequest)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.post("/leagues/" + league.getID() + "-INVALID" + "/join")
-                        .header(securityConstants.HEADER_STRING, userOther.getToken())
-                        .content(format(joinRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(userOther.getToken())
+                .post(wrongJoinUrl, joinRequest)
                 .andExpect(status().is4xxClientError());
 
         // join, successful
-        mvc.perform(MockMvcRequestBuilders.post("/leagues/" + league.getID() + "/join")
-                        .header(securityConstants.HEADER_STRING, userOther.getToken())
-                        .content(format(joinRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(userOther.getToken())
+                .post(joinUrl, joinRequest)
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
                     League joinLeague = parse(mvcResult, League.class);
@@ -275,63 +261,54 @@ class LeaguesControllerTest extends BaseControllerTest {
             }
         };
 
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/" + league.getID() + "/users")
-                        .header(securityConstants.HEADER_STRING, userOther.getToken()))
+        // Get Users
+        final String usersUrl = "/leagues/" + league.getID() + "/users";
+        final String wrongUsersUrl = "/leagues/" + league.getID() + "-INVALID" + "/users";
+
+        doOn(mvc).withHeader(userOther.getToken())
+                .get(usersUrl)
                 .andExpect(status().isOk())
                 .andExpect(checkEqualAccounts);
 
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/" + league.getID() + "/users")
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get(usersUrl)
                 .andExpect(status().isOk())
                 .andExpect(checkEqualAccounts);
 
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/" + league.getID() + "/users"))
+        doOn(mvc).get(usersUrl)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/" + league.getID() + "/users")
-                        .header(securityConstants.HEADER_STRING, admin.getToken()))
+        doOn(mvc).withHeader(admin.getToken())
+                .get(usersUrl)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/" + league.getID() + "-INVALID" + "/users")
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get(wrongUsersUrl)
                 .andExpect(status().is4xxClientError());
 
         //
         // update name
         league.setName("ANOTHER NAME");
 
-        mvc.perform(MockMvcRequestBuilders.put("/leagues/" + league.getID() + "-INVALID")
-                        .header(securityConstants.HEADER_STRING, user.getToken())
-                        .content(format(league))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        final String leagueUrl = "/leagues/" + league.getID();
+        final String wrongLeagueUrl = "/leagues/" + league.getID() + "-INVALID";
+        doOn(mvc).withHeader(user.getToken())
+                .put(wrongLeagueUrl, league)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.put("/leagues/" + league.getID())
-                        .header(securityConstants.HEADER_STRING, userOther.getToken())
-                        .content(format(newLeague))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(userOther.getToken())
+                .put(leagueUrl, league)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.put("/leagues/" + league.getID())
-                        .header(securityConstants.HEADER_STRING, admin.getToken())
-                        .content(format(newLeague))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(admin.getToken())
+                .put(leagueUrl, league)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.put("/leagues/" + league.getID())
-                        .content(format(newLeague))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).put(leagueUrl, league)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.put("/leagues/" + league.getID())
-                        .header(securityConstants.HEADER_STRING, user.getToken())
-                        .content(format(league))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(user.getToken())
+                .put(leagueUrl, league)
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
                     League updatedLeague = parse(mvcResult, League.class);
@@ -344,9 +321,10 @@ class LeaguesControllerTest extends BaseControllerTest {
                     Assertions.assertNotNull(league.getCode());
                 });
 
+        // Get leagues
 
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/")
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get(leaguesUrl)
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
                     List<League> leagues = parse(mvcResult, new TypeReference<List<League>>(){});
@@ -366,45 +344,43 @@ class LeaguesControllerTest extends BaseControllerTest {
                     }
                 });
 
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/" + league.getID() + "/users")
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get(usersUrl)
                 .andExpect(status().isOk())
                 .andExpect(checkEqualAccounts);
 
 
         //
         // delete league name
-
-        mvc.perform(MockMvcRequestBuilders.delete("/leagues/" + league.getID() + "-INVALID")
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .delete(wrongLeagueUrl)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.delete("/leagues/" + league.getID())
-                        .header(securityConstants.HEADER_STRING, userOther.getToken()))
+        doOn(mvc).withHeader(userOther.getToken())
+                .delete(leagueUrl)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.delete("/leagues/" + league.getID())
-                        .header(securityConstants.HEADER_STRING, admin.getToken()))
+        doOn(mvc).withHeader(admin.getToken())
+                .delete(leagueUrl)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.delete("/leagues/" + league.getID()))
+        doOn(mvc).delete(leagueUrl)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.delete("/leagues/" + league.getID())
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .delete(leagueUrl)
                 .andExpect(status().isOk());
 
-
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/")
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get(leaguesUrl)
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
                     List<League> leagues = parse(mvcResult, new TypeReference<List<League>>(){});
                     Assertions.assertEquals(0, leagues.size());
                 });
 
-        mvc.perform(MockMvcRequestBuilders.get("/leagues/" + league.getID() + "/users")
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get(usersUrl)
                 .andExpect(status().is4xxClientError());
 
     }
@@ -412,7 +388,7 @@ class LeaguesControllerTest extends BaseControllerTest {
     @Test
     void leaveLeague() throws Exception {
 
-        League newLeague = new League("League Name", null);
+        League newLeague = new League("League Name");
 
         MvcResult postLeaguesRes = mvc.perform(MockMvcRequestBuilders.post("/leagues/")
                         .header(securityConstants.HEADER_STRING, user.getToken())

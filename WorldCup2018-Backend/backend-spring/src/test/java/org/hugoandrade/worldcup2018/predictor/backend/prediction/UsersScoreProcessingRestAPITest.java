@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
-import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
+import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,7 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
 
         // update system date to before start of tournament, so that predictions can be accepted
         final Date date = ISO8601Utils.parse("2018-05-27T12:00:00Z");
-        final SystemData expectedSystemData = new SystemData(null, "0,1,2,4", true, date);
+        final SystemData expectedSystemData = new SystemData("0,1,2,4", true, date);
 
         mvc.perform(MockMvcRequestBuilders.post("/system-data/")
                         .header(securityConstants.HEADER_STRING, admin.getToken())

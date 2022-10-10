@@ -15,4 +15,9 @@ public interface AccountRepository extends CrudRepository<Account, String> {
         return StreamSupport.stream(this.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
+
+    List<Account> findAllByOrderByScoreDesc();
+
+    List<Account> findAllByIdInOrderByScoreDesc(Iterable<String> ids);
+
 }

@@ -41,6 +41,14 @@ public final class QuickParserUtils {
         return parse(mvcResult.getResponse().getContentAsString(), clazz);
     }
 
+    public static <T> T parse(Class<T> clazz, MvcResult mvcResult) throws UnsupportedEncodingException {
+        return parse(mvcResult.getResponse().getContentAsString(), clazz);
+    }
+
+    public static <T> T parse(Class<T> clazz, String data) {
+        return parse(data, clazz);
+    }
+
     public static <T> T parse(String data, Class<T> clazz) {
         if (data == null) return null;
         ObjectMapper mapper = new ObjectMapper();
@@ -56,6 +64,10 @@ public final class QuickParserUtils {
     }
 
     public static <T> T parse(MvcResult mvcResult, TypeReference<T> clazz) throws UnsupportedEncodingException {
+        return parse(mvcResult.getResponse().getContentAsString(), clazz);
+    }
+
+    public static <T> T parse(TypeReference<T> clazz, MvcResult mvcResult) throws UnsupportedEncodingException {
         return parse(mvcResult.getResponse().getContentAsString(), clazz);
     }
 
