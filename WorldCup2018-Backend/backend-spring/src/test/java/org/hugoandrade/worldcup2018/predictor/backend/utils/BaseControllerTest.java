@@ -114,6 +114,10 @@ public abstract class BaseControllerTest {
             return this;
         }
 
+        public ResultActions post(String url) throws Exception {
+            return post(url, null);
+        }
+
         public ResultActions post(String url, Object body) throws Exception {
             MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(url);
 
@@ -121,9 +125,11 @@ public abstract class BaseControllerTest {
                 builder.header(securityConstants.HEADER_STRING, token);
             }
 
-            builder.content(format(body))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON);
+            if (body != null) {
+                builder.content(format(body))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON);
+            }
 
             return mvc.perform(builder);
         }

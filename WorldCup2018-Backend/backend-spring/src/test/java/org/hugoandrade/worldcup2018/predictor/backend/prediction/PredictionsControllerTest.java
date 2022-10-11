@@ -1,9 +1,8 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
-import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchesService;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
@@ -15,15 +14,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
-import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
-import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.ListResultMatchers.list;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.ObjResultMatchers.obj;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parseList;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -48,140 +45,100 @@ class PredictionsControllerTest extends BaseControllerTest {
     @Test
     void enabledMatches() throws Exception {
 
-        mvc.perform(MockMvcRequestBuilders.get("/predictions/" + "enabled-matches")
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get("/predictions/enabled-matches")
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    List<MatchDto> matches = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>(){});
-
-                    Assertions.assertEquals(24, matches.size());
-                });
+                .andExpect(list(MatchDto.class).assertSize(24));
     }
 
     @Test
     void getAll() throws Exception {
 
-        mvc.perform(MockMvcRequestBuilders.get("/predictions/" + user.getUserID())
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get("/predictions/" + user.getUserID())
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    List<PredictionDto> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<PredictionDto>>(){});
-
-                    Assertions.assertEquals(0, predictions.size());
-                });
+                .andExpect(list(PredictionDto.class).assertSize(0));
     }
 
     @Test
     void insertOne() throws Exception {
 
         // get first enabled
-        MvcResult matchesMvcResult = mvc.perform(MockMvcRequestBuilders.get("/predictions/enabled-matches")
-                        .header(securityConstants.HEADER_STRING, admin.getToken()))
-                .andReturn();
-        List<MatchDto> enabledMatches = parse(matchesMvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>(){});
+        List<MatchDto> enabledMatches = parseList(doOn(mvc).withHeader(admin.getToken())
+                .get("/predictions/enabled-matches")
+                .andReturn(), MatchDto.class);
         MatchDto match = enabledMatches.get(0);
 
         PredictionDto prediction = PredictionDto.emptyInstance(match.getMatchNumber(), user.getUserID());
         prediction.setHomeTeamGoals(0);
         prediction.setHomeTeamGoals(2);
 
-        mvc.perform(MockMvcRequestBuilders.post("/predictions/")
-                        .content(format(prediction))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).post("/predictions/", prediction)
                 .andExpect(status().is4xxClientError());
 
-        mvc.perform(MockMvcRequestBuilders.post("/predictions/")
-                        .header(securityConstants.HEADER_STRING, user.getToken())
-                        .content(format(prediction))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(user.getToken())
+                .post("/predictions/", prediction)
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    PredictionDto resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<PredictionDto>(){});
-
+                .andExpect(obj(PredictionDto.class).addDo((resPrediction) -> {
                     Assertions.assertEquals(user.getUserID(), resPrediction.getUserID());
                     Assertions.assertEquals(prediction.getMatchNumber(), resPrediction.getMatchNumber());
                     Assertions.assertEquals(prediction.getHomeTeamGoals(), resPrediction.getHomeTeamGoals());
                     Assertions.assertEquals(prediction.getAwayTeamGoals(), resPrediction.getAwayTeamGoals());
-                });
+                }));
 
         // update
         prediction.setHomeTeamGoals(-1);
         prediction.setAwayTeamGoals(4);
-        mvc.perform(MockMvcRequestBuilders.post("/predictions/")
-                        .header(securityConstants.HEADER_STRING, user.getToken())
-                        .content(format(prediction))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(user.getToken())
+                .post("/predictions/", prediction)
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    PredictionDto resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<PredictionDto>(){});
-
+                .andExpect(obj(PredictionDto.class).addDo((resPrediction) -> {
                     Assertions.assertEquals(user.getUserID(), resPrediction.getUserID());
                     Assertions.assertEquals(prediction.getMatchNumber(), resPrediction.getMatchNumber());
                     Assertions.assertEquals(prediction.getHomeTeamGoals(), resPrediction.getHomeTeamGoals());
                     Assertions.assertEquals(prediction.getAwayTeamGoals(), resPrediction.getAwayTeamGoals());
-                });
+                }));
 
 
         // insert another
         PredictionDto predictionOther = PredictionDto.emptyInstance(enabledMatches.get(1).getMatchNumber(), user.getUserID());
         predictionOther.setHomeTeamGoals(1);
         predictionOther.setAwayTeamGoals(3);
-        mvc.perform(MockMvcRequestBuilders.post("/predictions/")
-                        .header(securityConstants.HEADER_STRING, user.getToken())
-                        .content(format(predictionOther))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(user.getToken())
+                .post("/predictions/", predictionOther)
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    PredictionDto resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<PredictionDto>(){});
-
+                .andExpect(obj(PredictionDto.class).addDo((resPrediction) -> {
                     Assertions.assertEquals(user.getUserID(), resPrediction.getUserID());
                     Assertions.assertEquals(predictionOther.getMatchNumber(), resPrediction.getMatchNumber());
                     Assertions.assertEquals(predictionOther.getHomeTeamGoals(), resPrediction.getHomeTeamGoals());
                     Assertions.assertEquals(predictionOther.getAwayTeamGoals(), resPrediction.getAwayTeamGoals());
-                });
+                }));
 
         // insert for another
-        mvc.perform(MockMvcRequestBuilders.post("/predictions/")
-                        .header(securityConstants.HEADER_STRING, userOther.getToken())
-                        .content(format(prediction))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(userOther.getToken())
+                .post("/predictions/", prediction)
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    PredictionDto resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<PredictionDto>(){});
-
+                .andExpect(obj(PredictionDto.class).addDo((resPrediction) -> {
                     Assertions.assertEquals(userOther.getUserID(), resPrediction.getUserID());
                     Assertions.assertEquals(prediction.getMatchNumber(), resPrediction.getMatchNumber());
                     Assertions.assertEquals(prediction.getHomeTeamGoals(), resPrediction.getHomeTeamGoals());
                     Assertions.assertEquals(prediction.getAwayTeamGoals(), resPrediction.getAwayTeamGoals());
-                });
+                }));
 
         // assert there are two predictions in repo
-        Assertions.assertEquals(3, (int) predictionRepository.findAllAsList().size());
+        Assertions.assertEquals(3, predictionRepository.findAllAsList().size());
 
         // make sure there is one prediction
-        mvc.perform(MockMvcRequestBuilders.get("/predictions/" + user.getUserID())
-                        .header(securityConstants.HEADER_STRING, user.getToken()))
+        doOn(mvc).withHeader(user.getToken())
+                .get("/predictions/" + user.getUserID())
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    List<PredictionDto> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<PredictionDto>>(){});
-
-                    Assertions.assertEquals(2, predictions.size());
-                });
+                .andExpect(list(PredictionDto.class).assertSize(2));
 
         // make sure there is one prediction
-        mvc.perform(MockMvcRequestBuilders.get("/predictions/" + userOther.getUserID())
-                        .header(securityConstants.HEADER_STRING, userOther.getToken()))
+        doOn(mvc).withHeader(userOther.getToken())
+                .get("/predictions/" + userOther.getUserID())
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    List<PredictionDto> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<PredictionDto>>(){});
-
-                    Assertions.assertEquals(1, predictions.size());
-                });
+                .andExpect(list(PredictionDto.class).assertSize(1));
 
         // clean repo
         predictionRepository.deleteByUserID(user.getUserID());

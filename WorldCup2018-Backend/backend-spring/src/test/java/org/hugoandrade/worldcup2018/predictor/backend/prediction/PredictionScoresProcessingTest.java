@@ -1,5 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
+import org.hugoandrade.worldcup2018.predictor.backend.system.Rules;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataService;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
@@ -83,7 +84,7 @@ class PredictionScoresProcessingTest extends BaseControllerTest {
     void startUpdatePredictionScoreProcessing_GroupB() {
 
         final SystemData systemData = systemDataService.getSystemData();
-        final SystemData.Rules rules = systemData.getRules();
+        final Rules rules = systemData.getRules();
 
         int incorrectPrediction = rules.getRuleIncorrectPrediction();
         int correctOutcome = rules.getRuleCorrectOutcome();

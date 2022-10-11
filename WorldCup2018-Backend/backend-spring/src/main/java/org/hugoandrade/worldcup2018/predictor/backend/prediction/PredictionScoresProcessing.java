@@ -1,5 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
+import org.hugoandrade.worldcup2018.predictor.backend.system.Rules;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchUtils;
@@ -86,7 +87,7 @@ public class PredictionScoresProcessing {
         private int computeScore(Prediction prediction) {
 
             final Match match = mMatch;
-            final SystemData.Rules rules = mSystemData.getRules();
+            final Rules rules = mSystemData.getRules();
 
             int incorrectPrediction = rules.getRuleIncorrectPrediction();
             int correctOutcome = rules.getRuleCorrectOutcome();

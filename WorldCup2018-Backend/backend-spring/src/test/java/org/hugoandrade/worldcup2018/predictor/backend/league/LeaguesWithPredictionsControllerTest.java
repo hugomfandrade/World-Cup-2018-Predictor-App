@@ -1,11 +1,11 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
 import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionDto;
-import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
+import org.hugoandrade.worldcup2018.predictor.backend.system.Rules;
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BiConsumerException;
@@ -27,7 +27,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.ListResultMatchers.list;
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parseList;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -55,7 +57,7 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
 
         // update system date to before start of tournament, so that predictions can be accepted
         final Date date = ISO8601Utils.parse("2018-05-27T12:00:00Z");
-        final SystemData expectedSystemData = new SystemData("0,1,2,4", true, date);
+        final SystemDataDto expectedSystemData = new SystemDataDto("0,1,2,4", true, date);
 
         doOn(mvc).withHeader(admin.getToken())
                 .post("/system-data/", expectedSystemData)
@@ -128,11 +130,10 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         // get matches
 
         final String matchesUrl = "/matches/";
-        final List<MatchDto> matches = parse(new TypeReference<List<MatchDto>>() {},
-                doOn(mvc).withHeader(user.getToken())
-                        .get(matchesUrl)
-                        .andExpect(status().isOk())
-                        .andReturn());
+        final List<MatchDto> matches = parseList(doOn(mvc).withHeader(user.getToken())
+                .get(matchesUrl)
+                .andExpect(status().isOk())
+                .andReturn(), MatchDto.class);
 
         final Map<Integer, MatchDto> matchMap = matches.stream()
                 .collect(Collectors.toMap(MatchDto::getMatchNumber, Function.identity()));
@@ -152,12 +153,11 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         }
 
         // verify
-        final SystemData systemData = parse(SystemData.class, doOn(mvc)
-                .withHeader(user.getToken())
+        final SystemDataDto systemData = parse(SystemDataDto.class, doOn(mvc).withHeader(user.getToken())
                 .get("/system-data")
                 .andExpect(status().isOk())
                 .andReturn());
-        final SystemData.Rules rules = systemData.getRules();
+        final Rules rules = systemData.getRules();
 
         int incorrectPrediction = rules.getRuleIncorrectPrediction();
         int correctOutcome = rules.getRuleCorrectOutcome();
@@ -166,11 +166,10 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
 
         final BiFunctionException<Integer, LoginData, PredictionDto> getPrediction = (matchNumber, loginData) -> {
 
-            return parse(new TypeReference<List<PredictionDto>>(){}, doOn(mvc)
-                    .withHeader(loginData.getToken())
+            return parseList(doOn(mvc).withHeader(loginData.getToken())
                     .get("/predictions/" + loginData.getUserID())
                     .andExpect(status().isOk())
-                    .andReturn())
+                    .andReturn(), PredictionDto.class)
                     .stream()
                     .filter(prediction -> prediction.getMatchNumber() == matchNumber)
                     .findAny()
@@ -199,43 +198,20 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         expectedScores.put(user.getUserID(), 7);
         expectedScores.put(userOther.getUserID(), 6);
         expectedScores.put(admin.getUserID(), 3);
+        final List<AccountDto> expectedAccounts = Stream.of(user, userOther, admin)
+                .map(account -> new AccountDto(account.getUserID(), account.getUsername(), expectedScores.get(account.getUserID())))
+                .collect(Collectors.toList());
 
         // get overall users
         doOn(mvc).withHeader(user.getToken())
                 .get("/auth/accounts")
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    List<AccountDto> accounts = parse(mvcResult, new TypeReference<List<AccountDto>>() {});
-                    List<AccountDto> expectedAccounts = Stream.of(user, userOther, admin)
-                            .map(account -> new AccountDto(account.getUserID(), account.getUsername(), expectedScores.get(account.getUserID())))
-                            .collect(Collectors.toList());
-
-                    Assertions.assertEquals(3, accounts.size());
-
-                    for (int i = 0 ; i < accounts.size() ; i++) {
-                        Assertions.assertEquals(expectedAccounts.get(i).getId(), accounts.get(i).getId());
-                        Assertions.assertEquals(expectedAccounts.get(i).getUsername(), accounts.get(i).getUsername());
-                        Assertions.assertEquals(expectedAccounts.get(i).getScore(), accounts.get(i).getScore());
-                    }
-                });
+                .andExpect(list(AccountDto.class).assertEquals(expectedAccounts));
 
         // get league users
         doOn(mvc).withHeader(user.getToken())
                 .get("/leagues/" + league.getID() + "/users/")
                 .andExpect(status().isOk())
-                .andExpect(mvcResult -> {
-                    List<AccountDto> accounts = parse(mvcResult, new TypeReference<List<AccountDto>>() {});
-                    List<AccountDto> expectedAccounts = Stream.of(user, userOther)
-                            .map(account -> new AccountDto(account.getUserID(), account.getUsername(), expectedScores.get(account.getUserID())))
-                            .collect(Collectors.toList());
-
-                    Assertions.assertEquals(2, accounts.size());
-
-                    for (int i = 0 ; i < accounts.size() ; i++) {
-                        Assertions.assertEquals(expectedAccounts.get(i).getId(), accounts.get(i).getId());
-                        Assertions.assertEquals(expectedAccounts.get(i).getUsername(), accounts.get(i).getUsername());
-                        Assertions.assertEquals(expectedAccounts.get(i).getScore(), accounts.get(i).getScore());
-                    }
-                });
+                .andExpect(list(AccountDto.class).assertEquals(expectedAccounts.subList(0, 2)));
     }
 }

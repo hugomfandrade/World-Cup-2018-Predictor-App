@@ -3,9 +3,9 @@ package org.hugoandrade.worldcup2018.predictor.backend.system;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
+import java.util.Objects;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataDto.Entry.Cols.*;
-import static org.hugoandrade.worldcup2018.predictor.backend.system.SystemData.Rules;
 
 public class SystemDataDto {
 
@@ -66,12 +66,18 @@ public class SystemDataDto {
     }
 
     @Override
-    public String toString() {
-        return "SystemData{" +
-                "mRules='" + mRules + '\'' +
-                ", mAppState=" + mAppState +
-                ", mSystemDate=" + mSystemDate +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SystemDataDto that = (SystemDataDto) o;
+        return mAppState == that.mAppState
+                && Objects.equals(mRules, that.mRules)
+                && Objects.equals(mSystemDate, that.mSystemDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mRules, mAppState, mSystemDate);
     }
 
     public static class Entry {

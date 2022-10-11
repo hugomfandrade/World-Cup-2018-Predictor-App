@@ -1,5 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.authentication;
 
+import java.util.Objects;
+
 public class AccountDto {
 
     private String id;
@@ -48,11 +50,17 @@ public class AccountDto {
     }
 
     @Override
-    public String toString() {
-        return "AccountDto{" +
-                "id='" + id + '\'' +
-                ", username='" + username + '\'' +
-                ", score='" + score + '\'' +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountDto that = (AccountDto) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(username, that.username) &&
+                score == that.score;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, score);
     }
 }

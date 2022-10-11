@@ -1,6 +1,5 @@
 package org.hugoandrade.worldcup2018.predictor.backend.system;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
@@ -18,10 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -34,10 +31,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
-import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.ObjResultMatchers.obj;
 import static org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country.Tournament.*;
 import static org.hugoandrade.worldcup2018.predictor.backend.tournament.TournamentProcessingTest.standingsDetails;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,7 +48,7 @@ public class SystemControllerTest extends BaseControllerTest {
 
 	@Test
 	public void getHello() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
+		doOn(mvc).get("/")
 				.andExpect(status().isOk())
 				.andExpect(content().string(equalTo("Greetings from WorldCup 2018 (Spring Boot)!")));
 	}
@@ -61,44 +58,21 @@ public class SystemControllerTest extends BaseControllerTest {
 
 		final SystemDataDto expectedSystemData = new SystemDataDto("0,1,2,4", true, Date.from(Instant.now().truncatedTo(ChronoUnit.SECONDS)));
 
-		mvc.perform(MockMvcRequestBuilders.post("/system-data/")
-						.header(securityConstants.HEADER_STRING, admin.getToken())
-						.content(format(expectedSystemData))
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+		doOn(mvc).withHeader(admin.getToken())
+				.post("/system-data/", expectedSystemData)
 				.andExpect(status().isOk());
 
-		mvc.perform(MockMvcRequestBuilders.get("/system-data/"))
+		doOn(mvc).get("/system-data/")
 				.andExpect(status().isOk())
-				.andExpect(mvcResult -> {
-					SystemDataDto systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemDataDto>(){});
+				.andExpect(obj(SystemDataDto.class).assertEquals(expectedSystemData));
 
-					Assertions.assertEquals(expectedSystemData.getAppState(), systemData.getAppState());
-					Assertions.assertEquals(expectedSystemData.getRawRules(), systemData.getRawRules());
-					Assertions.assertEquals(expectedSystemData.getSystemDate().getTime(), systemData.getSystemDate().getTime());
-				});
-
-		mvc.perform(MockMvcRequestBuilders.get("/system-data/")
-						.header(securityConstants.HEADER_STRING, user.getToken()))
+		doOn(mvc).withHeader(user.getToken()).get("/system-data/")
 				.andExpect(status().isOk())
-				.andExpect(mvcResult -> {
-					SystemDataDto systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemDataDto>(){});
+				.andExpect(obj(SystemDataDto.class).assertEquals(expectedSystemData));
 
-					Assertions.assertEquals(expectedSystemData.getAppState(), systemData.getAppState());
-					Assertions.assertEquals(expectedSystemData.getRawRules(), systemData.getRawRules());
-					Assertions.assertEquals(expectedSystemData.getSystemDate(), systemData.getSystemDate());
-				});
-
-		mvc.perform(MockMvcRequestBuilders.get("/system-data/")
-						.header(securityConstants.HEADER_STRING, admin.getToken()))
+		doOn(mvc).withHeader(admin.getToken()).get("/system-data/")
 				.andExpect(status().isOk())
-				.andExpect(mvcResult -> {
-					SystemDataDto systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemDataDto>(){});
-
-					Assertions.assertEquals(expectedSystemData.getAppState(), systemData.getAppState());
-					Assertions.assertEquals(expectedSystemData.getRawRules(), systemData.getRawRules());
-					Assertions.assertEquals(expectedSystemData.getSystemDate(), systemData.getSystemDate());
-				});
+				.andExpect(obj(SystemDataDto.class).assertEquals(expectedSystemData));
 
 		startupScript.startup();
 	}
@@ -110,33 +84,17 @@ public class SystemControllerTest extends BaseControllerTest {
 
 		final SystemDataDto expectedSystemData = new SystemDataDto("0,1,2,4", true, date);
 
-		mvc.perform(MockMvcRequestBuilders.post("/system-data/")
-						.content(format(expectedSystemData))
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+		doOn(mvc).post("/system-data/", expectedSystemData)
 				.andExpect(status().is4xxClientError());
 
-		mvc.perform(MockMvcRequestBuilders.post("/system-data/")
-						.header(securityConstants.HEADER_STRING, user.getToken())
-						.content(format(expectedSystemData))
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+		doOn(mvc).withHeader(user.getToken())
+				.post("/system-data/", expectedSystemData)
 				.andExpect(status().is4xxClientError());
 
-		mvc.perform(MockMvcRequestBuilders.post("/system-data/")
-						.header(securityConstants.HEADER_STRING, admin.getToken())
-						.content(format(expectedSystemData))
-						.contentType(MediaType.APPLICATION_JSON)
-						.accept(MediaType.APPLICATION_JSON))
+		doOn(mvc).withHeader(admin.getToken())
+				.post("/system-data/", expectedSystemData)
 				.andExpect(status().isOk())
-				.andExpect(mvcResult -> {
-					SystemDataDto systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemDataDto>(){});
-
-					Assertions.assertEquals(expectedSystemData.getAppState(), systemData.getAppState());
-					Assertions.assertEquals(expectedSystemData.getRawRules(), systemData.getRawRules());
-					Assertions.assertEquals(expectedSystemData.getSystemDate().getTime(), systemData.getSystemDate().getTime());
-				});
-
+				.andExpect(obj(SystemDataDto.class).assertEquals(expectedSystemData));
 
 		startupScript.startup();
 	}
@@ -191,13 +149,11 @@ public class SystemControllerTest extends BaseControllerTest {
 		}
 
 		// hard-reset
-		mvc.perform(MockMvcRequestBuilders.post("/reset-all"))
+		doOn(mvc).post("/reset-all")
 				.andExpect(status().is4xxClientError());
-		mvc.perform(MockMvcRequestBuilders.post("/reset-all")
-						.header(securityConstants.HEADER_STRING, user.getToken()))
-				.andExpect(status().is4xxClientError());
-		mvc.perform(MockMvcRequestBuilders.post("/reset-all")
-						.header(securityConstants.HEADER_STRING, admin.getToken()))
+
+		doOn(mvc).withHeader(admin.getToken())
+				.post("/reset-all")
 				.andExpect(status().isOk());
 
 		// verify
@@ -229,7 +185,7 @@ public class SystemControllerTest extends BaseControllerTest {
 
 
 		final SystemDataDto systemData = systemController.getSystemData();
-		final SystemData.Rules rules = systemData.getRules();
+		final Rules rules = systemData.getRules();
 
 		int incorrectPrediction = rules.getRuleIncorrectPrediction();
 		int correctOutcome = rules.getRuleCorrectOutcome();
@@ -238,13 +194,10 @@ public class SystemControllerTest extends BaseControllerTest {
 
 		final BiFunctionException<Integer, LoginData, Prediction> getPrediction = (matchNumber, loginData) -> {
 
-			return parse(
-					mvc.perform(MockMvcRequestBuilders.get("/predictions/" + loginData.getUserID())
-									.header(securityConstants.HEADER_STRING, loginData.getToken()))
-							.andExpect(status().isOk())
-							.andReturn().getResponse().getContentAsString(),
-					new TypeReference<List<Prediction>>() {
-					})
+			return parseList(doOn(mvc).withHeader(loginData.getToken())
+						.get("/predictions/" + loginData.getUserID())
+						.andExpect(status().isOk())
+						.andReturn(), Prediction.class)
 					.stream()
 					.filter(prediction -> prediction.getMatchNumber() == matchNumber)
 					.findAny()
@@ -266,12 +219,12 @@ public class SystemControllerTest extends BaseControllerTest {
 
 	private AccountDto getAccount(String username) throws Exception {
 
-		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/auth/accounts")
-						.header(securityConstants.HEADER_STRING, admin.getToken()))
+		MvcResult mvcResult = doOn(mvc).withHeader(admin.getToken())
+				.get("/auth/accounts")
 				.andExpect(status().isOk())
 				.andReturn();
 
-		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<AccountDto>>() {})
+		return parseList(mvcResult, AccountDto.class)
 				.stream()
 				.filter(account -> username.equals(account.getUsername()))
 				.findAny()
@@ -280,21 +233,21 @@ public class SystemControllerTest extends BaseControllerTest {
 
 	private List<MatchDto> getMatches() throws Exception {
 
-		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/matches/")
-						.header(securityConstants.HEADER_STRING, admin.getToken()))
+		MvcResult mvcResult = doOn(mvc).withHeader(admin.getToken())
+				.get("/matches/")
 				.andExpect(status().isOk())
 				.andReturn();
 
-		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>() {});
+		return parseList(mvcResult, MatchDto.class);
 	}
 
 	private List<CountryDto> getCountries() throws Exception {
 
-		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/countries/")
-						.header(securityConstants.HEADER_STRING, admin.getToken()))
+		MvcResult mvcResult = doOn(mvc).withHeader(admin.getToken())
+				.get("/countries/")
 				.andExpect(status().isOk())
 				.andReturn();
 
-		return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<CountryDto>>() {});
+		return parseList(mvcResult, CountryDto.class);
 	}
 }

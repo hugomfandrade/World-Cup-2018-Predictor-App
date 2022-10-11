@@ -1,6 +1,5 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryDto;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +21,7 @@ import java.util.stream.Collectors;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.tournament.TournamentProcessingTest.standingsDetails;
 import static org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country.Tournament.*;
-import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
-import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parseList;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -66,11 +63,7 @@ class TournamentProcessingRestAPITest extends BaseControllerTest {
 
             match.setScore(scoreEntry.getValue()[0], scoreEntry.getValue()[1]);
 
-            mvc.perform(MockMvcRequestBuilders.put("/matches/" + match.getMatchNumber())
-                            .content(format(match))
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON)
-                            .header(securityConstants.HEADER_STRING, admin.getToken()))
+            doOn(mvc).withHeader(admin.getToken()).put("/matches/" + match.getMatchNumber(),match)
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
         }
@@ -108,7 +101,7 @@ class TournamentProcessingRestAPITest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>() {});
+        return parseList(mvcResult, MatchDto.class);
     }
 
     private List<CountryDto> getCountries() throws Exception {
@@ -118,7 +111,7 @@ class TournamentProcessingRestAPITest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<CountryDto>>() {});
+        return parseList(mvcResult, CountryDto.class);
     }
 
 

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public final class QuickParserUtils {
 
@@ -79,6 +81,33 @@ public final class QuickParserUtils {
         try {
             //Convert object to JSON string
             return mapper.readValue(data, clazz);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static <T> List<T> parseList(Class<T> clazz, MvcResult mvcResult) throws UnsupportedEncodingException {
+        return parseList(clazz, mvcResult.getResponse().getContentAsString());
+    }
+
+    public static <T> List<T> parseList(MvcResult mvcResult, Class<T> clazz) throws UnsupportedEncodingException {
+        return parseList(clazz, mvcResult.getResponse().getContentAsString());
+    }
+
+    public static <T> List<T> parseList(String data, Class<T> clazz) {
+        return parseList(clazz, data);
+    }
+
+    public static <T> List<T> parseList(Class<T> clazz, String data) {
+        if (data == null) return null;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+
+        try {
+            //Convert object to JSON string
+            return mapper.readValue(data, collectionType);
         } catch (Exception e) {
             e.printStackTrace();
         }

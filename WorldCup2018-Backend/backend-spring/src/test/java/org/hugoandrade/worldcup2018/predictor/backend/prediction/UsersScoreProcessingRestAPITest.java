@@ -1,10 +1,10 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
-import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
+import org.hugoandrade.worldcup2018.predictor.backend.system.Rules;
+import org.hugoandrade.worldcup2018.predictor.backend.system.SystemDataDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BiConsumerException;
@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.ws.rs.core.MediaType;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +24,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parseList;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -62,13 +59,10 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
 
         // update system date to before start of tournament, so that predictions can be accepted
         final Date date = ISO8601Utils.parse("2018-05-27T12:00:00Z");
-        final SystemData expectedSystemData = new SystemData("0,1,2,4", true, date);
+        final SystemDataDto expectedSystemData = new SystemDataDto("0,1,2,4", true, date);
 
-        mvc.perform(MockMvcRequestBuilders.post("/system-data/")
-                        .header(securityConstants.HEADER_STRING, admin.getToken())
-                        .content(format(expectedSystemData))
-                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
-                        .accept(org.springframework.http.MediaType.APPLICATION_JSON))
+        doOn(mvc).withHeader(admin.getToken())
+                .post("/system-data/", expectedSystemData)
                 .andExpect(status().isOk());
 
         //
@@ -77,11 +71,8 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
 
             prediction.setUserID(loginData.getUserID());
 
-            mvc.perform(MockMvcRequestBuilders.post("/predictions/")
-                            .content(format(prediction))
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON)
-                            .header(securityConstants.HEADER_STRING, loginData.getToken()))
+            doOn(mvc).withHeader(loginData.getToken())
+                    .post("/predictions/", prediction)
                     .andExpect(status().isOk());
         };
 
@@ -123,17 +114,13 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
 
             match.setScore(scoreEntry.getValue()[0], scoreEntry.getValue()[1]);
 
-            mvc.perform(MockMvcRequestBuilders.put("/matches/" + match.getMatchNumber())
-                            .content(format(match))
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON)
-                            .header(securityConstants.HEADER_STRING, admin.getToken()))
-                    .andExpect(status().isOk())
-                    .andReturn().getResponse().getContentAsString();
+            doOn(mvc).withHeader(admin.getToken())
+                    .put("/matches/" + match.getMatchNumber(), match)
+                    .andExpect(status().isOk());
         }
 
-        final SystemData systemData = getSystemData();
-        final SystemData.Rules rules = systemData.getRules();
+        final SystemDataDto systemData = getSystemData();
+        final Rules rules = systemData.getRules();
 
         int incorrectPrediction = rules.getRuleIncorrectPrediction();
         int correctOutcome = rules.getRuleCorrectOutcome();
@@ -146,24 +133,16 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
         Assertions.assertEquals(expectedScore, getAccount(userOther.getUsername()).getScore());
     }
 
-    private SystemData getSystemData() throws Exception {
+    private SystemDataDto getSystemData() throws Exception {
 
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/system-data/")
-                        .header(securityConstants.HEADER_STRING, admin.getToken()))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        return parse(mvcResult.getResponse().getContentAsString(), SystemData.class);
+        return parse(doOn(mvc).withHeader(admin.getToken()).get("/system-data/").andReturn(),
+                SystemDataDto.class);
     }
 
     private AccountDto getAccount(String username) throws Exception {
 
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/auth/accounts")
-                        .header(securityConstants.HEADER_STRING, admin.getToken()))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<AccountDto>>() {})
+        return parseList(doOn(mvc).withHeader(admin.getToken()).get("/auth/accounts").andReturn(),
+                AccountDto.class)
                 .stream()
                 .filter(account -> username.equals(account.getUsername()))
                 .findAny()
@@ -172,11 +151,7 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
 
     private List<MatchDto> getMatches() throws Exception {
 
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/matches/")
-                        .header(securityConstants.HEADER_STRING, admin.getToken()))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        return parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>() {});
+        return parseList(doOn(mvc).withHeader(admin.getToken()).get("/matches/").andReturn(),
+                MatchDto.class);
     }
 }
