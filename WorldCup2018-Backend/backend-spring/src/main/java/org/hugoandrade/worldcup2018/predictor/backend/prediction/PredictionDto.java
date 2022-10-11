@@ -1,28 +1,25 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import static org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionDto.Entry.Cols.*;
 
-@Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Prediction {
+public class PredictionDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String mID;
-    private String mUserID;
-    private int mMatchNo;
-    private int mHomeTeamGoals;
-    private int mAwayTeamGoals;
-    private int mScore;
+    @JsonProperty(ID) private String mID;
+    @JsonProperty(USER_ID) private String mUserID;
+    @JsonProperty(MATCH_NO) private int mMatchNo;
+    @JsonProperty(HOME_TEAM_GOALS) private int mHomeTeamGoals;
+    @JsonProperty(AWAY_TEAM_GOALS) private int mAwayTeamGoals;
+    @JsonProperty(SCORE) private int mScore;
 
-    public Prediction() {}
+    public PredictionDto() {}
 
-    public Prediction(int homeTeamGoals, int awayTeamGoals, int matchNo, String userID) {
+    public static PredictionDto emptyInstance(int matchNumber, String userID) {
+        return new PredictionDto(-1, -1, matchNumber, userID);
+    }
+
+    public PredictionDto(int homeTeamGoals, int awayTeamGoals, int matchNo, String userID) {
         mHomeTeamGoals = homeTeamGoals;
         mAwayTeamGoals = awayTeamGoals;
         mMatchNo = matchNo;
@@ -30,7 +27,7 @@ public class Prediction {
         mScore = -1;
     }
 
-    public Prediction(int homeTeamGoals, int awayTeamGoals, int matchNo) {
+    public PredictionDto(int homeTeamGoals, int awayTeamGoals, int matchNo) {
         this(homeTeamGoals, awayTeamGoals, matchNo, null);
     }
 
@@ -97,12 +94,12 @@ public class Prediction {
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
-        if (!(o instanceof Prediction)) return false;
-        if (!areEqual(((Prediction) o).mUserID, this.mUserID)) return false;
-        if (((Prediction) o).mMatchNo != this.mMatchNo) return false;
-        if (((Prediction) o).mHomeTeamGoals != this.mHomeTeamGoals) return false;
-        if (((Prediction) o).mAwayTeamGoals != this.mAwayTeamGoals) return false;
-        if (((Prediction) o).mScore != this.mScore) return false;
+        if (!(o instanceof PredictionDto)) return false;
+        if (!areEqual(((PredictionDto) o).mUserID, this.mUserID)) return false;
+        if (((PredictionDto) o).mMatchNo != this.mMatchNo) return false;
+        if (((PredictionDto) o).mHomeTeamGoals != this.mHomeTeamGoals) return false;
+        if (((PredictionDto) o).mAwayTeamGoals != this.mAwayTeamGoals) return false;
+        if (((PredictionDto) o).mScore != this.mScore) return false;
         return true;
     }
 
@@ -114,5 +111,19 @@ public class Prediction {
             return obj1.equals(obj2);
 
         return false;
+    }
+
+    public static class Entry {
+
+        public static final String TABLE_NAME = "Prediction";
+
+        public static class Cols {
+            public static final String ID = "id";
+            public static final String USER_ID = "UserID";
+            public static final String MATCH_NO = "MatchNumber";
+            public static final String HOME_TEAM_GOALS = "HomeTeamGoals";
+            public static final String AWAY_TEAM_GOALS = "AwayTeamGoals";
+            public static final String SCORE = "Score";
+        }
     }
 }

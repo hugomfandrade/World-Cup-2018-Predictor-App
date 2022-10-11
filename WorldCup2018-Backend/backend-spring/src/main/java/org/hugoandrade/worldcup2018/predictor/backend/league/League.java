@@ -1,14 +1,11 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import static org.hugoandrade.worldcup2018.predictor.backend.league.League.Entry.Cols.*;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -16,22 +13,13 @@ public class League {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(ID) private String mID;
-    @JsonProperty(NAME) private String mName;
-    @JsonProperty(ADMIN_ID) private String mAdminID;
-    @JsonProperty(CODE) private String mCode;
-    @JsonProperty(NUMBER_OF_MEMBERS) private int mNumberOfMembers;
+    private String mID;
+    private String mName;
+    private String mAdminID;
+    private String mCode;
+    private int mNumberOfMembers;
 
     public League() { }
-
-    @Deprecated
-    public League(String id, String name, String adminID, String code, int numberOfMembers) {
-        mID = id;
-        mName = name;
-        mAdminID = adminID;
-        mCode = code;
-        mNumberOfMembers = numberOfMembers;
-    }
 
     public League(String name, String adminID) {
         mName = name;
@@ -44,6 +32,10 @@ public class League {
 
     public String getID() {
         return mID;
+    }
+
+    public void setID(String id) {
+        this.mID = id;
     }
 
     public String getName() {
@@ -87,27 +79,5 @@ public class League {
                 ", mCode='" + mCode + '\'' +
                 ", mNumberOfMembers=" + mNumberOfMembers +
                 '}';
-    }
-
-    public static class Entry {
-
-        public static final String TABLE_NAME = "League";
-        public static final String API_NAME_CREATE_LEAGUE = "CreateLeague";
-        public static final String API_NAME_JOIN_LEAGUE = "JoinLeague";
-        public static final String API_NAME_LEAVE_LEAGUE = "LeaveLeague";
-        public static final String API_NAME_DELETE_LEAGUE = "DeleteLeague";
-
-        // parameters
-        public static final String MIN_MATCH_NUMBER = "MinMatchNumber";
-        public static final String MAX_MATCH_NUMBER = "MaxMatchNumber";
-        public static final String USER_ID = "UserID";
-
-        public static class Cols {
-            public static final String ID = "id";
-            public static final String NAME = "Name";
-            public static final String ADMIN_ID = "AdminID";
-            public static final String CODE = "Code";
-            public static final String NUMBER_OF_MEMBERS = "NumberOfMembers";
-        }
     }
 }

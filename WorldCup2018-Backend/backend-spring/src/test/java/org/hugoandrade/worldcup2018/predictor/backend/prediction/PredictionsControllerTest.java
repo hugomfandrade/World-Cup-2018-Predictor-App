@@ -65,7 +65,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Prediction> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Prediction>>(){});
+                    List<PredictionDto> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<PredictionDto>>(){});
 
                     Assertions.assertEquals(0, predictions.size());
                 });
@@ -74,19 +74,14 @@ class PredictionsControllerTest extends BaseControllerTest {
     @Test
     void insertOne() throws Exception {
 
-        MatchDto match;
-
-        // get first
-        match = modelMapper.map(matchesService.getAll().iterator().next(), MatchDto.class);
-
         // get first enabled
         MvcResult matchesMvcResult = mvc.perform(MockMvcRequestBuilders.get("/predictions/enabled-matches")
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andReturn();
         List<MatchDto> enabledMatches = parse(matchesMvcResult.getResponse().getContentAsString(), new TypeReference<List<MatchDto>>(){});
-        match = enabledMatches.get(0);
+        MatchDto match = enabledMatches.get(0);
 
-        Prediction prediction = Prediction.emptyInstance(match.getMatchNumber(), user.getUserID());
+        PredictionDto prediction = PredictionDto.emptyInstance(match.getMatchNumber(), user.getUserID());
         prediction.setHomeTeamGoals(0);
         prediction.setHomeTeamGoals(2);
 
@@ -103,7 +98,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Prediction resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Prediction>(){});
+                    PredictionDto resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<PredictionDto>(){});
 
                     Assertions.assertEquals(user.getUserID(), resPrediction.getUserID());
                     Assertions.assertEquals(prediction.getMatchNumber(), resPrediction.getMatchNumber());
@@ -121,7 +116,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Prediction resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Prediction>(){});
+                    PredictionDto resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<PredictionDto>(){});
 
                     Assertions.assertEquals(user.getUserID(), resPrediction.getUserID());
                     Assertions.assertEquals(prediction.getMatchNumber(), resPrediction.getMatchNumber());
@@ -131,7 +126,7 @@ class PredictionsControllerTest extends BaseControllerTest {
 
 
         // insert another
-        Prediction predictionOther = Prediction.emptyInstance(enabledMatches.get(1).getMatchNumber(), user.getUserID());
+        PredictionDto predictionOther = PredictionDto.emptyInstance(enabledMatches.get(1).getMatchNumber(), user.getUserID());
         predictionOther.setHomeTeamGoals(1);
         predictionOther.setAwayTeamGoals(3);
         mvc.perform(MockMvcRequestBuilders.post("/predictions/")
@@ -141,7 +136,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Prediction resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Prediction>(){});
+                    PredictionDto resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<PredictionDto>(){});
 
                     Assertions.assertEquals(user.getUserID(), resPrediction.getUserID());
                     Assertions.assertEquals(predictionOther.getMatchNumber(), resPrediction.getMatchNumber());
@@ -157,7 +152,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    Prediction resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<Prediction>(){});
+                    PredictionDto resPrediction = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<PredictionDto>(){});
 
                     Assertions.assertEquals(userOther.getUserID(), resPrediction.getUserID());
                     Assertions.assertEquals(prediction.getMatchNumber(), resPrediction.getMatchNumber());
@@ -173,7 +168,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Prediction> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Prediction>>(){});
+                    List<PredictionDto> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<PredictionDto>>(){});
 
                     Assertions.assertEquals(2, predictions.size());
                 });
@@ -183,7 +178,7 @@ class PredictionsControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, userOther.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<Prediction> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Prediction>>(){});
+                    List<PredictionDto> predictions = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<List<PredictionDto>>(){});
 
                     Assertions.assertEquals(1, predictions.size());
                 });

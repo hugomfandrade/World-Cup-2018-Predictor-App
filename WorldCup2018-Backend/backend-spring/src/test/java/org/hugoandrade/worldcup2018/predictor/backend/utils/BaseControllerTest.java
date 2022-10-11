@@ -1,7 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.utils;
 
 import org.hamcrest.Matchers;
-import org.hugoandrade.worldcup2018.predictor.backend.league.League;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Admin;

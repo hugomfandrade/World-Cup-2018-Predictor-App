@@ -29,15 +29,18 @@ public class PredictionsController {
 	}
 
 	@GetMapping("/{userID}")
-	public List<Prediction> getAll(Principal principal,
+	public List<PredictionDto> getAll(Principal principal,
 								   @PathVariable("userID") String requestedUserID) {
 		String userID = principal.getName();
-		return predictionsService.getPredictions(userID, !StringUtils.equals(userID, requestedUserID));
+		return predictionsService.getPredictions(userID, !StringUtils.equals(userID, requestedUserID))
+				.stream()
+				.map(prediction -> modelMapper.map(prediction, PredictionDto.class))
+				.collect(Collectors.toList());
 	}
 
 	// insert or... update
 	@PostMapping("/")
-	public Prediction insert(Principal principal, @RequestBody Prediction prediction) {
+	public PredictionDto insert(Principal principal, @RequestBody PredictionDto prediction) {
 		final String userID = principal.getName();
 		final int predictionNumber = prediction.getMatchNumber();
 		final int[] matchNumbers = predictionsService.enabledMatchNumbers();
@@ -46,13 +49,13 @@ public class PredictionsController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "can not add prediction to this match number. past the date");
 		}
 
-		Prediction dbPrediction = predictionsService.insert(userID, prediction);
-		return dbPrediction;
+		Prediction dbPrediction = predictionsService.insert(userID, modelMapper.map(prediction, Prediction.class));
+		return modelMapper.map(dbPrediction, PredictionDto.class);
 	}
 
 	// update or... insert
 	@PutMapping("/")
-	public Prediction update(Principal principal, @RequestBody Prediction prediction) {
+	public PredictionDto update(Principal principal, @RequestBody PredictionDto prediction) {
 		return insert(principal, prediction);
 	}
 }

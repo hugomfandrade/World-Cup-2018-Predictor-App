@@ -1,5 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.system;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,20 +9,22 @@ public class SystemController {
 
 	@Autowired private SystemDataService systemDataService;
 
+	@Autowired private ModelMapper modelMapper;
+
 	@RequestMapping("/")
 	public String index() {
 		return "Greetings from WorldCup 2018 (Spring Boot)!";
 	}
 
 	@GetMapping("/system-data")
-	public SystemData getSystemData() {
-		return systemDataService.getSystemData();
+	public SystemDataDto getSystemData() {
+		return modelMapper.map(systemDataService.getSystemData(), SystemDataDto.class);
 	}
 
 	@PostMapping("/system-data")
-	public SystemData postSystemData(@RequestBody SystemData systemData) {
-		SystemData newSystemData = systemDataService.setSystemData(systemData);
-		return newSystemData;
+	public SystemDataDto postSystemData(@RequestBody SystemDataDto systemData) {
+		SystemData newSystemData = systemDataService.setSystemData(modelMapper.map(systemData, SystemData.class));
+		return modelMapper.map(newSystemData, SystemDataDto.class);
 	}
 
 	@PostMapping("/reset-all")

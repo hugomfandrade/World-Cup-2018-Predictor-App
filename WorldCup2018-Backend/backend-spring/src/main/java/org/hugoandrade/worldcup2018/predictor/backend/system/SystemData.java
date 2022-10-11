@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.system.SystemData.Entry.Cols.*;
@@ -49,10 +51,6 @@ public class SystemData {
         return mRules;
     }
 
-    public Date getSystemDate() {
-        return mSystemDate;
-    }
-
     public void add(long time) {
         mSystemDate.setTime(mSystemDate.getTime() + time);
     }
@@ -86,21 +84,16 @@ public class SystemData {
         mDateOfChange = new Date();
     }
 
-    /*
-    public void setSystemDate(int year, int month, int day) {
-        mSystemDate.setHours().set(year, month, day);
-    }
-
-    public void setSystemDate(int field, int val) {
-        mSystemDate.set(field, val);
-    }
-    */
-
     public Date getDate() {
+        return mSystemDate;
+    }
+
+    public Date getSystemDate() {
         Date d = new Date();
         long diff = d.getTime() - mDateOfChange.getTime();
         d.setTime(mSystemDate.getTime() + diff);
-        return d;
+        return Date.from(Instant.ofEpochMilli(d.getTime()).truncatedTo(ChronoUnit.SECONDS));
+        // return d;
     }
 
     public Rules getRules() {

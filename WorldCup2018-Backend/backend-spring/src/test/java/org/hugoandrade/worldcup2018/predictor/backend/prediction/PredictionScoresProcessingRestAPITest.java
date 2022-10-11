@@ -6,6 +6,8 @@ import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
+import org.hugoandrade.worldcup2018.predictor.backend.utils.BiConsumerException;
+import org.hugoandrade.worldcup2018.predictor.backend.utils.BiFunctionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,8 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,47 +64,43 @@ class PredictionScoresProcessingRestAPITest extends BaseControllerTest {
                         .accept(org.springframework.http.MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        final BiConsumer<LoginData, Prediction> putPrediction = (loginData, prediction) -> {
+        final BiConsumerException<LoginData, PredictionDto> putPrediction = (loginData, prediction) -> {
 
-            try {
-                prediction.setUserID(prediction.getUserID());
+            prediction.setUserID(loginData.getUserID());
 
-                mvc.perform(MockMvcRequestBuilders.post("/predictions/")
-                                .content(format(prediction))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .header(securityConstants.HEADER_STRING, loginData.getToken()))
-                        .andExpect(status().isOk());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            mvc.perform(MockMvcRequestBuilders.post("/predictions/")
+                            .content(format(prediction))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .header(securityConstants.HEADER_STRING, loginData.getToken()))
+                    .andExpect(status().isOk());
         };
 
         // for user
         //
         // correct prediction
-        putPrediction.accept(user, new Prediction(0, 1, 4));
+        putPrediction.accept(user, new PredictionDto(0, 1, 4));
         // correct margin of victory
-        putPrediction.accept(user, new Prediction(2, 2, 3));
+        putPrediction.accept(user, new PredictionDto(2, 2, 3));
         // correct outcome
-        putPrediction.accept(user, new Prediction(2, 0, 19));
+        putPrediction.accept(user, new PredictionDto(2, 0, 19));
         // incorrect
-        putPrediction.accept(user, new Prediction(2, 1, 20));
+        putPrediction.accept(user, new PredictionDto(2, 1, 20));
         // incomplete
-        putPrediction.accept(user, new Prediction(-1, 1, 35));
+        putPrediction.accept(user, new PredictionDto(-1, 1, 35));
 
         // for userOther
         //
         // correct prediction
-        putPrediction.accept(userOther, new Prediction(3, 3, 3));
+        putPrediction.accept(userOther, new PredictionDto(3, 3, 3));
         // correct margin of victory
-        putPrediction.accept(userOther, new Prediction(2, 1, 19));
+        putPrediction.accept(userOther, new PredictionDto(2, 1, 19));
         // correct outcome
-        putPrediction.accept(userOther, new Prediction(0, 2, 20));
+        putPrediction.accept(userOther, new PredictionDto(0, 2, 20));
         // incorrect
-        putPrediction.accept(userOther, new Prediction(0, 1, 35));
+        putPrediction.accept(userOther, new PredictionDto(0, 1, 35));
         // incomplete
-        putPrediction.accept(userOther, new Prediction(0, -1, 36));
+        putPrediction.accept(userOther, new PredictionDto(0, -1, 36));
     }
 
     @Test
@@ -150,22 +146,18 @@ class PredictionScoresProcessingRestAPITest extends BaseControllerTest {
         int correctMarginOfVictory = rules.getRuleCorrectMarginOfVictory();
         int correctPrediction = rules.getRuleCorrectPrediction();
 
-        final BiFunction<Integer, LoginData, Prediction> getPrediction = (matchNumber, loginData) -> {
+        final BiFunctionException<Integer, LoginData, PredictionDto> getPrediction = (matchNumber, loginData) -> {
 
-            try {
-                return parse(
-                        mvc.perform(MockMvcRequestBuilders.get("/predictions/" + loginData.getUserID())
-                                        .header(securityConstants.HEADER_STRING, loginData.getToken()))
-                                .andExpect(status().isOk())
-                                .andReturn().getResponse().getContentAsString(),
-                        new TypeReference<List<Prediction>>(){})
-                        .stream()
-                        .filter(prediction -> prediction.getMatchNumber() == matchNumber)
-                        .findAny()
-                        .orElse(null);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return parse(
+                    mvc.perform(MockMvcRequestBuilders.get("/predictions/" + loginData.getUserID())
+                                    .header(securityConstants.HEADER_STRING, loginData.getToken()))
+                            .andExpect(status().isOk())
+                            .andReturn().getResponse().getContentAsString(),
+                    new TypeReference<List<PredictionDto>>(){})
+                    .stream()
+                    .filter(prediction -> prediction.getMatchNumber() == matchNumber)
+                    .findAny()
+                    .orElse(null);
         };
 
         Assertions.assertEquals(correctPrediction, getPrediction.apply(4, user).getScore());

@@ -21,39 +21,43 @@ public class LeaguesController {
 	@Autowired private ModelMapper modelMapper;
 
 	@GetMapping("/")
-	public List<League> getMyLeagues(Principal principal) {
+	public List<LeagueDto> getMyLeagues(Principal principal) {
 		String userID = principal.getName();
-		return leaguesService.getMyLeagues(userID);
+		return leaguesService.getMyLeagues(userID).stream()
+				.map(league -> modelMapper.map(league, LeagueDto.class))
+				.collect(Collectors.toList());
 	}
 
 	@PostMapping("/")
-	public League createLeague(Principal principal, @RequestBody League league) {
+	public LeagueDto createLeague(Principal principal, @RequestBody LeagueDto league) {
 		String userID = principal.getName();
-		return leaguesService.createLeague(userID, league);
+		return modelMapper.map(leaguesService.createLeague(userID, modelMapper.map(league, League.class)),
+				LeagueDto.class);
 	}
 
 	@GetMapping("/{leagueID}")
-	public League getLeague(Principal principal, @PathVariable("leagueID") String leagueID) {
+	public LeagueDto getLeague(Principal principal, @PathVariable("leagueID") String leagueID) {
 		String userID = principal.getName();
 
 		boolean belongsToLeague = leaguesService.belongsToLeague(userID, leagueID);
 
 		if (!belongsToLeague) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you do not belong to this league");
 
-		return leaguesService.getLeague(leagueID);
+		return modelMapper.map(leaguesService.getLeague(leagueID), LeagueDto.class);
 	}
 
 	@PutMapping("/{leagueID}")
-	public League updateLeague(Principal principal,
+	public LeagueDto updateLeague(Principal principal,
 							   @PathVariable("leagueID") String leagueID,
-							   @RequestBody League league) {
+							   @RequestBody LeagueDto league) {
 		String userID = principal.getName();
 
 		final boolean isAdmin = leaguesService.isAdminOfLeague(userID, leagueID);
 
 		if (!isAdmin) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you can not update to this league");
 
-		return leaguesService.updateLeague(userID, leagueID, league);
+		return modelMapper.map(leaguesService.updateLeague(userID, leagueID, modelMapper.map(league, League.class)),
+				LeagueDto.class);
 	}
 
 	@GetMapping("/{leagueID}/users")
@@ -84,7 +88,7 @@ public class LeaguesController {
 	}
 
 	@PostMapping("/{leagueID}/join")
-	public League joinLeague(Principal principal,
+	public LeagueDto joinLeague(Principal principal,
 							 @PathVariable("leagueID") String leagueID,
 							 @RequestBody JoinRequestBody requestBody) {
 		String userID = principal.getName();
@@ -102,7 +106,7 @@ public class LeaguesController {
 		if (!StringUtils.equals(code, league.getCode())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "wrong code");
 
 		// join
-		return leaguesService.joinLeague(userID, leagueID, code);
+		return modelMapper.map(leaguesService.joinLeague(userID, leagueID, code), LeagueDto.class);
 	}
 
 	@DeleteMapping("/{leagueID}/users")

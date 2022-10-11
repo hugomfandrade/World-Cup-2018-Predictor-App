@@ -11,6 +11,7 @@ import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionRepository;
+import org.hugoandrade.worldcup2018.predictor.backend.utils.BiFunctionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -22,12 +23,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -57,38 +59,45 @@ public class SystemControllerTest extends BaseControllerTest {
 	@Test
 	void getSystemData() throws Exception {
 
-		final SystemData expectedSystemData = new SystemData(null, "0,1,2,4", true, new Date(), new Date());
+		final SystemDataDto expectedSystemData = new SystemDataDto("0,1,2,4", true, Date.from(Instant.now().truncatedTo(ChronoUnit.SECONDS)));
+
+		mvc.perform(MockMvcRequestBuilders.post("/system-data/")
+						.header(securityConstants.HEADER_STRING, admin.getToken())
+						.content(format(expectedSystemData))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
 
 		mvc.perform(MockMvcRequestBuilders.get("/system-data/"))
 				.andExpect(status().isOk())
 				.andExpect(mvcResult -> {
-					SystemData systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemData>(){});
+					SystemDataDto systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemDataDto>(){});
 
 					Assertions.assertEquals(expectedSystemData.getAppState(), systemData.getAppState());
 					Assertions.assertEquals(expectedSystemData.getRawRules(), systemData.getRawRules());
-					Assertions.assertEquals(expectedSystemData.getDate(), systemData.getDate());
+					Assertions.assertEquals(expectedSystemData.getSystemDate().getTime(), systemData.getSystemDate().getTime());
 				});
 
 		mvc.perform(MockMvcRequestBuilders.get("/system-data/")
 						.header(securityConstants.HEADER_STRING, user.getToken()))
 				.andExpect(status().isOk())
 				.andExpect(mvcResult -> {
-					SystemData systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemData>(){});
+					SystemDataDto systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemDataDto>(){});
 
 					Assertions.assertEquals(expectedSystemData.getAppState(), systemData.getAppState());
 					Assertions.assertEquals(expectedSystemData.getRawRules(), systemData.getRawRules());
-					Assertions.assertEquals(expectedSystemData.getDate(), systemData.getDate());
+					Assertions.assertEquals(expectedSystemData.getSystemDate(), systemData.getSystemDate());
 				});
 
 		mvc.perform(MockMvcRequestBuilders.get("/system-data/")
 						.header(securityConstants.HEADER_STRING, admin.getToken()))
 				.andExpect(status().isOk())
 				.andExpect(mvcResult -> {
-					SystemData systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemData>(){});
+					SystemDataDto systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemDataDto>(){});
 
 					Assertions.assertEquals(expectedSystemData.getAppState(), systemData.getAppState());
 					Assertions.assertEquals(expectedSystemData.getRawRules(), systemData.getRawRules());
-					Assertions.assertEquals(expectedSystemData.getDate(), systemData.getDate());
+					Assertions.assertEquals(expectedSystemData.getSystemDate(), systemData.getSystemDate());
 				});
 
 		startupScript.startup();
@@ -99,7 +108,7 @@ public class SystemControllerTest extends BaseControllerTest {
 
 		final Date date = ISO8601Utils.parse("2018-06-27T12:00:00Z");
 
-		final SystemData expectedSystemData = new SystemData("0,1,2,4", true, date);
+		final SystemDataDto expectedSystemData = new SystemDataDto("0,1,2,4", true, date);
 
 		mvc.perform(MockMvcRequestBuilders.post("/system-data/")
 						.content(format(expectedSystemData))
@@ -121,11 +130,11 @@ public class SystemControllerTest extends BaseControllerTest {
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(mvcResult -> {
-					SystemData systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemData>(){});
+					SystemDataDto systemData = parse(mvcResult.getResponse().getContentAsString(), new TypeReference<SystemDataDto>(){});
 
 					Assertions.assertEquals(expectedSystemData.getAppState(), systemData.getAppState());
 					Assertions.assertEquals(expectedSystemData.getRawRules(), systemData.getRawRules());
-					Assertions.assertEquals(expectedSystemData.getDate(), systemData.getDate());
+					Assertions.assertEquals(expectedSystemData.getSystemDate().getTime(), systemData.getSystemDate().getTime());
 				});
 
 
@@ -142,8 +151,7 @@ public class SystemControllerTest extends BaseControllerTest {
 		SCORES_GROUP_B.put(36, new Integer[]{2, 2});
 	}
 
-	@Autowired
-	SystemController systemController;
+	@Autowired SystemController systemController;
 	@Autowired PredictionRepository predictionRepository;
 	@Autowired MatchRepository matchRepository;
 
@@ -220,7 +228,7 @@ public class SystemControllerTest extends BaseControllerTest {
 		Assertions.assertEquals(matchMap.get(51).getHomeTeamID(), countryMap.get(Spain.name).getID());
 
 
-		final SystemData systemData = systemController.getSystemData();
+		final SystemDataDto systemData = systemController.getSystemData();
 		final SystemData.Rules rules = systemData.getRules();
 
 		int incorrectPrediction = rules.getRuleIncorrectPrediction();
@@ -228,23 +236,19 @@ public class SystemControllerTest extends BaseControllerTest {
 		int correctMarginOfVictory = rules.getRuleCorrectMarginOfVictory();
 		int correctPrediction = rules.getRuleCorrectPrediction();
 
-		final BiFunction<Integer, LoginData, Prediction> getPrediction = (matchNumber, loginData) -> {
+		final BiFunctionException<Integer, LoginData, Prediction> getPrediction = (matchNumber, loginData) -> {
 
-			try {
-				return parse(
-						mvc.perform(MockMvcRequestBuilders.get("/predictions/" + loginData.getUserID())
-										.header(securityConstants.HEADER_STRING, loginData.getToken()))
-								.andExpect(status().isOk())
-								.andReturn().getResponse().getContentAsString(),
-						new TypeReference<List<Prediction>>() {
-						})
-						.stream()
-						.filter(prediction -> prediction.getMatchNumber() == matchNumber)
-						.findAny()
-						.orElse(null);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			return parse(
+					mvc.perform(MockMvcRequestBuilders.get("/predictions/" + loginData.getUserID())
+									.header(securityConstants.HEADER_STRING, loginData.getToken()))
+							.andExpect(status().isOk())
+							.andReturn().getResponse().getContentAsString(),
+					new TypeReference<List<Prediction>>() {
+					})
+					.stream()
+					.filter(prediction -> prediction.getMatchNumber() == matchNumber)
+					.findAny()
+					.orElse(null);
 		};
 
 		Assertions.assertEquals(correctPrediction, getPrediction.apply(4, user).getScore());

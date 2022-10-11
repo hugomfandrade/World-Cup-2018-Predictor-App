@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.LoginData;
-import org.hugoandrade.worldcup2018.predictor.backend.prediction.Prediction;
+import org.hugoandrade.worldcup2018.predictor.backend.prediction.PredictionDto;
 import org.hugoandrade.worldcup2018.predictor.backend.system.SystemData;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
@@ -61,7 +61,7 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
                 .post("/system-data/", expectedSystemData)
                 .andExpect(status().isOk());
 
-        final BiConsumerException<LoginData, Prediction> putPrediction = (loginData, prediction) -> {
+        final BiConsumerException<LoginData, PredictionDto> putPrediction = (loginData, prediction) -> {
 
             prediction.setUserID(loginData.getUserID());
 
@@ -73,37 +73,37 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         // for user
         //
         // correct prediction
-        putPrediction.accept(user, new Prediction(0, 1, 4));
+        putPrediction.accept(user, new PredictionDto(0, 1, 4));
         // correct margin of victory
-        putPrediction.accept(user, new Prediction(2, 2, 3));
+        putPrediction.accept(user, new PredictionDto(2, 2, 3));
         // correct outcome
-        putPrediction.accept(user, new Prediction(2, 0, 19));
+        putPrediction.accept(user, new PredictionDto(2, 0, 19));
         // incorrect
-        putPrediction.accept(user, new Prediction(2, 1, 20));
+        putPrediction.accept(user, new PredictionDto(2, 1, 20));
         // incomplete
-        putPrediction.accept(user, new Prediction(-1, 1, 35));
+        putPrediction.accept(user, new PredictionDto(-1, 1, 35));
 
         // for userOther
         //
         // correct prediction
-        putPrediction.accept(userOther, new Prediction(3, 3, 3));
+        putPrediction.accept(userOther, new PredictionDto(3, 3, 3));
         // correct margin of victory
-        putPrediction.accept(userOther, new Prediction(2, 1, 19));
+        putPrediction.accept(userOther, new PredictionDto(2, 1, 19));
         // correct outcome
-        // putPrediction.accept(userOther, new Prediction(0, 2, 20));
+        // putPrediction.accept(userOther, new PredictionDto(0, 2, 20));
         // incorrect
-        putPrediction.accept(userOther, new Prediction(0, 1, 35));
+        putPrediction.accept(userOther, new PredictionDto(0, 1, 35));
         // incomplete
-        putPrediction.accept(userOther, new Prediction(0, -1, 36));
+        putPrediction.accept(userOther, new PredictionDto(0, -1, 36));
 
         // for admin
         //
         // correct prediction
-        // putPrediction.accept(admin, new Prediction(3, 3, 3));
+        // putPrediction.accept(admin, new PredictionDto(3, 3, 3));
         // correct margin of victory
-        putPrediction.accept(admin, new Prediction(2, 1, 19));
+        putPrediction.accept(admin, new PredictionDto(2, 1, 19));
         // correct outcome
-        putPrediction.accept(admin, new Prediction(0, 2, 20));
+        putPrediction.accept(admin, new PredictionDto(0, 2, 20));
     }
 
     @Test
@@ -164,9 +164,9 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         int correctMarginOfVictory = rules.getRuleCorrectMarginOfVictory();
         int correctPrediction = rules.getRuleCorrectPrediction();
 
-        final BiFunctionException<Integer, LoginData, Prediction> getPrediction = (matchNumber, loginData) -> {
+        final BiFunctionException<Integer, LoginData, PredictionDto> getPrediction = (matchNumber, loginData) -> {
 
-            return parse(new TypeReference<List<Prediction>>(){}, doOn(mvc)
+            return parse(new TypeReference<List<PredictionDto>>(){}, doOn(mvc)
                     .withHeader(loginData.getToken())
                     .get("/predictions/" + loginData.getUserID())
                     .andExpect(status().isOk())

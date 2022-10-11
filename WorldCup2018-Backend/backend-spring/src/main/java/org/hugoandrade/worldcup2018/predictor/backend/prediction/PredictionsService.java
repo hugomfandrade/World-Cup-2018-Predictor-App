@@ -20,7 +20,7 @@ public class PredictionsService {
 	@Autowired private PredictionRepository predictionRepository;
 
 	public List<Match> enabledMatches() {
-		Date date = systemDataService.getSystemData().getDate();
+		Date date = systemDataService.getSystemData().getSystemDate();
 		return matchesService.getGreaterThan(date);
 	}
 

@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -60,7 +59,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<League> leagues = parse(mvcResult, new TypeReference<List<League>>(){});
+                    List<LeagueDto> leagues = parse(mvcResult, new TypeReference<List<LeagueDto>>(){});
                     Assertions.assertEquals(0, leagues.size());
                 });
 
@@ -68,7 +67,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, admin.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<League> leagues = parse(mvcResult, new TypeReference<List<League>>(){});
+                    List<LeagueDto> leagues = parse(mvcResult, new TypeReference<List<LeagueDto>>(){});
                     Assertions.assertEquals(0, leagues.size());
                 });
     }
@@ -76,7 +75,7 @@ class LeaguesControllerTest extends BaseControllerTest {
     @Test
     void createLeagues() throws Exception {
 
-        League newLeague = new League("League Name");
+        LeagueDto newLeague = new LeagueDto("League Name");
 
         mvc.perform(MockMvcRequestBuilders.post("/leagues/")
                         .content(format(newLeague))
@@ -91,7 +90,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    League league = parse(mvcResult, League.class);
+                    LeagueDto league = parse(mvcResult, LeagueDto.class);
 
                     Assertions.assertEquals(newLeague.getName(), league.getName());
                     Assertions.assertEquals(user.getUserID(), league.getAdminID());
@@ -106,7 +105,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    League league = parse(mvcResult, League.class);
+                    LeagueDto league = parse(mvcResult, LeagueDto.class);
 
                     Assertions.assertEquals(newLeague.getName(), league.getName());
                     Assertions.assertEquals(admin.getUserID(), league.getAdminID());
@@ -119,10 +118,10 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<League> leagues = parse(mvcResult, new TypeReference<List<League>>(){});
+                    List<LeagueDto> leagues = parse(mvcResult, new TypeReference<List<LeagueDto>>(){});
                     Assertions.assertEquals(1, leagues.size());
 
-                    League league = leagues.get(0);
+                    LeagueDto league = leagues.get(0);
 
                     Assertions.assertEquals(newLeague.getName(), league.getName());
                     Assertions.assertEquals(user.getUserID(), league.getAdminID());
@@ -134,8 +133,8 @@ class LeaguesControllerTest extends BaseControllerTest {
     @Test
     void createLeagues_Multiple() throws Exception {
 
-        League newLeague01 = new League("League Name 01");
-        League newLeague02 = new League("League Name 02");
+        LeagueDto newLeague01 = new LeagueDto("League Name 01");
+        LeagueDto newLeague02 = new LeagueDto("League Name 02");
 
 
         mvc.perform(MockMvcRequestBuilders.post("/leagues/")
@@ -145,7 +144,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    League league = parse(mvcResult, League.class);
+                    LeagueDto league = parse(mvcResult, LeagueDto.class);
 
                     Assertions.assertEquals(newLeague01.getName(), league.getName());
                     Assertions.assertEquals(user.getUserID(), league.getAdminID());
@@ -160,7 +159,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    League league = parse(mvcResult, League.class);
+                    LeagueDto league = parse(mvcResult, LeagueDto.class);
 
                     Assertions.assertEquals(newLeague02.getName(), league.getName());
                     Assertions.assertEquals(user.getUserID(), league.getAdminID());
@@ -174,16 +173,16 @@ class LeaguesControllerTest extends BaseControllerTest {
                         .header(securityConstants.HEADER_STRING, user.getToken()))
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<League> leagues = parse(mvcResult, new TypeReference<List<League>>(){});
+                    List<LeagueDto> leagues = parse(mvcResult, new TypeReference<List<LeagueDto>>(){});
                     Assertions.assertEquals(2, leagues.size());
 
-                    List<League> expectedLeagues = Lists.newArrayList(newLeague01, newLeague02);
-                    leagues.sort(Comparator.comparing(League::getName));
-                    expectedLeagues.sort(Comparator.comparing(League::getName));
+                    List<LeagueDto> expectedLeagues = Lists.newArrayList(newLeague01, newLeague02);
+                    leagues.sort(Comparator.comparing(LeagueDto::getName));
+                    expectedLeagues.sort(Comparator.comparing(LeagueDto::getName));
 
                     for (int i = 0 ; i < 2 ; i++) {
-                        League league = leagues.get(i);
-                        League expectedLeague = expectedLeagues.get(i);
+                        LeagueDto league = leagues.get(i);
+                        LeagueDto expectedLeague = expectedLeagues.get(i);
                         Assertions.assertEquals(expectedLeague.getName(), league.getName());
                         Assertions.assertEquals(user.getUserID(), league.getAdminID());
                         Assertions.assertEquals(1, league.getNumberOfMembers());
@@ -195,7 +194,7 @@ class LeaguesControllerTest extends BaseControllerTest {
     @Test
     void leagueLifecycle() throws Exception {
 
-        League newLeague = new League("League Name");
+        LeagueDto newLeague = new LeagueDto("League Name");
 
         final String leaguesUrl = "/leagues/";
 
@@ -204,7 +203,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        League league = parse(postLeaguesRes, League.class);
+        LeagueDto league = parse(postLeaguesRes, LeagueDto.class);
 
         final String joinUrl = "/leagues/" + league.getID() + "/join";
         final JoinRequestBody joinRequest = new JoinRequestBody(league.getCode());
@@ -232,7 +231,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                 .post(joinUrl, joinRequest)
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    League joinLeague = parse(mvcResult, League.class);
+                    LeagueDto joinLeague = parse(mvcResult, LeagueDto.class);
 
                     Assertions.assertEquals(league.getID(), joinLeague.getID());
                     Assertions.assertEquals(league.getName(), joinLeague.getName());
@@ -310,7 +309,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                 .put(leagueUrl, league)
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    League updatedLeague = parse(mvcResult, League.class);
+                    LeagueDto updatedLeague = parse(mvcResult, LeagueDto.class);
 
                     Assertions.assertEquals(league.getName(), updatedLeague.getName());
                     Assertions.assertEquals(league.getAdminID(), updatedLeague.getAdminID());
@@ -326,16 +325,16 @@ class LeaguesControllerTest extends BaseControllerTest {
                 .get(leaguesUrl)
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<League> leagues = parse(mvcResult, new TypeReference<List<League>>(){});
+                    List<LeagueDto> leagues = parse(mvcResult, new TypeReference<List<LeagueDto>>(){});
                     Assertions.assertEquals(1, leagues.size());
 
-                    List<League> expectedLeagues = Lists.newArrayList(league);
-                    leagues.sort(Comparator.comparing(League::getName));
-                    expectedLeagues.sort(Comparator.comparing(League::getName));
+                    List<LeagueDto> expectedLeagues = Lists.newArrayList(league);
+                    leagues.sort(Comparator.comparing(LeagueDto::getName));
+                    expectedLeagues.sort(Comparator.comparing(LeagueDto::getName));
 
                     for (int i = 0 ; i < leagues.size() ; i++) {
-                        League updatedLeague = leagues.get(i);
-                        League expectedLeague = expectedLeagues.get(i);
+                        LeagueDto updatedLeague = leagues.get(i);
+                        LeagueDto expectedLeague = expectedLeagues.get(i);
                         Assertions.assertEquals(expectedLeague.getName(), updatedLeague.getName());
                         Assertions.assertEquals(user.getUserID(), updatedLeague.getAdminID());
                         Assertions.assertEquals(2, updatedLeague.getNumberOfMembers());
@@ -374,7 +373,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                 .get(leaguesUrl)
                 .andExpect(status().isOk())
                 .andExpect(mvcResult -> {
-                    List<League> leagues = parse(mvcResult, new TypeReference<List<League>>(){});
+                    List<LeagueDto> leagues = parse(mvcResult, new TypeReference<List<LeagueDto>>(){});
                     Assertions.assertEquals(0, leagues.size());
                 });
 
@@ -387,7 +386,7 @@ class LeaguesControllerTest extends BaseControllerTest {
     @Test
     void leaveLeague() throws Exception {
 
-        League newLeague = new League("League Name");
+        LeagueDto newLeague = new LeagueDto("League Name");
 
         MvcResult postLeaguesRes = mvc.perform(MockMvcRequestBuilders.post("/leagues/")
                         .header(securityConstants.HEADER_STRING, user.getToken())
@@ -397,7 +396,7 @@ class LeaguesControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        League league = parse(postLeaguesRes, League.class);
+        LeagueDto league = parse(postLeaguesRes, LeagueDto.class);
 
         JoinRequestBody joinRequest = new JoinRequestBody(league.getCode());
 
