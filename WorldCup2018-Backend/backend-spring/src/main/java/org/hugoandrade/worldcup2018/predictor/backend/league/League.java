@@ -2,10 +2,8 @@ package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,6 +16,14 @@ public class League {
     private String mAdminID;
     private String mCode;
     private int mNumberOfMembers;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "mLeague", cascade = { CascadeType.ALL }, orphanRemoval = true)
+    /* @ManyToMany(fetch = FetchType.EAGER, targetEntity = LeagueUser.class, cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "league_league_user",
+            joinColumns = @JoinColumn(name = "mLeague_ID"),
+            inverseJoinColumns = @JoinColumn(name = "mLeagueUser_ID"))*/
+    private Set<LeagueUser> leagueUsers = new HashSet<>();
 
     public League() { }
 
@@ -68,6 +74,19 @@ public class League {
 
     public void setNumberOfMembers(int numberOfMembers) {
         this.mNumberOfMembers = numberOfMembers;
+    }
+
+    public List<LeagueUser> getLeagueUsers() {
+        return new ArrayList<>(leagueUsers);
+    }
+
+    public League addLeagueUser(LeagueUser leagueUser) {
+        leagueUsers.add(leagueUser);
+        return this;
+    }
+
+    public void removeLeagueUser(String userID) {
+        leagueUsers.removeIf(leagueUser -> Objects.equals(userID, leagueUser.getUserID()));
     }
 
     @Override

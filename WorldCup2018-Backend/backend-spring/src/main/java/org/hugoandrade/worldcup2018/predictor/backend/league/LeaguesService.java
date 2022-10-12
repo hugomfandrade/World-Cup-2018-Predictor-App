@@ -1,13 +1,13 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import org.apache.commons.lang.StringUtils;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -16,12 +16,14 @@ public class LeaguesService {
 
 	@Autowired private AccountService accountService;
 
-	@Autowired private ModelMapper modelMapper;
-
 	@Autowired private LeagueRepository leagueRepository;
 	@Autowired private LeagueUserRepository leagueUserRepository;
 
 	public List<League> getMyLeagues(String userID) {
+
+		List<League> leagueUsers01 = GET_MY_LEAGUES_STRATEGIES.get(SIMPLE).apply(userID);
+		List<League> leagueUsers02 = GET_MY_LEAGUES_STRATEGIES.get(QUERY).apply(userID);
+		List<League> leagueUsers03 = GET_MY_LEAGUES_STRATEGIES.get(RELATIONS).apply(userID);
 
 		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID);
 
@@ -34,7 +36,6 @@ public class LeaguesService {
 	}
 
 	public boolean isAdminOfLeague(String userID, String leagueID) {
-
 		League dbLeague = leagueRepository.findByAdminID(leagueID, userID);
 		return dbLeague != null;
 	}
@@ -52,23 +53,42 @@ public class LeaguesService {
 		league.setNumberOfMembers(1);
 		league.setCode(code);
 
+		LeagueUser adminUser = new LeagueUser(userID, 1);
+		league.addLeagueUser(adminUser); // add relations
+
 		League dbLeague = leagueRepository.save(league);
 
-		LeagueUser adminUser = new LeagueUser(dbLeague.getID(), userID, 1);
-
+		adminUser.setLeague(dbLeague); 			 // add league
 		LeagueUser dbAdminUser = leagueUserRepository.save(adminUser);
 
 		return dbLeague;
 	}
 
-	@Deprecated
-	public League getLeague(String userID, String leagueID) {
+	public League joinLeague(String userID, String leagueID, String code) {
 
+		// check if league exists
+		League league = leagueRepository.findById(leagueID).orElse(null);
+		if (league == null) return null;
+
+		// check if user already belongs to league
 		LeagueUser leagueUser = leagueUserRepository.findByUserID(leagueID, userID);
+		if (leagueUser != null) return null;
 
-		if (leagueUser == null) return null;
+		// check if code equals
+		if (!StringUtils.equals(code, league.getCode())) return null;
 
-		return this.getLeague(leagueID);
+		// join
+		LeagueUser newLeagueUser = new LeagueUser(userID, 1);
+		league.setNumberOfMembers(league.getNumberOfMembers() + 1);
+		league.addLeagueUser(newLeagueUser);   // add relations
+
+		League dbLeague = leagueRepository.save(league);
+
+		newLeagueUser = dbLeague.getLeagueUsers().stream().filter(l -> l.getLeagueID() == null).findAny().get();
+		newLeagueUser.setLeague(dbLeague);			  // add relations
+		LeagueUser dbLeagueUser = leagueUserRepository.save(newLeagueUser);
+
+		return dbLeague;
 	}
 
 	public League getLeague(String leagueID) {
@@ -87,17 +107,11 @@ public class LeaguesService {
 		return leagueRepository.save(dbLeague);
 	}
 
-	@Deprecated
-	public List<AccountDto> getLeagueUsers(String userID, String leagueID) {
+	public List<Account> getLeagueUsers(String leagueID) {
 
-		LeagueUser leagueUser = leagueUserRepository.findByUserID(leagueID, userID);
-
-		if (leagueUser == null) return null;
-
-		return this.getLeagueUsers(leagueID);
-	}
-
-	public List<AccountDto> getLeagueUsers(String leagueID) {
+		List<LeagueUser> leagueUsers01 = GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE).apply(leagueID);
+		List<LeagueUser> leagueUsers02 = GET_LEAGUE_USERS_STRATEGIES.get(QUERY).apply(leagueID);
+		List<LeagueUser> leagueUsers03 = GET_LEAGUE_USERS_STRATEGIES.get(RELATIONS).apply(leagueID);
 
 		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByLeagueID(leagueID);
 
@@ -105,10 +119,7 @@ public class LeaguesService {
 				.map(LeagueUser::getUserID)
 				.collect(Collectors.toList());
 
-		return accountService.getAccounts(accountIDs)
-				.stream()
-				.map(account -> modelMapper.map(account, AccountDto.class))
-				.collect(Collectors.toList());
+		return accountService.getAccounts(accountIDs);
 	}
 
 	public void deleteLeague(String userID, String leagueID) {
@@ -116,7 +127,7 @@ public class LeaguesService {
 		League league = leagueRepository.findByAdminID(leagueID, userID);
 
 		if (league == null) return;
-			// throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you can not delete to this league");
+			// throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you can not delete this league");
 
 		// delete league users
 		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByLeagueID(leagueID);
@@ -134,6 +145,13 @@ public class LeaguesService {
 
 	public void removeLeagueUser(String userID, String leagueID) {
 		LeagueUser leagueUser = leagueUserRepository.findByUserID(leagueID, userID);
+		League league = leagueRepository.findById(leagueID).orElse(null);
+
+		if (league != null) {
+			league.removeLeagueUser(userID);
+			leagueRepository.save(league);
+		}
+
 		leagueUserRepository.delete(leagueUser);
 	}
 
@@ -145,30 +163,6 @@ public class LeaguesService {
 		leagueRepository.deleteById(leagueID);
 	}
 
-	public League joinLeague(String userID, String leagueID, String code) {
-
-		// check if league exists
-		League league = leagueRepository.findById(leagueID).orElse(null);
-		if (league == null) return null;
-
-		// check if user already belongs to league
-		LeagueUser leagueUser = leagueUserRepository.findByUserID(leagueID, userID);
-		if (leagueUser != null) return null;
-
-		// check if code equals
-		if (!StringUtils.equals(code, league.getCode())) return null;
-
-		// join
-		league.setNumberOfMembers(league.getNumberOfMembers() + 1);
-
-		League dbLeague = leagueRepository.save(league);
-
-		LeagueUser newLeagueUser = new LeagueUser(dbLeague.getID(), userID, 1);
-		LeagueUser dbLeagueUser = leagueUserRepository.save(newLeagueUser);
-
-		return dbLeague;
-	}
-
 	public void leaveLeague(String userID, String leagueID) {
 
 		// check if league exists
@@ -177,17 +171,16 @@ public class LeaguesService {
 
 		// if is admin, delete league altogether
 		if (StringUtils.equals(userID, league.getAdminID())) {
-			deleteLeague(userID, leagueID);
-			return;
+			this.deleteLeague(userID, leagueID);
 		}
+		else {
 
-		// check if user does not belong to league
-		LeagueUser leagueUser = leagueUserRepository.findByUserID(leagueID, userID);
-		if (leagueUser == null) return;
+			// check if user does not belong to league
+			if (!belongsToLeague(userID, leagueID)) return;
 
-		leagueUserRepository.delete(leagueUser);
+			this.removeLeagueUser(userID, leagueID);
+		}
 	}
-
 
 	private final static int COUNT = 8;
 	private final static String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -212,5 +205,47 @@ public class LeaguesService {
 		}
 
 		return str.toString();
+	}
+
+	private final static int SIMPLE = 1;
+	private final static int QUERY = 2;
+	private final static int RELATIONS = 3;
+
+	private final Map<Integer, Function<String, List<League>>> GET_MY_LEAGUES_STRATEGIES = new HashMap<>();
+	{
+		GET_MY_LEAGUES_STRATEGIES.put(SIMPLE, userID -> {
+
+			List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID);
+
+			List<String> leagueIDs = leagueUsers.stream()
+					.map(LeagueUser::getLeagueID)
+					.collect(Collectors.toList());
+
+			return StreamSupport.stream(leagueRepository.findAllById(leagueIDs).spliterator(), false)
+					.collect(Collectors.toList());
+		});
+		GET_MY_LEAGUES_STRATEGIES.put(QUERY, userID -> leagueRepository.findAllByUserID(userID));
+		GET_MY_LEAGUES_STRATEGIES.put(RELATIONS, userID -> leagueUserRepository.findAllByUserID(userID)
+				.stream()
+				.map(LeagueUser::getLeague)
+				.collect(Collectors.toList())
+		);
+	}
+
+	private final Map<Integer, Function<String, List<LeagueUser>>> GET_LEAGUE_USERS_STRATEGIES = new HashMap<>();
+	{
+		GET_LEAGUE_USERS_STRATEGIES.put(SIMPLE, leagueID -> {
+
+			List<LeagueUser> leagueUsers = leagueUserRepository.findAllByLeagueID(leagueID);
+
+			return leagueUsers;
+		});
+		GET_LEAGUE_USERS_STRATEGIES.put(QUERY, GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE));
+		GET_LEAGUE_USERS_STRATEGIES.put(RELATIONS, leagueID -> {
+
+			List<LeagueUser> leagueUsers = leagueRepository.findById(leagueID).get().getLeagueUsers();
+
+			return leagueUsers;
+		});
 	}
 }

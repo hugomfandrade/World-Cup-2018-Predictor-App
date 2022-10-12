@@ -48,8 +48,8 @@ public class LeaguesController {
 
 	@PutMapping("/{leagueID}")
 	public LeagueDto updateLeague(Principal principal,
-							   @PathVariable("leagueID") String leagueID,
-							   @RequestBody LeagueDto league) {
+								  @PathVariable("leagueID") String leagueID,
+								  @RequestBody LeagueDto league) {
 		String userID = principal.getName();
 
 		final boolean isAdmin = leaguesService.isAdminOfLeague(userID, leagueID);

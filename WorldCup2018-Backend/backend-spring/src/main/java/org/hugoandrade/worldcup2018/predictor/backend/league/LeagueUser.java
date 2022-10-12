@@ -1,14 +1,12 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import static org.hugoandrade.worldcup2018.predictor.backend.league.LeagueUser.Entry.Cols.*;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -16,10 +14,16 @@ public class LeagueUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(ID) private String mID;
-    @JsonProperty(LEAGUE_ID) private String mLeagueID;
-    @JsonProperty(USER_ID) private String mUserID;
-    @JsonProperty(RANK) private int mRank;
+    private String mID;
+    private String mLeagueID;
+    private String mUserID;
+    private int mRank;
+
+    // @ManyToMany(fetch = FetchType.EAGER, mappedBy = "leagueUsers", cascade = { CascadeType.PERSIST })
+    // public Set<League> mLeagues = new HashSet<>();
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST })
+    // @JoinColumn(name="mID", nullable=false)
+    public League mLeague;
 
     public LeagueUser() { }
 
@@ -52,6 +56,19 @@ public class LeagueUser {
 
     public String getLeagueID() {
         return mLeagueID;
+    }
+
+    public void setLeagueID(String leagueID) {
+        this.mLeagueID = leagueID;
+    }
+
+    public void setLeague(League league) {
+        this.mLeague = league;
+        this.mLeagueID = league.getID();
+    }
+
+    public League getLeague() {
+        return mLeague;
     }
 
     public static class Entry {

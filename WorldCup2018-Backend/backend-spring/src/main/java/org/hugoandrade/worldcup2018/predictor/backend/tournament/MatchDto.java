@@ -1,11 +1,10 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.codehaus.jackson.map.util.ISO8601Utils;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
 
-import javax.persistence.*;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
