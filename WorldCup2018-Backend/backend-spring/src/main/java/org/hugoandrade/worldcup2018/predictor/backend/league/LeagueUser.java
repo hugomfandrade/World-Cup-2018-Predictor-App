@@ -1,12 +1,9 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,11 +16,11 @@ public class LeagueUser {
     private String mUserID;
     private int mRank;
 
-    // @ManyToMany(fetch = FetchType.EAGER, mappedBy = "leagueUsers", cascade = { CascadeType.PERSIST })
-    // public Set<League> mLeagues = new HashSet<>();
     @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST })
-    // @JoinColumn(name="mID", nullable=false)
     public League mLeague;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST })
+    public Account mAccount;
 
     public LeagueUser() { }
 
@@ -69,6 +66,16 @@ public class LeagueUser {
 
     public League getLeague() {
         return mLeague;
+    }
+
+    public void setAccount(Account account) {
+        if (account == null) return;
+        this.mAccount = account;
+        this.mUserID = account.getId();
+    }
+
+    public Account getAccount() {
+        return mAccount;
     }
 
     public static class Entry {

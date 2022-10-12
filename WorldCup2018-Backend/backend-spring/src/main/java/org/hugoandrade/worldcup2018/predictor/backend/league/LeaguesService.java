@@ -2,11 +2,14 @@ package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import org.apache.commons.lang.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -16,6 +19,7 @@ public class LeaguesService {
 
 	@Autowired private AccountService accountService;
 
+	@Autowired private AccountRepository accountRepository;
 	@Autowired private LeagueRepository leagueRepository;
 	@Autowired private LeagueUserRepository leagueUserRepository;
 
@@ -59,6 +63,7 @@ public class LeaguesService {
 		League dbLeague = leagueRepository.save(league);
 
 		adminUser.setLeague(dbLeague); 			 // add league
+		adminUser.setAccount(accountRepository.findById(userID).orElse(null));
 		LeagueUser dbAdminUser = leagueUserRepository.save(adminUser);
 
 		return dbLeague;
@@ -86,6 +91,7 @@ public class LeaguesService {
 
 		newLeagueUser = dbLeague.getLeagueUsers().stream().filter(l -> l.getLeagueID() == null).findAny().get();
 		newLeagueUser.setLeague(dbLeague);			  // add relations
+		newLeagueUser.setAccount(accountRepository.findById(userID).orElse(null));
 		LeagueUser dbLeagueUser = leagueUserRepository.save(newLeagueUser);
 
 		return dbLeague;
@@ -109,17 +115,13 @@ public class LeaguesService {
 
 	public List<Account> getLeagueUsers(String leagueID) {
 
-		List<LeagueUser> leagueUsers01 = GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE).apply(leagueID);
-		List<LeagueUser> leagueUsers02 = GET_LEAGUE_USERS_STRATEGIES.get(QUERY).apply(leagueID);
-		List<LeagueUser> leagueUsers03 = GET_LEAGUE_USERS_STRATEGIES.get(RELATIONS).apply(leagueID);
+		List<Account> leagueUsers01 = GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE).apply(leagueID);
+		List<Account> leagueUsers02 = GET_LEAGUE_USERS_STRATEGIES.get(QUERY).apply(leagueID);
+		List<Account> leagueUsers03 = GET_LEAGUE_USERS_STRATEGIES.get(RELATIONS).apply(leagueID);
 
-		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByLeagueID(leagueID);
+		List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID);
 
-		List<String> accountIDs = leagueUsers.stream()
-				.map(LeagueUser::getUserID)
-				.collect(Collectors.toList());
-
-		return accountService.getAccounts(accountIDs);
+		return leagueUsers;
 	}
 
 	public void deleteLeague(String userID, String leagueID) {
@@ -232,20 +234,26 @@ public class LeaguesService {
 		);
 	}
 
-	private final Map<Integer, Function<String, List<LeagueUser>>> GET_LEAGUE_USERS_STRATEGIES = new HashMap<>();
+	private final Map<Integer, Function<String, List<Account>>> GET_LEAGUE_USERS_STRATEGIES = new HashMap<>();
 	{
 		GET_LEAGUE_USERS_STRATEGIES.put(SIMPLE, leagueID -> {
 
 			List<LeagueUser> leagueUsers = leagueUserRepository.findAllByLeagueID(leagueID);
 
-			return leagueUsers;
+			List<String> accountIDs = leagueUsers.stream()
+					.map(LeagueUser::getUserID)
+					.collect(Collectors.toList());
+
+			return accountService.getAccounts(accountIDs);
 		});
-		GET_LEAGUE_USERS_STRATEGIES.put(QUERY, GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE));
+		GET_LEAGUE_USERS_STRATEGIES.put(QUERY, leagueID -> accountRepository.findAllByLeagueID(leagueID));
 		GET_LEAGUE_USERS_STRATEGIES.put(RELATIONS, leagueID -> {
 
 			List<LeagueUser> leagueUsers = leagueRepository.findById(leagueID).get().getLeagueUsers();
 
-			return leagueUsers;
+			return leagueUsers.stream()
+					.map(LeagueUser::getAccount)
+					.collect(Collectors.toList());
 		});
 	}
 }

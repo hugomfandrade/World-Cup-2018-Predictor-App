@@ -18,11 +18,6 @@ public class League {
     private int mNumberOfMembers;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "mLeague", cascade = { CascadeType.ALL }, orphanRemoval = true)
-    /* @ManyToMany(fetch = FetchType.EAGER, targetEntity = LeagueUser.class, cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "league_league_user",
-            joinColumns = @JoinColumn(name = "mLeague_ID"),
-            inverseJoinColumns = @JoinColumn(name = "mLeagueUser_ID"))*/
     private Set<LeagueUser> leagueUsers = new HashSet<>();
 
     public League() { }
