@@ -16,6 +16,7 @@ public class Account {
     private String password;
     private String salt;
     private int score;
+    private int rank;
 
     public Account() { }
 
@@ -77,6 +78,14 @@ public class Account {
         this.score = score;
     }
 
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
@@ -84,6 +93,7 @@ public class Account {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", salt='" + salt + '\'' +
+                ", rank='" + rank + '\'' +
                 '}';
     }
 }

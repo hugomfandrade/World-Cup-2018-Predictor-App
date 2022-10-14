@@ -7,6 +7,7 @@ public class AccountDto {
     private String id;
     private String username;
     private int score;
+    private int rank;
 
     public AccountDto() { }
 
@@ -23,6 +24,13 @@ public class AccountDto {
         this.id = id;
         this.username = username;
         this.score = score;
+    }
+
+    public AccountDto(String id, String username, int score, int rank) {
+        this.id = id;
+        this.username = username;
+        this.score = score;
+        this.rank = rank;
     }
 
     public String getId() {
@@ -49,6 +57,14 @@ public class AccountDto {
         this.score = score;
     }
 
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -56,11 +72,22 @@ public class AccountDto {
         AccountDto that = (AccountDto) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(username, that.username) &&
-                score == that.score;
+                score == that.score &&
+                rank == that.rank;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, score);
+        return Objects.hash(id, username, score, rank);
+    }
+
+    @Override
+    public String toString() {
+        return "AccountDto{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", score=" + score +
+                ", rank=" + rank +
+                '}';
     }
 }

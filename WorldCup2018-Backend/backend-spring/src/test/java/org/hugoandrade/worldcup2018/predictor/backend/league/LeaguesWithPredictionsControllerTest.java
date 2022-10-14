@@ -122,7 +122,7 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         final JoinRequestBody joinRequest = new JoinRequestBody(league.getCode());
 
         // join, successful
-        doOn(mvc).withHeader(userOther.getToken())
+        doOn(mvc).withHeader(admin.getToken())
                 .post(joinUrl, joinRequest)
                 .andExpect(status().isOk());
 
@@ -198,8 +198,15 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         expectedScores.put(user.getUserID(), 7);
         expectedScores.put(userOther.getUserID(), 6);
         expectedScores.put(admin.getUserID(), 3);
+        // expected scores
+        final Map<String, Integer> expectedRanks = new HashMap<>();
+        expectedRanks.put(user.getUserID(), 1);
+        expectedRanks.put(userOther.getUserID(), 2);
+        expectedRanks.put(admin.getUserID(), 3);
         final List<AccountDto> expectedAccounts = Stream.of(user, userOther, admin)
-                .map(account -> new AccountDto(account.getUserID(), account.getUsername(), expectedScores.get(account.getUserID())))
+                .map(account -> new AccountDto(account.getUserID(), account.getUsername(),
+                        expectedScores.get(account.getUserID()),
+                        expectedRanks.get(account.getUserID())))
                 .collect(Collectors.toList());
 
         // get overall users
@@ -209,9 +216,15 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
                 .andExpect(list(AccountDto.class).assertEquals(expectedAccounts));
 
         // get league users
+        final Map<String, Integer> expectedLeagueRanks = new HashMap<>();
+        expectedLeagueRanks.put(user.getUserID(), 1);
+        expectedLeagueRanks.put(admin.getUserID(), 2);
         doOn(mvc).withHeader(user.getToken())
                 .get("/leagues/" + league.getID() + "/users/")
                 .andExpect(status().isOk())
-                .andExpect(list(AccountDto.class).assertEquals(expectedAccounts.subList(0, 2)));
+                .andExpect(list(AccountDto.class).assertEquals(expectedAccounts.stream()
+                        .filter(accountDto -> expectedLeagueRanks.containsKey(accountDto.getId()))
+                        .peek(accountDto -> accountDto.setRank(expectedLeagueRanks.get(accountDto.getId())))
+                        .collect(Collectors.toList())));
     }
 }

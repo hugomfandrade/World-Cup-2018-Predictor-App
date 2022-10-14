@@ -77,6 +77,7 @@ public class UsersScoreProcessingService {
                 for (AccountDto account : accounts) {
                     Account dbAccount = accountRepository.findByUsername(account.getUsername());
                     dbAccount.setScore(account.getScore());
+                    dbAccount.setRank(account.getRank());
                     accountRepository.save(dbAccount);
                 }
             }
@@ -95,6 +96,7 @@ public class UsersScoreProcessingService {
             public void updateAccount(AccountDto account) {
                 Account dbAccount = accountRepository.findByUsername(account.getUsername());
                 dbAccount.setScore(account.getScore());
+                dbAccount.setRank(account.getRank());
                 accountRepository.save(dbAccount);
             }
         });

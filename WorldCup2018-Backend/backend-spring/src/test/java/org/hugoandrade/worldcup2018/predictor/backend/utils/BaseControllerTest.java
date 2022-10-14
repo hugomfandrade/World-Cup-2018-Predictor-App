@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.utils;
 
 import org.hamcrest.Matchers;
+import org.hugoandrade.worldcup2018.predictor.backend.league.LeagueRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Admin;
@@ -34,6 +35,7 @@ public abstract class BaseControllerTest {
 
     @Autowired AdminRepository adminRepository;
     @Autowired AccountRepository accountRepository;
+    @Autowired LeagueRepository leagueRepository;
     @Autowired PredictionRepository predictionRepository;
     @Autowired protected SecurityConstants securityConstants;
     @Autowired protected StartupDatabaseScript startupScript;
@@ -66,6 +68,7 @@ public abstract class BaseControllerTest {
 
     @AfterAll
     void tearDown() {
+        leagueRepository.deleteAll();
         adminRepository.deleteAll();
         accountRepository.deleteAll();
     }

@@ -15,6 +15,7 @@ public class MatchesService {
 	@Autowired private PredictionScoresProcessingService predictionScoresProcessing;
 	@Autowired private TournamentProcessingService tournamentProcessing;
 	@Autowired private UsersScoreProcessingService usersScoreProcessing;
+	@Autowired private LeagueUsersScoreProcessingService leagueUsersScoreProcessing;
 
 	public List<Match> getAll() {
 		return matchRepository.findAllAsList();
@@ -67,6 +68,9 @@ public class MatchesService {
 
 		// update accounts
 		usersScoreProcessing.updateScores();
+
+		// update leagues
+		leagueUsersScoreProcessing.updateScores();
 
 		return resMatch;
 	}

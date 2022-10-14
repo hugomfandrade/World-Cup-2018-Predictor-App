@@ -51,6 +51,10 @@ public class LeagueUser {
         return mRank;
     }
 
+    public void setRank(int rank) {
+        this.mRank = rank;
+    }
+
     public String getLeagueID() {
         return mLeagueID;
     }

@@ -205,7 +205,7 @@ class LeaguesControllerTest extends BaseControllerTest {
 
         // check two members
         final List<AccountDto> expectedAccounts = Stream.of(user, userOther)
-                .map(account -> new AccountDto(account.getUserID(), account.getUsername()))
+                .map(account -> new AccountDto(account.getUserID(), account.getUsername(), 0, 1))
                 .collect(Collectors.toList());
 
         // Get Users

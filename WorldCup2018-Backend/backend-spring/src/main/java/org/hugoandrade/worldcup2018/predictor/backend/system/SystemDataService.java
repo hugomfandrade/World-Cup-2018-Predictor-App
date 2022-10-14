@@ -15,6 +15,7 @@ public class SystemDataService {
 	@Autowired private PredictionScoresProcessingService predictionScoresProcessing;
 	@Autowired private TournamentProcessingService tournamentProcessing;
 	@Autowired private UsersScoreProcessingService usersScoreProcessing;
+	@Autowired private LeagueUsersScoreProcessingService leagueUsersScoreProcessing;
 
 	public SystemData getSystemData() {
 
@@ -47,5 +48,8 @@ public class SystemDataService {
 
 		// update users' scores
 		usersScoreProcessing.resetScores();
+
+		// update users' scores
+		leagueUsersScoreProcessing.resetScores();
 	}
 }

@@ -121,7 +121,15 @@ public class LeaguesService {
 
 		List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID);
 
-		return leagueUsers;
+		final Map<String, LeagueUser> leaguesUsersMap = leagueUserRepository.findAllByLeagueID(leagueID)
+				.stream()
+				.collect(Collectors.toMap(LeagueUser::getUserID, Function.identity()));
+		final LeagueUser EMPTY_USER = new LeagueUser(null, -1);
+
+		return leagueUsers.stream()
+				.peek(account -> account.setRank(leaguesUsersMap.getOrDefault(account.getId(), EMPTY_USER).getRank()))
+				.filter(account -> account.getRank() != -1)
+				.collect(Collectors.toList());
 	}
 
 	public void deleteLeague(String userID, String leagueID) {
