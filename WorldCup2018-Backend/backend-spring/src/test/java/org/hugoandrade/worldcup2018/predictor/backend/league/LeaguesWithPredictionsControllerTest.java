@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.ListResultMatchers.list;
+import static org.hugoandrade.worldcup2018.predictor.backend.utils.ObjResultMatchers.obj;
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parseList;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -149,7 +150,7 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
             doOn(mvc).withHeader(admin.getToken())
                     .put("/matches/" + match.getMatchNumber(), match)
                     .andExpect(status().isOk())
-                    .andReturn().getResponse().getContentAsString();
+                    .andReturn();
         }
 
         // verify
@@ -211,7 +212,7 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
 
         // get overall users
         doOn(mvc).withHeader(user.getToken())
-                .get("/auth/accounts")
+                .get("/users/")
                 .andExpect(status().isOk())
                 .andExpect(list(AccountDto.class).assertEquals(expectedAccounts));
 
@@ -226,5 +227,20 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
                         .filter(accountDto -> expectedLeagueRanks.containsKey(accountDto.getId()))
                         .peek(accountDto -> accountDto.setRank(expectedLeagueRanks.get(accountDto.getId())))
                         .collect(Collectors.toList())));
+
+        // get league users' profiles
+        doOn(mvc).withHeader(user.getToken())
+                .get("/leagues/" + league.getID() + "/profile")
+                .andExpect(status().isOk())
+                .andExpect(obj(AccountDto.class).assertEquals(expectedAccounts.get(0)));
+
+        doOn(mvc).withHeader(userOther.getToken())
+                .get("/leagues/" + league.getID() + "/profile")
+                .andExpect(status().is4xxClientError());
+
+        doOn(mvc).withHeader(admin.getToken())
+                .get("/leagues/" + league.getID() + "/profile")
+                .andExpect(status().isOk())
+                .andExpect(obj(AccountDto.class).assertEquals(expectedAccounts.get(2)));
     }
 }

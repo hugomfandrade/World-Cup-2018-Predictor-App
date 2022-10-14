@@ -1,6 +1,5 @@
 package org.hugoandrade.worldcup2018.predictor.backend.utils;
 
-import org.hugoandrade.worldcup2018.predictor.backend.league.LeaguesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.DatabaseMetaDataCallback;
 import org.springframework.jdbc.support.JdbcUtils;

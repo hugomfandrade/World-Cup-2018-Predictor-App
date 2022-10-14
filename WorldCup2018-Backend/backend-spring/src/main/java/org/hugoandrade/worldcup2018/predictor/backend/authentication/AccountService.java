@@ -25,6 +25,10 @@ public class AccountService {
 		return accountRepository.findAllByIdInOrderByScoreDesc(accountIDs);
 	}
 
+	public Account getByID(String userID) {
+		return accountRepository.findById(userID).orElse(null);
+	}
+
 	public Account getByUsername(String username) {
 		return accountRepository.findByUsername(username);
 	}

@@ -48,12 +48,4 @@ public class AuthenticationController {
 		loginData.setUsername(account.getUsername());
 		return loginData;
 	}
-
-	@GetMapping("/accounts")
-	public List<AccountDto> getAccounts() {
-		return accountService.getAccounts()
-				.stream()
-				.map(account -> modelMapper.map(account, AccountDto.class))
-				.collect(Collectors.toList());
-	}
 }

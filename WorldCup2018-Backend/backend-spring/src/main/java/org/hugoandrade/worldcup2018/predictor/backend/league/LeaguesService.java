@@ -132,6 +132,17 @@ public class LeaguesService {
 				.collect(Collectors.toList());
 	}
 
+	public Account getLeagueUser(String leagueID, String userID) {
+
+		final Account account = accountRepository.findById(userID).orElse(null);
+		final LeagueUser leaguesUser = leagueUserRepository.findByUserID(leagueID, userID);
+
+		if (account == null || leaguesUser == null) return null;
+
+		account.setRank(leaguesUser.getRank());
+		return account;
+	}
+
 	public void deleteLeague(String userID, String leagueID) {
 
 		League league = leagueRepository.findByAdminID(leagueID, userID);

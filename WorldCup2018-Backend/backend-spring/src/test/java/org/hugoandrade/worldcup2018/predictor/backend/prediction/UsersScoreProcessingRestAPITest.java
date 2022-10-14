@@ -141,7 +141,7 @@ class UsersScoreProcessingRestAPITest extends BaseControllerTest {
 
     private AccountDto getAccount(String username) throws Exception {
 
-        return parseList(doOn(mvc).withHeader(admin.getToken()).get("/auth/accounts").andReturn(),
+        return parseList(doOn(mvc).withHeader(admin.getToken()).get("/users/").andReturn(),
                 AccountDto.class)
                 .stream()
                 .filter(account -> username.equals(account.getUsername()))

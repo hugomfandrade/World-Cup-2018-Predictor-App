@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,6 +59,19 @@ public class LeaguesController {
 
 		return modelMapper.map(leaguesService.updateLeague(userID, leagueID, modelMapper.map(league, League.class)),
 				LeagueDto.class);
+	}
+
+	@GetMapping("/{leagueID}/profile")
+	public AccountDto getLeagueUser(Principal principal, @PathVariable("leagueID") String leagueID) {
+		String userID = principal.getName();
+
+		boolean belongsToLeague = leaguesService.belongsToLeague(userID, leagueID);
+
+		if (!belongsToLeague) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you do not belong to this league");
+
+		return Optional.ofNullable(leaguesService.getLeagueUser(leagueID, userID))
+				.map(account -> modelMapper.map(account, AccountDto.class))
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "you do not belong to this league"));
 	}
 
 	@GetMapping("/{leagueID}/users")

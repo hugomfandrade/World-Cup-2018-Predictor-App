@@ -220,7 +220,7 @@ public class SystemControllerTest extends BaseControllerTest {
 	private AccountDto getAccount(String username) throws Exception {
 
 		MvcResult mvcResult = doOn(mvc).withHeader(admin.getToken())
-				.get("/auth/accounts")
+				.get("/users/")
 				.andExpect(status().isOk())
 				.andReturn();
 
