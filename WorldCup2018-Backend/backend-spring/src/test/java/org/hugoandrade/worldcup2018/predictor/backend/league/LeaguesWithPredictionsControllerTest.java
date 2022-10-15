@@ -220,13 +220,31 @@ class LeaguesWithPredictionsControllerTest extends BaseControllerTest {
         final Map<String, Integer> expectedLeagueRanks = new HashMap<>();
         expectedLeagueRanks.put(user.getUserID(), 1);
         expectedLeagueRanks.put(admin.getUserID(), 2);
+        final List<AccountDto> expectedLeagueUsers = expectedAccounts.stream()
+                .filter(accountDto -> expectedLeagueRanks.containsKey(accountDto.getId()))
+                .peek(accountDto -> accountDto.setRank(expectedLeagueRanks.get(accountDto.getId())))
+                .collect(Collectors.toList());
+
         doOn(mvc).withHeader(user.getToken())
                 .get("/leagues/" + league.getID() + "/users/")
                 .andExpect(status().isOk())
-                .andExpect(list(AccountDto.class).assertEquals(expectedAccounts.stream()
-                        .filter(accountDto -> expectedLeagueRanks.containsKey(accountDto.getId()))
-                        .peek(accountDto -> accountDto.setRank(expectedLeagueRanks.get(accountDto.getId())))
-                        .collect(Collectors.toList())));
+                .andExpect(list(AccountDto.class).assertEquals(expectedLeagueUsers));
+
+        // (paging)
+        doOn(mvc).withHeader(user.getToken()).paging(0, 1)
+                .get("/leagues/" + league.getID() + "/users/")
+                .andExpect(status().isOk())
+                .andExpect(list(AccountDto.class).assertEquals(expectedLeagueUsers.subList(0, 1)));
+
+        doOn(mvc).withHeader(user.getToken()).paging(1, 1)
+                .get("/leagues/" + league.getID() + "/users/")
+                .andExpect(status().isOk())
+                .andExpect(list(AccountDto.class).assertEquals(expectedLeagueUsers.subList(1, 2)));
+
+        doOn(mvc).withHeader(user.getToken()).paging(2, 1)
+                .get("/leagues/" + league.getID() + "/users/")
+                .andExpect(status().isOk())
+                .andExpect(list(AccountDto.class).assertSize(0));
 
         // get league users' profiles
         doOn(mvc).withHeader(user.getToken())

@@ -22,8 +22,9 @@ public class UsersController {
 	private ModelMapper modelMapper;
 
 	@GetMapping("/")
-	public List<AccountDto> getAccounts() {
-		return accountService.getAccounts()
+	public List<AccountDto> getAccounts(@RequestParam(name = "page", defaultValue = "0") int page,
+										@RequestParam(name = "size", defaultValue = "50") int size) {
+		return accountService.getAccounts(page, size)
 				.stream()
 				.map(account -> modelMapper.map(account, AccountDto.class))
 				.collect(Collectors.toList());

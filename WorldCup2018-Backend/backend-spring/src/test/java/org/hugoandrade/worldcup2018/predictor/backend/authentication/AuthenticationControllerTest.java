@@ -77,6 +77,18 @@ public class AuthenticationControllerTest extends BaseControllerTest {
 				.andExpect(list(AccountDto.class)
 						.addDo(accountDtos -> Assertions.assertTrue(accountDtos.contains(accountDto))));
 
+		doOn(mvc).withHeader(loginData.getToken()).paging(0,2).get("/users/")
+				.andExpect(status().isOk())
+				.andExpect(list(AccountDto.class).assertSize(2));
+
+		doOn(mvc).withHeader(loginData.getToken()).paging(1,2).get("/users/")
+				.andExpect(status().isOk())
+				.andExpect(list(AccountDto.class).assertSize(2));
+
+		doOn(mvc).withHeader(loginData.getToken()).paging(2,2).get("/users/")
+				.andExpect(status().isOk())
+				.andExpect(list(AccountDto.class).assertSize(0));
+
 		// get single user
 		doOn(mvc).get("/users/" + loginData.getUsername() + "-INVALID")
 				.andExpect(status().is4xxClientError());

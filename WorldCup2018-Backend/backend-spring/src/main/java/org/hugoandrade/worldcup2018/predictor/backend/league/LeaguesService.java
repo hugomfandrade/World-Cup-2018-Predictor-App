@@ -4,7 +4,11 @@ import org.apache.commons.lang.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountService;
+import org.hugoandrade.worldcup2018.predictor.backend.utils.UnpagedSorted;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -24,12 +28,21 @@ public class LeaguesService {
 	@Autowired private LeagueUserRepository leagueUserRepository;
 
 	public List<League> getMyLeagues(String userID) {
+		return this.getMyLeagues(userID, UnpagedSorted.of(Sort.by(Sort.Order.asc("id"))));
+	}
+
+	public List<League> getMyLeagues(String userID, int page, int size) {
+		return this.getMyLeagues(userID, PageRequest.of(page, size, Sort.by(Sort.Order.asc("id"))));
+	}
+
+	public List<League> getMyLeagues(String userID, Pageable pageable) {
 
 		List<League> leagueUsers01 = GET_MY_LEAGUES_STRATEGIES.get(SIMPLE).apply(userID);
 		List<League> leagueUsers02 = GET_MY_LEAGUES_STRATEGIES.get(QUERY).apply(userID);
 		List<League> leagueUsers03 = GET_MY_LEAGUES_STRATEGIES.get(RELATIONS).apply(userID);
 
-		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID);
+		// List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID);
+		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID, pageable);
 
 		List<String> leagueIDs = leagueUsers.stream()
 				.map(LeagueUser::getLeagueID)
@@ -114,12 +127,23 @@ public class LeaguesService {
 	}
 
 	public List<Account> getLeagueUsers(String leagueID) {
+		return this.getLeagueUsers(leagueID,
+				UnpagedSorted.of(Sort.by(Sort.Order.desc("score"), Sort.Order.asc("id"))));
+	}
+
+	public List<Account> getLeagueUsers(String leagueID, int page, int size) {
+		return this.getLeagueUsers(leagueID,
+				PageRequest.of(page, size, Sort.by(Sort.Order.desc("score"), Sort.Order.asc("id"))));
+	}
+
+	public List<Account> getLeagueUsers(String leagueID, Pageable pageble) {
 
 		List<Account> leagueUsers01 = GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE).apply(leagueID);
 		List<Account> leagueUsers02 = GET_LEAGUE_USERS_STRATEGIES.get(QUERY).apply(leagueID);
 		List<Account> leagueUsers03 = GET_LEAGUE_USERS_STRATEGIES.get(RELATIONS).apply(leagueID);
 
-		List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID);
+		// List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID);
+		List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID, pageble);
 
 		final Map<String, LeagueUser> leaguesUsersMap = leagueUserRepository.findAllByLeagueID(leagueID)
 				.stream()

@@ -1,11 +1,13 @@
 package org.hugoandrade.worldcup2018.predictor.backend.authentication;
 
+import org.hugoandrade.worldcup2018.predictor.backend.utils.UnpagedSorted;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class AccountService {
@@ -18,7 +20,20 @@ public class AccountService {
 	}
 
 	public List<Account> getAccounts() {
-		return accountRepository.findAllByOrderByScoreDesc();
+		// return accountRepository.findAllByOrderByScoreDesc();
+		return this.getAccounts(UnpagedSorted.of(Sort.by(
+				Sort.Order.desc("score"),
+				Sort.Order.asc("id"))));
+	}
+
+	public List<Account> getAccounts(int page, int size) {
+		return this.getAccounts(PageRequest.of(page, size,
+				Sort.by(Sort.Order.desc("score"),
+						Sort.Order.asc("id"))));
+	}
+
+	public List<Account> getAccounts(Pageable pageable) {
+		return accountRepository.findAll(pageable);
 	}
 
 	public List<Account> getAccounts(List<String> accountIDs) {

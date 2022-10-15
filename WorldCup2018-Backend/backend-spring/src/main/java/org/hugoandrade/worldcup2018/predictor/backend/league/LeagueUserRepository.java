@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -13,6 +14,9 @@ public interface LeagueUserRepository extends CrudRepository<LeagueUser, String>
 
     @Query("FROM LeagueUser l WHERE l.mUserID = :userID")
     List<LeagueUser> findAllByUserID(String userID);
+
+    @Query("FROM LeagueUser l WHERE l.mUserID = :userID")
+    List<LeagueUser> findAllByUserID(String userID, Pageable pageable);
 
     @Query("FROM LeagueUser l WHERE l.mLeagueID = :leagueID")
     List<LeagueUser> findAllByLeagueID(String leagueID);

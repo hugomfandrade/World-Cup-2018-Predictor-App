@@ -1,5 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.authentication;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -17,11 +18,16 @@ public interface AccountRepository extends CrudRepository<Account, String> {
                 .collect(Collectors.toList());
     }
 
+    List<Account> findAll(Pageable pageable);
+
     List<Account> findAllByOrderByScoreDesc();
 
     List<Account> findAllByIdInOrderByScoreDesc(Iterable<String> ids);
 
     @Query("FROM Account a INNER JOIN LeagueUser l ON l.mUserID = a.id WHERE l.mLeagueID = :leagueID")
     List<Account> findAllByLeagueID(String leagueID);
+
+    @Query("FROM Account a INNER JOIN LeagueUser l ON l.mUserID = a.id WHERE l.mLeagueID = :leagueID")
+    List<Account> findAllByLeagueID(String leagueID, Pageable pageable);
 
 }

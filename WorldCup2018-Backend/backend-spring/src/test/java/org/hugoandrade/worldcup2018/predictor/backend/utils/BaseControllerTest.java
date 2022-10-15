@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
+
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.format;
 import static org.hugoandrade.worldcup2018.predictor.backend.utils.QuickParserUtils.parse;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -108,12 +110,21 @@ public abstract class BaseControllerTest {
 
         private String token;
 
+        private Integer page;
+        private Integer size;
+
         protected RequestBuilder(MockMvc mvc) {
             this.mvc = mvc;
         }
 
         public RequestBuilder withHeader(String token) {
             this.token = token;
+            return this;
+        }
+
+        public RequestBuilder paging(int page, int size) {
+            this.page = page;
+            this.size = size;
             return this;
         }
 
@@ -142,6 +153,12 @@ public abstract class BaseControllerTest {
 
             if (token != null) {
                 builder.header(securityConstants.HEADER_STRING, token);
+            }
+            if (page != null) {
+                builder.param("page", page.toString());
+            }
+            if (size != null) {
+                builder.param("size", size.toString());
             }
 
             return mvc.perform(builder);

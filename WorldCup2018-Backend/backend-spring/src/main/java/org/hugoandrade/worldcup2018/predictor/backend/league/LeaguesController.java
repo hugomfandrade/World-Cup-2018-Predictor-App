@@ -22,9 +22,11 @@ public class LeaguesController {
 	@Autowired private ModelMapper modelMapper;
 
 	@GetMapping("/")
-	public List<LeagueDto> getMyLeagues(Principal principal) {
+	public List<LeagueDto> getMyLeagues(Principal principal,
+										@RequestParam(name = "page", defaultValue = "0") int page,
+										@RequestParam(name = "size", defaultValue = "50") int size) {
 		String userID = principal.getName();
-		return leaguesService.getMyLeagues(userID).stream()
+		return leaguesService.getMyLeagues(userID, page, size).stream()
 				.map(league -> modelMapper.map(league, LeagueDto.class))
 				.collect(Collectors.toList());
 	}
@@ -75,14 +77,17 @@ public class LeaguesController {
 	}
 
 	@GetMapping("/{leagueID}/users")
-	public List<AccountDto> getLeagueUsers(Principal principal, @PathVariable("leagueID") String leagueID) {
+	public List<AccountDto> getLeagueUsers(Principal principal,
+										   @PathVariable("leagueID") String leagueID,
+										   @RequestParam(name = "page", defaultValue = "0") int page,
+										   @RequestParam(name = "size", defaultValue = "50") int size) {
 		String userID = principal.getName();
 
 		boolean belongsToLeague = leaguesService.belongsToLeague(userID, leagueID);
 
 		if (!belongsToLeague) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you do not belong to this league");
 
-		return leaguesService.getLeagueUsers(leagueID)
+		return leaguesService.getLeagueUsers(leagueID, page, size)
 				.stream()
 				.map(account -> modelMapper.map(account, AccountDto.class))
 				.collect(Collectors.toList());
@@ -103,8 +108,8 @@ public class LeaguesController {
 
 	@PostMapping("/{leagueID}/join")
 	public LeagueDto joinLeague(Principal principal,
-							 @PathVariable("leagueID") String leagueID,
-							 @RequestBody JoinRequestBody requestBody) {
+								@PathVariable("leagueID") String leagueID,
+								@RequestBody JoinRequestBody requestBody) {
 		String userID = principal.getName();
 		String code = requestBody.code;
 

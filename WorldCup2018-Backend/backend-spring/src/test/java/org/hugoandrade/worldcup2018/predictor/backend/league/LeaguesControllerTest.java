@@ -289,6 +289,17 @@ class LeaguesControllerTest extends BaseControllerTest {
                     }
                 }));
 
+        // (paging)
+        doOn(mvc).withHeader(user.getToken()).paging(0, 50)
+                .get(leaguesUrl)
+                .andExpect(status().isOk())
+                .andExpect(list(LeagueDto.class).assertSize(1));
+
+        doOn(mvc).withHeader(user.getToken()).paging(1, 50)
+                .get(leaguesUrl)
+                .andExpect(status().isOk())
+                .andExpect(list(LeagueDto.class).assertSize(0));
+
         doOn(mvc).withHeader(user.getToken())
                 .get(usersUrl)
                 .andExpect(status().isOk())
