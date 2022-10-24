@@ -20,7 +20,6 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.lang.Nullable;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -91,6 +90,7 @@ public class DatabaseConfig {
         MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory), new MongoMappingContext()) {
             @Override
             public Object convertId(Object id, @NonNull Class<?> targetType) {
+                if (targetType == ObjectId.class) return super.convertId(id, targetType);
                 return id == null ? null : new ObjectId((String) id);
             }
         };

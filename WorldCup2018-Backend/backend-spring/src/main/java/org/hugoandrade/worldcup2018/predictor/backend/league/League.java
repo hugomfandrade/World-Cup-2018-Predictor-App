@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
 import java.util.*;
@@ -9,7 +10,8 @@ import java.util.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class League {
 
-    @Id
+    @javax.persistence.Id
+    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String mID;
     private String mName;
@@ -18,6 +20,7 @@ public class League {
     private int mNumberOfMembers;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "mLeague", cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Transient
     private Set<LeagueUser> leagueUsers = new HashSet<>();
 
     public League() { }

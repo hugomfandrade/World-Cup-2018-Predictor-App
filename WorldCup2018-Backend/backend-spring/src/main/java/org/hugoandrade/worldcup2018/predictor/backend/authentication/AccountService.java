@@ -33,7 +33,7 @@ public class AccountService {
 	}
 
 	public List<Account> getAccounts(Pageable pageable) {
-		return accountRepository.findAll(pageable);
+		return accountRepository.findAll(pageable).toList();
 	}
 
 	public List<Account> getAccounts(List<String> accountIDs) {

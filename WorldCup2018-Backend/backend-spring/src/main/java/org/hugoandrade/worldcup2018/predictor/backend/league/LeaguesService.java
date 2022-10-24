@@ -37,9 +37,9 @@ public class LeaguesService {
 
 	public List<League> getMyLeagues(String userID, Pageable pageable) {
 
-		List<League> leagueUsers01 = GET_MY_LEAGUES_STRATEGIES.get(SIMPLE).apply(userID);
-		List<League> leagueUsers02 = GET_MY_LEAGUES_STRATEGIES.get(QUERY).apply(userID);
-		List<League> leagueUsers03 = GET_MY_LEAGUES_STRATEGIES.get(RELATIONS).apply(userID);
+		// List<League> leagueUsers01 = GET_MY_LEAGUES_STRATEGIES.get(SIMPLE).apply(userID);
+		// List<League> leagueUsers02 = GET_MY_LEAGUES_STRATEGIES.get(QUERY).apply(userID);
+		// List<League> leagueUsers03 = GET_MY_LEAGUES_STRATEGIES.get(RELATIONS).apply(userID);
 
 		// List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID);
 		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID, pageable);
@@ -102,7 +102,7 @@ public class LeaguesService {
 
 		League dbLeague = leagueRepository.save(league);
 
-		newLeagueUser = dbLeague.getLeagueUsers().stream().filter(l -> l.getLeagueID() == null).findAny().get();
+		newLeagueUser = dbLeague.getLeagueUsers().stream().filter(l -> l.getLeagueID() == null).findAny().orElse(newLeagueUser);
 		newLeagueUser.setLeague(dbLeague);			  // add relations
 		newLeagueUser.setAccount(accountRepository.findById(userID).orElse(null));
 		LeagueUser dbLeagueUser = leagueUserRepository.save(newLeagueUser);
@@ -136,19 +136,19 @@ public class LeaguesService {
 				PageRequest.of(page, size, Sort.by(Sort.Order.desc("score"), Sort.Order.asc("id"))));
 	}
 
-	public List<Account> getLeagueUsers(String leagueID, Pageable pageble) {
+	public List<Account> getLeagueUsers(String leagueID, Pageable pageable) {
 
-		List<Account> leagueUsers01 = GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE).apply(leagueID);
-		List<Account> leagueUsers02 = GET_LEAGUE_USERS_STRATEGIES.get(QUERY).apply(leagueID);
-		List<Account> leagueUsers03 = GET_LEAGUE_USERS_STRATEGIES.get(RELATIONS).apply(leagueID);
-
-		// List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID);
-		List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID, pageble);
+		// List<Account> leagueUsers01 = GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE).apply(leagueID);
+		// List<Account> leagueUsers02 = GET_LEAGUE_USERS_STRATEGIES.get(QUERY).apply(leagueID);
+		// List<Account> leagueUsers03 = GET_LEAGUE_USERS_STRATEGIES.get(RELATIONS).apply(leagueID);
 
 		final Map<String, LeagueUser> leaguesUsersMap = leagueUserRepository.findAllByLeagueID(leagueID)
 				.stream()
 				.collect(Collectors.toMap(LeagueUser::getUserID, Function.identity()));
 		final LeagueUser EMPTY_USER = new LeagueUser(null, -1);
+
+		// List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID);
+		List<Account> leagueUsers = accountRepository.findAllByIdIn(leaguesUsersMap.keySet(), pageable);
 
 		return leagueUsers.stream()
 				.peek(account -> account.setRank(leaguesUsersMap.getOrDefault(account.getId(), EMPTY_USER).getRank()))

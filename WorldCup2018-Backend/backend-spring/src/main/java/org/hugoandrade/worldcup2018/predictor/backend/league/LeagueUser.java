@@ -2,6 +2,7 @@ package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
+import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
 
@@ -9,7 +10,8 @@ import javax.persistence.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LeagueUser {
 
-    @Id
+    @javax.persistence.Id
+    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String mID;
     private String mLeagueID;
@@ -17,9 +19,11 @@ public class LeagueUser {
     private int mRank;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST })
+    @Transient
     public League mLeague;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST })
+    @Transient
     public Account mAccount;
 
     public LeagueUser() { }
