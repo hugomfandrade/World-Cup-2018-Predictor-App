@@ -1,15 +1,10 @@
 package org.hugoandrade.worldcup2018.predictor.backend;
 
+import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
 import org.hugoandrade.worldcup2018.predictor.backend.security.Pbkdf2PasswordEncoderImpl;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
-import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.Match;
-import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.DestinationSetter;
-import org.modelmapper.spi.SourceGetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,9 +12,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -28,9 +26,13 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.util.Arrays;
 import java.util.Map;
 
+import static org.springframework.context.annotation.FilterType.ASPECTJ;
+
 @SpringBootApplication
 @EnableAutoConfiguration
 @Configuration
+@EnableJpaRepositories(excludeFilters = @ComponentScan.Filter(pattern = "org.hugoandrade.worldcup2018.predictor.backend.repos.mongodb.*", type = ASPECTJ))
+@EnableMongoRepositories(basePackages = "org.hugoandrade.worldcup2018.predictor.backend.repos.mongodb")
 public class Application {
 
 	public static void main(String[] args) {
