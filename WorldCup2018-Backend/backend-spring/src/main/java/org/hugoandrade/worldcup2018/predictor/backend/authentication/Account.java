@@ -8,13 +8,13 @@ import javax.persistence.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
 
-    @javax.persistence.Id
-    @org.springframework.data.annotation.Id
+    @javax.persistence.Id                       // jpa
+    @org.springframework.data.annotation.Id     // mongo
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    @org.springframework.data.mongodb.core.index.Indexed(unique = true)
-    @Column(unique = true)
+    @javax.persistence.Column(unique = true)                             // jpa
+    @org.springframework.data.mongodb.core.index.Indexed(unique = true)  // mongo
     private String username;
     private String password;
     private String salt;

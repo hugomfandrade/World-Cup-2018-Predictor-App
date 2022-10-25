@@ -10,8 +10,8 @@ import javax.persistence.GenerationType;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Prediction {
 
-    @javax.persistence.Id
-    @org.springframework.data.annotation.Id
+    @javax.persistence.Id                       // jpa
+    @org.springframework.data.annotation.Id     // mongo
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String mID;
     private String mUserID;

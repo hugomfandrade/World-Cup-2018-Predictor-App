@@ -6,12 +6,15 @@ import org.springframework.data.annotation.Transient;
 import javax.persistence.*;
 import java.util.*;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class League {
 
-    @javax.persistence.Id
-    @org.springframework.data.annotation.Id
+    @javax.persistence.Id                       // jpa
+    @org.springframework.data.annotation.Id     // mongo
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String mID;
     private String mName;
@@ -19,8 +22,8 @@ public class League {
     private String mCode;
     private int mNumberOfMembers;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "mLeague", cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Transient
+    @OneToMany(fetch = EAGER, mappedBy = "mLeague", cascade = { ALL }, orphanRemoval = true) // jpa
+@Transient                                                                                   // mongo
     private Set<LeagueUser> leagueUsers = new HashSet<>();
 
     public League() { }

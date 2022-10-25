@@ -7,8 +7,8 @@ import javax.persistence.GenerationType;
 @Entity
 public class Admin {
 
-    @javax.persistence.Id
-    @org.springframework.data.annotation.Id
+    @javax.persistence.Id                       // jpa
+    @org.springframework.data.annotation.Id     // mongo
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private String userID;

@@ -6,24 +6,27 @@ import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
 
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LeagueUser {
 
-    @javax.persistence.Id
-    @org.springframework.data.annotation.Id
+    @javax.persistence.Id                       // jpa
+    @org.springframework.data.annotation.Id     // mongo
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String mID;
     private String mLeagueID;
     private String mUserID;
     private int mRank;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST })
-    @Transient
+    @ManyToOne(fetch = EAGER, cascade = { PERSIST })    // jpa
+    @Transient                                          // mongo
     public League mLeague;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST })
-    @Transient
+    @ManyToOne(fetch = EAGER, cascade = { PERSIST })    // jpa
+    @Transient                                          // mongo
     public Account mAccount;
 
     public LeagueUser() { }
