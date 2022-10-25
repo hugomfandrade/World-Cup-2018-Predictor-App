@@ -13,6 +13,9 @@ public interface MatchJpaRepository extends MatchRepository, JpaRepository<Match
     @Query("FROM Match m WHERE m.mMatchNo = :matchNumber")
     Match findByMatchNumber(int matchNumber);
 
+    @Query("FROM Match m WHERE m.mHomeTeamID = :countryID OR m.mAwayTeamID = :countryID")
+    List<Match> findAllByCountryID(String countryID);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM Match m WHERE m.mMatchNo = :matchNumber")

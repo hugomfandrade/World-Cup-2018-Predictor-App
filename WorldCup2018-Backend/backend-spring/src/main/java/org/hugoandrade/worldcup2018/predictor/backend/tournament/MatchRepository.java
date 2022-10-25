@@ -13,6 +13,8 @@ public interface MatchRepository extends CrudRepository<Match, String> {
 
     Match findByMatchNumber(int matchNumber);
 
+    List<Match> findAllByCountryID(String countryID);
+
     void deleteByMatchNumber(int matchNumber);
 
     List<Match> findGreatThan(Date dateTime);

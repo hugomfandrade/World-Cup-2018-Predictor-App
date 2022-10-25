@@ -14,6 +14,9 @@ public interface MatchMongoRepository extends MatchRepository, MongoRepository<M
     @Query("{ 'mMatchNo' : ?0 }")
     Match findByMatchNumber(int matchNumber);
 
+    @Query("{ '$or':[ {'mHomeTeamID': ?0 }, {'mAwayTeamID': ?0} ] }")
+    List<Match> findAllByCountryID(String countryID);
+
     @DeleteQuery("{ 'mMatchNo' : ?0 }")
     void deleteByMatchNumber(int matchNumber);
 
