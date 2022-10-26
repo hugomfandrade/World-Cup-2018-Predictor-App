@@ -61,9 +61,9 @@ public class ListResultMatchers<T> {
             actualList.sort(sorter);
             expectedList.sort(sorter);
 
-            Assertions.assertTrue(expectedList.size() == actualList.size() &&
-                    IntStream.range(0, expectedList.size())
-                            .allMatch(i -> comparator.compare(expectedList.get(i), actualList.get(i)) == 0));
+            Assertions.assertEquals(expectedList.size(), actualList.size());
+            Assertions.assertTrue(IntStream.range(0, expectedList.size())
+                    .allMatch(i -> comparator.compare(expectedList.get(i), actualList.get(i)) == 0));
         };
     }
 

@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.io.Serializable;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Country implements Comparable<Country>, Serializable {
 
-    @Id
+    @javax.persistence.Id                       // jpa
+    @org.springframework.data.annotation.Id     // mongo
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String mID;
     private String mName;

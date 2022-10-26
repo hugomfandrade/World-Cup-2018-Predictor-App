@@ -11,10 +11,13 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Match implements Comparable<Match>, Serializable {
 
-    @Id
+    @javax.persistence.Id                       // jpa
+    @org.springframework.data.annotation.Id     // mongo
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String mID;
-    @Column(unique = true)
+
+    @javax.persistence.Column(unique = true)                             // jpa
+    @org.springframework.data.mongodb.core.index.Indexed(unique = true)  // mongo
     private int mMatchNo;
     private String mHomeTeamID;
     private String mAwayTeamID;

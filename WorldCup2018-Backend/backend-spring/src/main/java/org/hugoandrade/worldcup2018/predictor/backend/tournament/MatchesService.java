@@ -21,6 +21,10 @@ public class MatchesService {
 		return matchRepository.findAllAsList();
 	}
 
+	public List<Match> getAllOf(String countryID) {
+		return matchRepository.findAllByCountryID(countryID);
+	}
+
 	public Match addOne(Match match) {
 		Match resMatch = matchRepository.save(match);
 		return resMatch;

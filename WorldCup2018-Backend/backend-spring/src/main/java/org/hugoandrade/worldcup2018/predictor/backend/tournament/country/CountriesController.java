@@ -1,5 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament.country;
 
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchesService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,9 @@ public class CountriesController {
 
 	@Autowired
 	private CountriesService countriesService;
+
+	@Autowired
+	private MatchesService matchesService;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -54,4 +59,10 @@ public class CountriesController {
 		return modelMapper.map(dbCountry, CountryDto.class);
 	}
 
+	@GetMapping("/{countryID}/matches")
+	public List<MatchDto> getMatches(@PathVariable("countryID") String countryID) {
+		return matchesService.getAllOf(countryID).stream()
+				.map(country -> modelMapper.map(country, MatchDto.class))
+				.collect(Collectors.toList());
+	}
 }

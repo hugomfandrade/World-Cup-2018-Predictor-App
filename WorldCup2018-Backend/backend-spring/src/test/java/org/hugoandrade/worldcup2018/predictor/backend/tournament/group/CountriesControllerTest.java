@@ -1,5 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament.group;
 
+import org.hugoandrade.worldcup2018.predictor.backend.tournament.MatchDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryDto;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.CountryRepository;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.BaseControllerTest;
@@ -110,7 +111,7 @@ class CountriesControllerTest extends BaseControllerTest {
         doOn(mvc).get("/countries/" + country.getID())
                 .andExpect(status().is4xxClientError());
 
-        doOn(mvc).withHeader(user.getToken()).get("/countries/" + country.getID())
+        doOn(mvc).withHeader(admin.getToken()).get("/countries/" + country.getID())
                 .andExpect(status().isOk())
                 .andExpect(obj(CountryDto.class).addDo((resCountry) -> {
                     Assertions.assertEquals(country.getName(), resCountry.getName());
@@ -126,6 +127,37 @@ class CountriesControllerTest extends BaseControllerTest {
                     Assertions.assertEquals(country.getGroup(), resCountry.getGroup());
                     Assertions.assertEquals(country.getDrawingOfLots(), resCountry.getDrawingOfLots());
                     Assertions.assertEquals(country, resCountry);
+                }));
+    }
+
+    @Test
+    void getMatches() throws Exception {
+
+        CountryDto country = modelMapper.map(countryRepository.findAll().iterator().next(), CountryDto.class);
+
+        doOn(mvc).get("/countries/" + country.getID() + "/matches")
+                .andExpect(status().is4xxClientError());
+
+        doOn(mvc).withHeader(admin.getToken()).get("/countries/" + country.getID() + "/matches")
+                .andExpect(status().isOk())
+                .andExpect(list(MatchDto.class).assertSize(3))
+                .andExpect(list(MatchDto.class).addDo((matchDtos) -> {
+                    for (MatchDto matchDto : matchDtos) {
+                        Assertions.assertTrue(
+                                country.getID().equals(matchDto.getAwayTeamID()) |
+                                        country.getID().equals(matchDto.getHomeTeamID()));
+                    }
+                }));
+
+        doOn(mvc).withHeader(user.getToken()).get("/countries/" + country.getID() + "/matches")
+                .andExpect(status().isOk())
+                .andExpect(list(MatchDto.class).assertSize(3))
+                .andExpect(list(MatchDto.class).addDo((matchDtos) -> {
+                    for (MatchDto matchDto : matchDtos) {
+                        Assertions.assertTrue(
+                                country.getID().equals(matchDto.getAwayTeamID()) |
+                                        country.getID().equals(matchDto.getHomeTeamID()));
+                    }
                 }));
     }
 
