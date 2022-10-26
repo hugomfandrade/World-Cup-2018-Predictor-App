@@ -1,6 +1,5 @@
 package org.hugoandrade.worldcup2018.predictor.backend.repos.mongodb;
 
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.league.LeagueUser;
 import org.hugoandrade.worldcup2018.predictor.backend.league.LeagueUserRepository;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +21,4 @@ public interface LeagueUserMongoRepository extends LeagueUserRepository, MongoRe
 
     @Query("{ 'mLeagueID' : ?0 }")
     List<LeagueUser> findAllByLeagueID(String leagueID);
-
-    @Deprecated
-    List<Account> findAllAccountsByLeagueID(String leagueID);
 }

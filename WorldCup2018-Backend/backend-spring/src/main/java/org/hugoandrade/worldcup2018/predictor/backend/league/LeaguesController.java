@@ -2,12 +2,15 @@ package org.hugoandrade.worldcup2018.predictor.backend.league;
 
 import org.apache.commons.lang.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
+import org.hugoandrade.worldcup2018.predictor.backend.league.strategy.LeaguesStrategyFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.PostConstruct;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,19 @@ public class LeaguesController {
 	@Autowired private LeaguesService leaguesService;
 
 	@Autowired private ModelMapper modelMapper;
+
+	@Value("${spring.data.repository.type}")
+	private String repositoryType;
+
+	@PostConstruct
+	public void setup() {
+		if ("mongodb".equalsIgnoreCase(repositoryType)) {
+			leaguesService.setStrategyFactory(new LeaguesStrategyFactory.Mongo());
+		}
+		else {
+			leaguesService.setStrategyFactory(new LeaguesStrategyFactory.Jpa());
+		}
+	}
 
 	@GetMapping("/")
 	public List<LeagueDto> getMyLeagues(Principal principal,

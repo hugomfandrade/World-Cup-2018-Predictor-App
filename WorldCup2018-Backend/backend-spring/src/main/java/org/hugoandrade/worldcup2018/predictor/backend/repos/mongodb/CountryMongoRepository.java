@@ -9,7 +9,4 @@ public interface CountryMongoRepository extends CountryRepository, MongoReposito
 
     @Query("{ '_id' : ?0 }")
     Country findCountryById(String id);
-
-    // @org.springframework.data.mongodb.repository.DeleteQuery("{ '_id' : ?0 }")
-    // void deleteById(@com.mongodb.lang.NonNull String countryID);
 }

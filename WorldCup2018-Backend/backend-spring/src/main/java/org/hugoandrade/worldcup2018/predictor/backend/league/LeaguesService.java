@@ -3,7 +3,9 @@ package org.hugoandrade.worldcup2018.predictor.backend.league;
 import org.apache.commons.lang.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.Account;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountRepository;
-import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountService;
+import org.hugoandrade.worldcup2018.predictor.backend.league.strategy.GetLeagueUsers;
+import org.hugoandrade.worldcup2018.predictor.backend.league.strategy.GetLeagues;
+import org.hugoandrade.worldcup2018.predictor.backend.league.strategy.LeaguesStrategyFactory;
 import org.hugoandrade.worldcup2018.predictor.backend.utils.UnpagedSorted;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -11,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -21,11 +22,13 @@ import java.util.stream.StreamSupport;
 @Service
 public class LeaguesService {
 
-	@Autowired private AccountService accountService;
+	@Autowired public AccountRepository accountRepository;
+	@Autowired public LeagueRepository leagueRepository;
+	@Autowired public LeagueUserRepository leagueUserRepository;
 
-	@Autowired private AccountRepository accountRepository;
-	@Autowired private LeagueRepository leagueRepository;
-	@Autowired private LeagueUserRepository leagueUserRepository;
+	private GetLeagues getLeaguesStrategy;
+	private GetLeagueUsers getLeagueUsersStrategy;
+	private LeaguesStrategyFactory strategyFactory;
 
 	public List<League> getMyLeagues(String userID) {
 		return this.getMyLeagues(userID, UnpagedSorted.of(Sort.by(Sort.Order.asc("id"))));
@@ -37,11 +40,10 @@ public class LeaguesService {
 
 	public List<League> getMyLeagues(String userID, Pageable pageable) {
 
-		// List<League> leagueUsers01 = GET_MY_LEAGUES_STRATEGIES.get(SIMPLE).apply(userID);
-		// List<League> leagueUsers02 = GET_MY_LEAGUES_STRATEGIES.get(QUERY).apply(userID);
-		// List<League> leagueUsers03 = GET_MY_LEAGUES_STRATEGIES.get(RELATIONS).apply(userID);
+		if (getLeaguesStrategy != null) {
+			return getLeaguesStrategy.getLeagues(userID, pageable);
+		}
 
-		// List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID);
 		List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID, pageable);
 
 		List<String> leagueIDs = leagueUsers.stream()
@@ -133,26 +135,26 @@ public class LeaguesService {
 
 	public List<Account> getLeagueUsers(String leagueID, int page, int size) {
 		return this.getLeagueUsers(leagueID,
-				PageRequest.of(page, size, Sort.by(Sort.Order.desc("score"), Sort.Order.asc("id"))));
+				PageRequest.of(page, size, Sort.by(
+						Sort.Order.desc("score"),
+						Sort.Order.asc("id"))));
 	}
 
 	public List<Account> getLeagueUsers(String leagueID, Pageable pageable) {
 
-		// List<Account> leagueUsers01 = GET_LEAGUE_USERS_STRATEGIES.get(SIMPLE).apply(leagueID);
-		// List<Account> leagueUsers02 = GET_LEAGUE_USERS_STRATEGIES.get(QUERY).apply(leagueID);
-		// List<Account> leagueUsers03 = GET_LEAGUE_USERS_STRATEGIES.get(RELATIONS).apply(leagueID);
+		if (getLeagueUsersStrategy != null) {
+			return getLeagueUsersStrategy.getLeagueUsers(leagueID, pageable);
+		}
 
 		final Map<String, LeagueUser> leaguesUsersMap = leagueUserRepository.findAllByLeagueID(leagueID)
 				.stream()
 				.collect(Collectors.toMap(LeagueUser::getUserID, Function.identity()));
-		final LeagueUser EMPTY_USER = new LeagueUser(null, -1);
 
-		// List<Account> leagueUsers = accountRepository.findAllByLeagueID(leagueID);
 		List<Account> leagueUsers = accountRepository.findAllByIdIn(leaguesUsersMap.keySet(), pageable);
 
 		return leagueUsers.stream()
-				.peek(account -> account.setRank(leaguesUsersMap.getOrDefault(account.getId(), EMPTY_USER).getRank()))
-				.filter(account -> account.getRank() != -1)
+				.filter(account -> leaguesUsersMap.containsKey(account.getId()))
+				.peek(account -> account.setRank(leaguesUsersMap.get(account.getId()).getRank()))
 				.collect(Collectors.toList());
 	}
 
@@ -252,51 +254,17 @@ public class LeaguesService {
 		return str.toString();
 	}
 
-	private final static int SIMPLE = 1;
-	private final static int QUERY = 2;
-	private final static int RELATIONS = 3;
-
-	private final Map<Integer, Function<String, List<League>>> GET_MY_LEAGUES_STRATEGIES = new HashMap<>();
-	{
-		GET_MY_LEAGUES_STRATEGIES.put(SIMPLE, userID -> {
-
-			List<LeagueUser> leagueUsers = leagueUserRepository.findAllByUserID(userID);
-
-			List<String> leagueIDs = leagueUsers.stream()
-					.map(LeagueUser::getLeagueID)
-					.collect(Collectors.toList());
-
-			return StreamSupport.stream(leagueRepository.findAllById(leagueIDs).spliterator(), false)
-					.collect(Collectors.toList());
-		});
-		GET_MY_LEAGUES_STRATEGIES.put(QUERY, userID -> leagueRepository.findAllByUserID(userID));
-		GET_MY_LEAGUES_STRATEGIES.put(RELATIONS, userID -> leagueUserRepository.findAllByUserID(userID)
-				.stream()
-				.map(LeagueUser::getLeague)
-				.collect(Collectors.toList())
-		);
+	public void setGetLeagueUsersStrategy(GetLeagueUsers getLeagueUsersStrategy) {
+		this.getLeagueUsersStrategy = getLeagueUsersStrategy;
 	}
 
-	private final Map<Integer, Function<String, List<Account>>> GET_LEAGUE_USERS_STRATEGIES = new HashMap<>();
-	{
-		GET_LEAGUE_USERS_STRATEGIES.put(SIMPLE, leagueID -> {
+	public void setGetLeaguesStrategy(GetLeagues getLeaguesStrategy) {
+		this.getLeaguesStrategy = getLeaguesStrategy;
+	}
 
-			List<LeagueUser> leagueUsers = leagueUserRepository.findAllByLeagueID(leagueID);
-
-			List<String> accountIDs = leagueUsers.stream()
-					.map(LeagueUser::getUserID)
-					.collect(Collectors.toList());
-
-			return accountService.getAccounts(accountIDs);
-		});
-		GET_LEAGUE_USERS_STRATEGIES.put(QUERY, leagueID -> accountRepository.findAllByLeagueID(leagueID));
-		GET_LEAGUE_USERS_STRATEGIES.put(RELATIONS, leagueID -> {
-
-			List<LeagueUser> leagueUsers = leagueRepository.findById(leagueID).get().getLeagueUsers();
-
-			return leagueUsers.stream()
-					.map(LeagueUser::getAccount)
-					.collect(Collectors.toList());
-		});
+	public void setStrategyFactory(LeaguesStrategyFactory strategyFactory) {
+		this.strategyFactory = strategyFactory;
+		this.setGetLeaguesStrategy(strategyFactory.getLeaguesStrategy(this));
+		this.setGetLeagueUsersStrategy(strategyFactory.getLeagueUsersStrategy(this));
 	}
 }
