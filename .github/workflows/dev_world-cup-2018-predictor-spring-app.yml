@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./WorldCup2018-Backend/backend-spring
 
     steps:
       - uses: actions/checkout@v2
