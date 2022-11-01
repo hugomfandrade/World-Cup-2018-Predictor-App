@@ -1,7 +1,8 @@
 package org.hugoandrade.worldcup2018.predictor.backend.tournament;
 
-import javafx.util.Pair;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hugoandrade.worldcup2018.predictor.backend.tournament.country.Country;
 
 import java.lang.ref.WeakReference;
@@ -29,31 +30,31 @@ public class TournamentProcessing {
     }
     private static final Map<Integer, Pair<Integer, Place>> QUARTER_FINALS_MATCH_UPS = new HashMap<>();
     static {
-        QUARTER_FINALS_MATCH_UPS.put(49, new Pair<>(57, Place.HOME));
-        QUARTER_FINALS_MATCH_UPS.put(50, new Pair<>(57, Place.AWAY));
-        QUARTER_FINALS_MATCH_UPS.put(53, new Pair<>(58, Place.HOME));
-        QUARTER_FINALS_MATCH_UPS.put(54, new Pair<>(58, Place.AWAY));
-        QUARTER_FINALS_MATCH_UPS.put(51, new Pair<>(59, Place.HOME));
-        QUARTER_FINALS_MATCH_UPS.put(52, new Pair<>(59, Place.AWAY));
-        QUARTER_FINALS_MATCH_UPS.put(55, new Pair<>(60, Place.HOME));
-        QUARTER_FINALS_MATCH_UPS.put(56, new Pair<>(60, Place.AWAY));
+        QUARTER_FINALS_MATCH_UPS.put(49, new ImmutablePair<>(57, Place.HOME));
+        QUARTER_FINALS_MATCH_UPS.put(50, new ImmutablePair<>(57, Place.AWAY));
+        QUARTER_FINALS_MATCH_UPS.put(53, new ImmutablePair<>(58, Place.HOME));
+        QUARTER_FINALS_MATCH_UPS.put(54, new ImmutablePair<>(58, Place.AWAY));
+        QUARTER_FINALS_MATCH_UPS.put(51, new ImmutablePair<>(59, Place.HOME));
+        QUARTER_FINALS_MATCH_UPS.put(52, new ImmutablePair<>(59, Place.AWAY));
+        QUARTER_FINALS_MATCH_UPS.put(55, new ImmutablePair<>(60, Place.HOME));
+        QUARTER_FINALS_MATCH_UPS.put(56, new ImmutablePair<>(60, Place.AWAY));
     }
     private static final Map<Integer, Pair<Integer, Place>> SEMI_FINALS_MATCH_UPS = new HashMap<>();
     static {
-        SEMI_FINALS_MATCH_UPS.put(57, new Pair<>(61, Place.HOME));
-        SEMI_FINALS_MATCH_UPS.put(58, new Pair<>(61, Place.AWAY));
-        SEMI_FINALS_MATCH_UPS.put(59, new Pair<>(62, Place.HOME));
-        SEMI_FINALS_MATCH_UPS.put(60, new Pair<>(62, Place.AWAY));
+        SEMI_FINALS_MATCH_UPS.put(57, new ImmutablePair<>(61, Place.HOME));
+        SEMI_FINALS_MATCH_UPS.put(58, new ImmutablePair<>(61, Place.AWAY));
+        SEMI_FINALS_MATCH_UPS.put(59, new ImmutablePair<>(62, Place.HOME));
+        SEMI_FINALS_MATCH_UPS.put(60, new ImmutablePair<>(62, Place.AWAY));
     }
     private static final Map<Integer, Pair<Integer, Place>> THIRD_PLACE_MATCH_UPS = new HashMap<>();
     static {
-        THIRD_PLACE_MATCH_UPS.put(61, new Pair<>(63, Place.HOME));
-        THIRD_PLACE_MATCH_UPS.put(62, new Pair<>(63, Place.AWAY));
+        THIRD_PLACE_MATCH_UPS.put(61, new ImmutablePair<>(63, Place.HOME));
+        THIRD_PLACE_MATCH_UPS.put(62, new ImmutablePair<>(63, Place.AWAY));
     }
     private static final Map<Integer, Pair<Integer, Place>> FINAL_MATCH_UPS = new HashMap<>();
     static {
-        FINAL_MATCH_UPS.put(61, new Pair<>(64, Place.HOME));
-        FINAL_MATCH_UPS.put(62, new Pair<>(64, Place.AWAY));
+        FINAL_MATCH_UPS.put(61, new ImmutablePair<>(64, Place.HOME));
+        FINAL_MATCH_UPS.put(62, new ImmutablePair<>(64, Place.AWAY));
     }
 
     private OnProcessingListener mOnProcessingFinished;

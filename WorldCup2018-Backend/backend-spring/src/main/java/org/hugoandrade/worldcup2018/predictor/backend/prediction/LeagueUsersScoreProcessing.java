@@ -1,6 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.backend.prediction;
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hugoandrade.worldcup2018.predictor.backend.authentication.AccountDto;
 import org.hugoandrade.worldcup2018.predictor.backend.league.League;
 import org.hugoandrade.worldcup2018.predictor.backend.league.LeagueUser;
@@ -70,7 +71,7 @@ public class LeagueUsersScoreProcessing {
             final Map<League, List<Pair<LeagueUser, AccountDto>>> leagueUsersByLeague = Arrays.stream(mLeagueUsers)
                     // check if league exists
                     .filter(leagueUser -> leagues.containsKey(leagueUser.getLeagueID()))
-                    .map(leagueUser -> new Pair<>(leagueUser, accounts.getOrDefault(leagueUser.getUserID(), null)))
+                    .map(leagueUser -> new ImmutablePair<>(leagueUser, accounts.getOrDefault(leagueUser.getUserID(), null)))
                     // check if account exists
                     .filter(leagueUser -> leagueUser.getValue() != null)
                     // group by league
