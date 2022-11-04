@@ -1,4 +1,4 @@
-# RTP Play Video Downloader App
+# World Cup 2018 Predictor App
 An Android app which allows users to predict the 2018 World Cup football matches, create or join private leagues, and follow every team, match and stage. 
 
 This project consists of an Android app (Java) with a backend hosted on Microsoft Azure web services (Node.js) where the storage (T-SQL) and computation of the predictions are performed.

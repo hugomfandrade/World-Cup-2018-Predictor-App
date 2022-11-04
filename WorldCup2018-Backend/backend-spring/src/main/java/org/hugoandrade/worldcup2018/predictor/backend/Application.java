@@ -1,5 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.backend;
 
+import org.hugoandrade.worldcup2018.predictor.backend.config.ApplicationListeners;
 import org.hugoandrade.worldcup2018.predictor.backend.config.StartupDatabaseScript;
 import org.hugoandrade.worldcup2018.predictor.backend.security.Pbkdf2PasswordEncoderImpl;
 import org.hugoandrade.worldcup2018.predictor.backend.security.SecurityConstants;
@@ -36,7 +37,12 @@ import static org.springframework.context.annotation.FilterType.ASPECTJ;
 public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+
+		SpringApplication application = new SpringApplication(Application.class);
+		application.addListeners(
+				new ApplicationListeners.AzureApplicationPropertiesListener(),
+				new ApplicationListeners.AzureApplicationPropertiesListener2());
+		application.run(args);
 	}
 
 	@Bean
