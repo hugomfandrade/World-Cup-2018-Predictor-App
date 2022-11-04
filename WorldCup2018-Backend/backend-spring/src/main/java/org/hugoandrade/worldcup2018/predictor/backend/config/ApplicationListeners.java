@@ -4,19 +4,18 @@ import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEven
 import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MapPropertySource;
+import org.springframework.lang.NonNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public final class ApplicationListeners {
 
     private ApplicationListeners() {}
 
-    public static class AzureApplicationPropertiesListener implements ApplicationListener<ApplicationStartingEvent> {
+    public static class ApplicationStartingListener implements ApplicationListener<ApplicationStartingEvent> {
 
         @Override
-        public void onApplicationEvent(ApplicationStartingEvent event) {
+        public void onApplicationEvent(@NonNull ApplicationStartingEvent event) {
             /*
             for (Map.Entry<String, String> env :  System.getenv().entrySet()) {
                 System.err.println(env.getKey() + " ==> " + env.getValue());
@@ -24,19 +23,12 @@ public final class ApplicationListeners {
             for (Map.Entry<Object, Object> env :  System.getProperties().entrySet()) {
                 System.err.println(env.getKey() + " --> " + env.getValue());
             }
-
-            event.getSpringApplication().setDefaultProperties(
-                    new HashMap<String, Object>() {{
-                        put("spring.data.mongodb.host", "LEEEL");
-                    }}
-            );
             */
-            // event.getSpringApplication().setDefaultProperties(System.getProperties());
         }
     }
 
 
-    public static class AzureApplicationPropertiesListener2 implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
+    public static class ApplicationEnvironmentPreparedListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
         @Override
         public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
@@ -66,6 +58,7 @@ public final class ApplicationListeners {
                 }
             }
 
+            /*
             System.err.println("System Environment Variables: System.getenv()");
             for (Map.Entry<String, String> var :  System.getenv().entrySet()) {
                 System.err.println("   " + var.getKey() + " ==> " + var.getValue());
@@ -85,30 +78,6 @@ public final class ApplicationListeners {
 
             System.err.println("System Environment Variable (mongodb host): "
                     + event.getEnvironment().getProperty("spring.data.mongodb.host"));
-            System.err.println("System Environment Variable (mongodb host): "
-                    + event.getEnvironment().getProperty("spring.data.mongodb.host"));
-            System.err.println("System Environment Variable (my secret one): "
-                    + event.getEnvironment().getProperty("my.secret.one"));
-            System.err.println("System Environment Variable (my secret two): "
-                    + event.getEnvironment().getProperty("my.secret.two"));
-            System.err.println("System Environment Variable (my secret ONE): "
-                    + event.getEnvironment().getProperty("MY_SECRET_ONE"));
-            System.err.println("System Environment Variable (my secret TWO): "
-                    + event.getEnvironment().getProperty("MY_SECRET_TWO"));
-            System.err.println("System Environment Variable (my secret TWO): "
-                    + event.getEnvironment().getProperty("MY_SECRET_TWO"));
-            /*
-            // env_.getSystemProperties().putAll(System.getenv());
-
-            Object m1 = event.getEnvironment().getProperty("spring.data.mongodb.host");
-            event.getEnvironment().getPropertySources().addFirst(new MapPropertySource(
-                    "SYSTEM", new HashMap<String, Object>(){{put("spring.data.mongodb.host", "LEEEL");}}
-            ));
-            Object m2 = event.getEnvironment().getProperty("spring.data.mongodb.host");
-            Object o1 = event.getEnvironment().getSystemProperties();
-            Object o2 = event.getEnvironment().getPropertySources();
-            Object o3 = event.getEnvironment().getSystemEnvironment();
-            // event.getSpringApplication().setDefaultProperties(System.getProperties());
             */
         }
     }

@@ -40,8 +40,8 @@ public class Application {
 
 		SpringApplication application = new SpringApplication(Application.class);
 		application.addListeners(
-				new ApplicationListeners.AzureApplicationPropertiesListener(),
-				new ApplicationListeners.AzureApplicationPropertiesListener2());
+				new ApplicationListeners.ApplicationStartingListener(),
+				new ApplicationListeners.ApplicationEnvironmentPreparedListener());
 		application.run(args);
 	}
 

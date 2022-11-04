@@ -9,8 +9,8 @@ public class CustomSpringBootContextLoader extends SpringBootContextLoader {
 	@Override
 	protected SpringApplication getSpringApplication() {
 		SpringApplication app = super.getSpringApplication();
-		app.addListeners(new ApplicationListeners.AzureApplicationPropertiesListener());
-		app.addListeners(new ApplicationListeners.AzureApplicationPropertiesListener2());
+		app.addListeners(new ApplicationListeners.ApplicationStartingListener());
+		app.addListeners(new ApplicationListeners.ApplicationEnvironmentPreparedListener());
 		return app;
 	}
 }

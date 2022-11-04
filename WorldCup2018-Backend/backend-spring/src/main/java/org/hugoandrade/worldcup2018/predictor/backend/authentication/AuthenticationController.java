@@ -2,8 +2,10 @@ package org.hugoandrade.worldcup2018.predictor.backend.authentication;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +35,9 @@ public class AuthenticationController {
 
 	@PostMapping("/sign-up")
 	public LoginData signUp(@RequestBody LoginData user) {
+		if (accountService.getByUsername(user.getUsername()) != null) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "username already exists");
+		}
 		String passwordAndSalt = bCryptPasswordEncoder.encode(user.getPassword());
 		String salt = passwordAndSalt.substring(0, passwordAndSalt.length() / 2);
 		String password = passwordAndSalt.substring(passwordAndSalt.length() / 2);
