@@ -2,6 +2,8 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
 name: Build and deploy JAR app to Azure Web App - world-cup-2018-predictor-spring-app
+env:
+  SUB_DIR: 'WorldCup2018-Backend/backend-spring'
 
 on:
   push:
@@ -12,9 +14,14 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    environment: dev
+    
+    env:
+      MY_SECRET_ONE: MY_SECRET_ONE
+      MY_SECRET_THREE: THREE
     defaults:
       run:
-        working-directory: ./WorldCup2018-Backend/backend-spring
+        working-directory: './${{ env.SUB_DIR }}'
 
     steps:
       - uses: actions/checkout@v2
@@ -23,6 +30,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '8'
+  
+      - uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
 
       - name: Build with Maven
         run: mvn clean install
@@ -31,13 +42,13 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: '${{ github.workspace }}/${{ env.SUB_DIR }}/target/*.jar'
 
   deploy:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'Production'
+      name: 'dev'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
