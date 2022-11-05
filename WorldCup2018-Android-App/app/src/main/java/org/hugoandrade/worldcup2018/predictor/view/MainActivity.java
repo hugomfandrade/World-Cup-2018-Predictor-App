@@ -3,7 +3,6 @@ package org.hugoandrade.worldcup2018.predictor.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,11 +19,9 @@ import org.hugoandrade.worldcup2018.predictor.common.ServiceManagerOps;
 import org.hugoandrade.worldcup2018.predictor.customview.IconTabLayout;
 import org.hugoandrade.worldcup2018.predictor.customview.NonSwipeableViewPager;
 import org.hugoandrade.worldcup2018.predictor.presenter.MainPresenter;
-import org.hugoandrade.worldcup2018.predictor.utils.ErrorMessageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.NetworkUtils;
-import org.hugoandrade.worldcup2018.predictor.utils.SharedPreferencesUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
-import org.hugoandrade.worldcup2018.predictor.view.fragment.FragComm;
+import org.hugoandrade.worldcup2018.predictor.view.fragment.MainFragComm;
 import org.hugoandrade.worldcup2018.predictor.view.fragment.LeaguesFragment;
 import org.hugoandrade.worldcup2018.predictor.view.fragment.PredictionsFragment;
 import org.hugoandrade.worldcup2018.predictor.view.fragment.RulesFragment;
@@ -34,7 +31,7 @@ public class MainActivity extends MainActivityBase<MVP.RequiredMainViewOps,
                                                    MVP.ProvidedMainPresenterOps,
                                                    MainPresenter>
         implements MVP.RequiredMainViewOps,
-                   FragComm.RequiredActivityOps {
+                   MainFragComm.RequiredActivityOps {
 
     /**
      * Touch-event-consuming layout located above all views.

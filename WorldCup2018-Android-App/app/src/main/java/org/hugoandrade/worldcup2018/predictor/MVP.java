@@ -5,12 +5,12 @@ import java.util.List;
 import org.hugoandrade.worldcup2018.predictor.common.ContextView;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManager;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManagerOps;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.LeagueUser;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
 import org.hugoandrade.worldcup2018.predictor.common.ModelOps;
 import org.hugoandrade.worldcup2018.predictor.common.PresenterOps;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 import org.hugoandrade.worldcup2018.predictor.model.IMobileClientService;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 

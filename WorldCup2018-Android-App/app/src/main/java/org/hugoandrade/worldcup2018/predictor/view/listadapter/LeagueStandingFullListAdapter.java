@@ -12,8 +12,8 @@ import android.widget.TextView;
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.data.LeagueWrapper;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.data.LeagueUser;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 
 public class LeagueStandingFullListAdapter extends RecyclerView.Adapter<LeagueStandingFullListAdapter.ViewHolder> {
 

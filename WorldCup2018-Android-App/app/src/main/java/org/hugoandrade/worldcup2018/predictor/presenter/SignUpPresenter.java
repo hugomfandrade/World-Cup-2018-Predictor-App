@@ -3,7 +3,7 @@ package org.hugoandrade.worldcup2018.predictor.presenter;
 import android.os.RemoteException;
 
 import org.hugoandrade.worldcup2018.predictor.MVP;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 import org.hugoandrade.worldcup2018.predictor.utils.ErrorMessageUtils;
 

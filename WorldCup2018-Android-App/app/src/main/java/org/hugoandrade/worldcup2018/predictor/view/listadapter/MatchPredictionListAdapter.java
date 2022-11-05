@@ -13,13 +13,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.CountryUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.MatchAppUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 
 import java.util.List;
@@ -59,9 +60,9 @@ public class MatchPredictionListAdapter extends RecyclerView.Adapter<MatchPredic
 
         holder.isBinding = true;
 
-        holder.cardView.setCardBackgroundColor(MatchUtils.getCardColor(mMatch, prediction));
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, Country.getImageID(mMatch.getHomeTeam()));
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, Country.getImageID(mMatch.getAwayTeam()));
+        holder.cardView.setCardBackgroundColor(MatchAppUtils.getCardColor(mMatch, prediction));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, CountryUtils.getImageID(mMatch.getHomeTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, CountryUtils.getImageID(mMatch.getAwayTeam()));
         holder.etHomeTeamGoals.setText(MatchUtils.getAsString(prediction.getHomeTeamGoals()));
         holder.etAwayTeamGoals.setText(MatchUtils.getAsString(prediction.getAwayTeamGoals()));
         holder.tvPoints.setText(getPointsText(prediction));

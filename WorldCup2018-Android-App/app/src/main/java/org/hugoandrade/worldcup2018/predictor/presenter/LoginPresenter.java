@@ -6,12 +6,13 @@ import android.util.Log;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.MVP;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LoginData;
-import org.hugoandrade.worldcup2018.predictor.data.raw.SystemData;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 import org.hugoandrade.worldcup2018.predictor.model.service.MobileService;
 import org.hugoandrade.worldcup2018.predictor.utils.ErrorMessageUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.NetworkAppUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.NetworkBroadcastReceiverUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.NetworkUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.SharedPreferencesUtils;
@@ -205,7 +206,7 @@ public class LoginPresenter extends MobileClientPresenterBase<MVP.RequiredLoginV
         }
         else {
 
-            if (!NetworkUtils.isNetworkUnavailableError(getActivityContext(), message)) {
+            if (!NetworkAppUtils.isNetworkUnavailableError(getActivityContext(), message)) {
                 getView().showAppStateErrorGettingSystemDataMessage();
             }
             /*else {

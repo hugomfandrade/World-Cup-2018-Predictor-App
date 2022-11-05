@@ -27,10 +27,12 @@ import android.widget.TextView;
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.common.TextWatcherAdapter;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
 import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.CountryUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.MatchAppUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.TranslationUtils;
@@ -105,23 +107,23 @@ public class PredictionListAdapter extends RecyclerView.Adapter<PredictionListAd
 
         holder.isBinding = true;
 
-        holder.cardView.setCardBackgroundColor(MatchUtils.getCardColor(match, prediction));
+        holder.cardView.setCardBackgroundColor(MatchAppUtils.getCardColor(match, prediction));
 
-        holder.tvHomeTeam.setText(MatchUtils.tryGetTemporaryHomeTeam(context, mMatchSet, match));
-        holder.tvAwayTeam.setText(MatchUtils.tryGetTemporaryAwayTeam(context, mMatchSet, match));
+        holder.tvHomeTeam.setText(MatchAppUtils.tryGetTemporaryHomeTeam(context, mMatchSet, match));
+        holder.tvAwayTeam.setText(MatchAppUtils.tryGetTemporaryAwayTeam(context, mMatchSet, match));
 
         holder.tvHomeTeam.setTypeface(null, Typeface.NORMAL);
         holder.tvAwayTeam.setTypeface(null, Typeface.NORMAL);
         holder.tvHomeTeam.setTextColor(isPast ? TEXT_COLOR_DEFAULT : TEXT_COLOR);
         holder.tvAwayTeam.setTextColor(isPast ? TEXT_COLOR_DEFAULT : TEXT_COLOR);
 
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, Country.getImageID(match.getHomeTeam()));
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, Country.getImageID(match.getAwayTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, CountryUtils.getImageID(match.getHomeTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, CountryUtils.getImageID(match.getAwayTeam()));
         //holder.ivHomeTeam.setImageResource(Country.getImageID(match.getHomeTeam()));
         //holder.ivAwayTeam.setImageResource(Country.getImageID(match.getAwayTeam()));
 
-        boolean hasHomeCountryFlag = Country.getImageID(match.getHomeTeam()) != 0;
-        boolean hasAwayCountryFlag = Country.getImageID(match.getAwayTeam()) != 0;
+        boolean hasHomeCountryFlag = CountryUtils.getImageID(match.getHomeTeam()) != 0;
+        boolean hasAwayCountryFlag = CountryUtils.getImageID(match.getAwayTeam()) != 0;
         ((View) holder.ivHomeTeam.getParent()).setVisibility(hasHomeCountryFlag ? View.VISIBLE : View.GONE);
         ((View) holder.ivAwayTeam.getParent()).setVisibility(hasAwayCountryFlag ? View.VISIBLE : View.GONE);
         holder.tvHomeTeam.setGravity(hasHomeCountryFlag ? Gravity.TOP | Gravity.CENTER_HORIZONTAL : Gravity.CENTER);
@@ -148,7 +150,7 @@ public class PredictionListAdapter extends RecyclerView.Adapter<PredictionListAd
                 ": ",
                 String.valueOf(match.getMatchNumber())));
         holder.detailsInfoContainer.setVisibility(View.INVISIBLE);
-        holder.tvStage.setText(StageUtils.getAsString(context, match));
+        holder.tvStage.setText(TranslationUtils.getAsString(context, match));
         holder.tvStadium.setText(TranslationUtils.translateStadium(context, match.getStadium()));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             holder.ivInfo.setImageTintList(ColorStateList.valueOf(isPast ? TEXT_COLOR_DEFAULT : TEXT_COLOR));

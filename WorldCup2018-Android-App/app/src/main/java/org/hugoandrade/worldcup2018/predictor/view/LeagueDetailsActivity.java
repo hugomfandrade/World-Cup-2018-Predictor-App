@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -16,11 +17,10 @@ import android.widget.TextView;
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.MVP;
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
 import org.hugoandrade.worldcup2018.predictor.data.LeagueWrapper;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.data.LeagueUser;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 import org.hugoandrade.worldcup2018.predictor.presenter.LeagueDetailsPresenter;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
@@ -186,7 +186,7 @@ public class LeagueDetailsActivity extends MainActivityBase<MVP.RequiredLeagueDe
 
         RecyclerView rvLeagueStandings = findViewById(R.id.rv_league_standings);
         rvLeagueStandings.setNestedScrollingEnabled(false);
-        rvLeagueStandings.setLayoutManager(new VerticalLinearLayoutManager(this));
+        rvLeagueStandings.setLayoutManager(new LinearLayoutManager(this));
         rvLeagueStandings.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
         rvLeagueStandings.setAdapter(leagueStandingListAdapter);
 

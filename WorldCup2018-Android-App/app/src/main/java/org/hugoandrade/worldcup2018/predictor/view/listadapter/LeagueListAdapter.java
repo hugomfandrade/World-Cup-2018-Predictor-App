@@ -2,6 +2,7 @@ package org.hugoandrade.worldcup2018.predictor.view.listadapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
 import org.hugoandrade.worldcup2018.predictor.data.LeagueWrapper;
 
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class LeagueListAdapter extends RecyclerView.Adapter<LeagueListAdapter.Vi
             tvLeagueMembers = itemView.findViewById(R.id.tv_league_members);
             rvLeagueStandings = itemView.findViewById(R.id.rv_league_standings);
             rvLeagueStandings.setNestedScrollingEnabled(false);
-            rvLeagueStandings.setLayoutManager(new VerticalLinearLayoutManager(itemView.getContext()));
+            rvLeagueStandings.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             rvLeagueStandings.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
             tvLeagueDetails = itemView.findViewById(R.id.tv_league_details);
             tvLeagueDetails.setOnClickListener(this);

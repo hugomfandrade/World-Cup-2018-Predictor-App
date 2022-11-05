@@ -2,15 +2,14 @@ package org.hugoandrade.worldcup2018.predictor.presenter;
 
 import android.app.Activity;
 import android.os.RemoteException;
-import android.util.Log;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.MVP;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManager;
 import org.hugoandrade.worldcup2018.predictor.data.LeagueWrapper;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 import org.hugoandrade.worldcup2018.predictor.utils.ErrorMessageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.SharedPreferencesUtils;

@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
@@ -15,16 +16,16 @@ import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManager;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManagerOps;
-import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
 import org.hugoandrade.worldcup2018.predictor.model.IMobileClientService;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 import org.hugoandrade.worldcup2018.predictor.utils.ErrorMessageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
 import org.hugoandrade.worldcup2018.predictor.view.CountryDetailsActivity;
+import org.hugoandrade.worldcup2018.predictor.view.FragmentBase;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterTheme;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.helper.StageFilterWrapper;
@@ -32,7 +33,7 @@ import org.hugoandrade.worldcup2018.predictor.view.listadapter.PredictionListAda
 
 import java.util.List;
 
-public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityOps>
+public class PredictionsFragment extends FragmentBase<MainFragComm.RequiredActivityOps>
 
         implements ServiceManagerOps, FilterWrapper.OnFilterSelectedListener {
 
@@ -87,7 +88,7 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
 
 
         rvPredictions = view.findViewById(R.id.rv_predictions);
-        rvPredictions.setLayoutManager(new VerticalLinearLayoutManager(getContext()));
+        rvPredictions.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPredictions.setAdapter(mPredictionsAdapter);
         ((SimpleItemAnimator) rvPredictions.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -287,7 +288,7 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
             mPredictionsAdapter.notifyDataSetChanged();
         }
         if (rvPredictions != null) {
-            rvPredictions.setLayoutManager(new VerticalLinearLayoutManager(getContext()));
+            rvPredictions.setLayoutManager(new LinearLayoutManager(getContext()));
             //rvPredictions.scrollToPosition(0);
             //rvPredictions.scrollToPosition(finalStartingPosition);
         }
@@ -300,7 +301,7 @@ public class PredictionsFragment extends FragmentBase<FragComm.RequiredActivityO
 
                 if (rvPredictions != null) {
                     //android.util.Log.e(TAG, "position:: " + finalStartingPosition);
-                    int i = ((VerticalLinearLayoutManager) rvPredictions.getLayoutManager()).findLastVisibleItemPosition();
+                    int i = ((LinearLayoutManager) rvPredictions.getLayoutManager()).findLastVisibleItemPosition();
 
                     /*if (Math.abs(finalStartingPosition - i) > 16) {
                         rvPredictions.scrollToPosition(finalStartingPosition - 16);

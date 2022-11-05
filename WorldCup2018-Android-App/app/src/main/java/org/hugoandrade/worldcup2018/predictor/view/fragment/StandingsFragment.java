@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +16,16 @@ import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Group;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Group;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StaticVariableUtils.SGroup;
 import org.hugoandrade.worldcup2018.predictor.utils.StaticVariableUtils.SStage;
-import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 import org.hugoandrade.worldcup2018.predictor.view.CountryDetailsActivity;
+import org.hugoandrade.worldcup2018.predictor.view.FragComm;
+import org.hugoandrade.worldcup2018.predictor.view.FragmentBase;
 import org.hugoandrade.worldcup2018.predictor.view.listadapter.GroupListAdapter;
 import org.hugoandrade.worldcup2018.predictor.view.listadapter.KnockoutListAdapter;
 
@@ -257,7 +258,7 @@ public class StandingsFragment extends FragmentBase<FragComm.RequiredActivityBas
         RecyclerView recyclerView = view.findViewById(R.id.rv_group);
         recyclerView.setAdapter(groupViewStruct.getAdapter());
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new VerticalLinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     private void setupKnockOutLayout(View view, KnockOutViewStruct knockOutViewStruct) {
@@ -270,7 +271,7 @@ public class StandingsFragment extends FragmentBase<FragComm.RequiredActivityBas
         RecyclerView recyclerView = view.findViewById(R.id.rv_knockout);
         recyclerView.setAdapter(knockOutViewStruct.getAdapter());
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new VerticalLinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     private void updateGroupViewStruct(GroupViewStruct groupViewStruct, Group group) {

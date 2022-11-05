@@ -11,7 +11,7 @@ public abstract class MainActivityBase<RequiredViewOps,
                                        ProvidedPresenterOps,
                                        PresenterType extends PresenterOps<RequiredViewOps>>
 
-        extends ActivityBase<RequiredViewOps, ProvidedPresenterOps, PresenterType> {
+        extends AppActivityBase<RequiredViewOps, ProvidedPresenterOps, PresenterType> {
 
     private boolean isPauseCalled;
 

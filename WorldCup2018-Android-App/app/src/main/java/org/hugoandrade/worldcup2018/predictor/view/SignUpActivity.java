@@ -17,12 +17,12 @@ import org.hugoandrade.worldcup2018.predictor.MVP;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.common.TextWatcherAdapter;
 import org.hugoandrade.worldcup2018.predictor.customview.ImeEditText;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
 import org.hugoandrade.worldcup2018.predictor.presenter.SignUpPresenter;
 import org.hugoandrade.worldcup2018.predictor.utils.LoginUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 
-public class SignUpActivity extends ActivityBase<MVP.RequiredSignUpViewOps,
+public class SignUpActivity extends AppActivityBase<MVP.RequiredSignUpViewOps,
                                                  MVP.ProvidedSignUpPresenterOps,
                                                  SignUpPresenter>
         implements MVP.RequiredSignUpViewOps {

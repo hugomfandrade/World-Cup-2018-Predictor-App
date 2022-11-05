@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.data.raw.SystemData;
+import org.hugoandrade.worldcup2018.predictor.data.SystemData;
+import org.hugoandrade.worldcup2018.predictor.view.FragComm;
+import org.hugoandrade.worldcup2018.predictor.view.FragmentBase;
 
 public class RulesFragment extends FragmentBase<FragComm.RequiredActivityBaseOps> {
 

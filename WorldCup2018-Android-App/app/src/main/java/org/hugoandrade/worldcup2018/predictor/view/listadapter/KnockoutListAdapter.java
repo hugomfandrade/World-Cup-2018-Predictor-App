@@ -18,16 +18,17 @@ import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
 import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.CountryUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.MatchAppUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.TranslationUtils;
 
 import java.util.List;
-import java.util.Locale;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -59,11 +60,11 @@ public class KnockoutListAdapter extends RecyclerView.Adapter<KnockoutListAdapte
         Context context = holder.itemView.getContext();
         final Match match = mMatchList.get(holder.getAdapterPosition());
 
-        holder.tvHomeTeam.setText(MatchUtils.tryGetTemporaryHomeTeam(context, mMatchSet, match));
-        holder.tvAwayTeam.setText(MatchUtils.tryGetTemporaryAwayTeam(context, mMatchSet, match));
+        holder.tvHomeTeam.setText(MatchAppUtils.tryGetTemporaryHomeTeam(context, mMatchSet, match));
+        holder.tvAwayTeam.setText(MatchAppUtils.tryGetTemporaryAwayTeam(context, mMatchSet, match));
 
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, Country.getImageID(match.getHomeTeam()));
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, Country.getImageID(match.getAwayTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivHomeTeam, CountryUtils.getImageID(match.getHomeTeam()));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(context, holder.ivAwayTeam, CountryUtils.getImageID(match.getAwayTeam()));
         //holder.ivHomeTeam.setImageResource(Country.getImageID(match.getHomeTeam()));
         //holder.ivAwayTeam.setImageResource(Country.getImageID(match.getAwayTeam()));
 
@@ -75,7 +76,7 @@ public class KnockoutListAdapter extends RecyclerView.Adapter<KnockoutListAdapte
                 context.getString(R.string.match_number),
                 ": ",
                 String.valueOf(match.getMatchNumber())));
-        holder.tvStage.setText(StageUtils.getAsString(context, match));
+        holder.tvStage.setText(TranslationUtils.getAsString(context, match));
         holder.tvStadium.setText(TranslationUtils.translateStadium(context, match.getStadium()));
 
 
@@ -89,8 +90,8 @@ public class KnockoutListAdapter extends RecyclerView.Adapter<KnockoutListAdapte
                 holder.tvAwayTeam.setTypeface(holder.tvAwayTeam.getTypeface(), Typeface.BOLD);
         }
 
-        boolean hasHomeCountryFlag = Country.getImageID(match.getHomeTeam()) != 0;
-        boolean hasAwayCountryFlag = Country.getImageID(match.getAwayTeam()) != 0;
+        boolean hasHomeCountryFlag = CountryUtils.getImageID(match.getHomeTeam()) != 0;
+        boolean hasAwayCountryFlag = CountryUtils.getImageID(match.getAwayTeam()) != 0;
         ((View) holder.ivHomeTeam.getParent()).setVisibility(hasHomeCountryFlag ? VISIBLE : GONE);
         ((View) holder.ivAwayTeam.getParent()).setVisibility(hasAwayCountryFlag ? VISIBLE : GONE);
         holder.tvHomeTeam.setGravity(hasHomeCountryFlag ? Gravity.TOP | Gravity.CENTER_HORIZONTAL : Gravity.CENTER);

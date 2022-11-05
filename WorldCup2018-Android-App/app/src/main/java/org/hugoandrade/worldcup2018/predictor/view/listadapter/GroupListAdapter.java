@@ -15,8 +15,9 @@ import android.widget.TextView;
 import java.util.List;
 
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
 import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.CountryUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.TranslationUtils;
 
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.ViewHolder> {
@@ -46,7 +47,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         holder.tvPosition.setText(String.valueOf(country.getPosition()));
         holder.tvCountryName.setText(TranslationUtils.translateCountryName(context, country.getName()));
         holder.tvCountryName.setGravity(Gravity.START);
-        BitmapUtils.decodeSampledBitmapFromResourceSync(context, holder.ivCountryFlag, Country.getImageID(country));
+        BitmapUtils.decodeSampledBitmapFromResourceSync(context, holder.ivCountryFlag, CountryUtils.getImageID(country));
 
         holder.tvVictories.setText(String.valueOf(country.getVictories()));
         holder.tvDraws.setText(String.valueOf(country.getDraws()));

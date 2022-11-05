@@ -4,20 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.User;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
-import org.hugoandrade.worldcup2018.predictor.utils.ViewUtils;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterWrapper;
 import org.hugoandrade.worldcup2018.predictor.view.helper.FilterTheme;
 import org.hugoandrade.worldcup2018.predictor.view.helper.StageFilterWrapper;
@@ -108,7 +107,7 @@ public class UsersPredictionsActivity extends SimpleActivityBase
                 startActivity(CountryDetailsActivity.makeIntent(UsersPredictionsActivity.this, country));
             }
         });
-        rvPredictions.setLayoutManager(new VerticalLinearLayoutManager(this));
+        rvPredictions.setLayoutManager(new LinearLayoutManager(this));
         rvPredictions.setAdapter(mPredictionsAdapter);
 
         updateUI();
@@ -193,7 +192,7 @@ public class UsersPredictionsActivity extends SimpleActivityBase
             mPredictionsAdapter.notifyDataSetChanged();
         }
         if (rvPredictions != null) {
-            rvPredictions.setLayoutManager(new VerticalLinearLayoutManager(this));
+            rvPredictions.setLayoutManager(new LinearLayoutManager(this));
             //rvPredictions.scrollToPosition(0);
             //rvPredictions.scrollToPosition(finalStartingPosition);
         }

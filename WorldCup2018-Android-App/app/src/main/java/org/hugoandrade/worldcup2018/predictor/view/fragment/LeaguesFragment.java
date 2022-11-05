@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +15,13 @@ import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManager;
 import org.hugoandrade.worldcup2018.predictor.common.ServiceManagerOps;
-import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
 import org.hugoandrade.worldcup2018.predictor.data.LeagueWrapper;
-import org.hugoandrade.worldcup2018.predictor.data.raw.League;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LeagueUser;
+import org.hugoandrade.worldcup2018.predictor.data.League;
+import org.hugoandrade.worldcup2018.predictor.data.LeagueUser;
 import org.hugoandrade.worldcup2018.predictor.model.IMobileClientService;
 import org.hugoandrade.worldcup2018.predictor.model.parser.MobileClientData;
 import org.hugoandrade.worldcup2018.predictor.utils.ErrorMessageUtils;
+import org.hugoandrade.worldcup2018.predictor.view.FragmentBase;
 import org.hugoandrade.worldcup2018.predictor.view.LeagueDetailsActivity;
 import org.hugoandrade.worldcup2018.predictor.view.dialog.CreateLeagueDialog;
 import org.hugoandrade.worldcup2018.predictor.view.dialog.JoinLeagueDialog;
@@ -29,7 +29,7 @@ import org.hugoandrade.worldcup2018.predictor.view.listadapter.LeagueListAdapter
 
 import java.util.Collections;
 
-public class LeaguesFragment extends FragmentBase<FragComm.RequiredActivityOps>
+public class LeaguesFragment extends FragmentBase<MainFragComm.RequiredActivityOps>
 
         implements ServiceManagerOps {
 
@@ -81,7 +81,7 @@ public class LeaguesFragment extends FragmentBase<FragComm.RequiredActivityOps>
         mLeagueListAdapter.set(GlobalData.getInstance().getLeagues());
 
         RecyclerView rvLeagues = view.findViewById(R.id.rv_leagues);
-        rvLeagues.setLayoutManager(new VerticalLinearLayoutManager(getContext()));
+        rvLeagues.setLayoutManager(new LinearLayoutManager(getContext()));
         rvLeagues.setNestedScrollingEnabled(false);
         rvLeagues.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
         rvLeagues.setAdapter(mLeagueListAdapter);

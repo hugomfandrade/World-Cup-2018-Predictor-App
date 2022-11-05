@@ -1,1 +1,3 @@
 include ':app'
+include ':admin-app'
+include ':predictorLibrary'

@@ -3,6 +3,7 @@ package org.hugoandrade.worldcup2018.predictor.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,10 +12,10 @@ import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.GlobalData;
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.common.VerticalLinearLayoutManager;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Country;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Match;
+import org.hugoandrade.worldcup2018.predictor.data.Country;
+import org.hugoandrade.worldcup2018.predictor.data.Match;
 import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
+import org.hugoandrade.worldcup2018.predictor.utils.CountryUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StaticVariableUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.TranslationUtils;
@@ -68,7 +69,7 @@ public class CountryDetailsActivity extends SimpleActivityBase {
         }
 
         ImageView ivFlag = findViewById(R.id.iv_country_flag);
-        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivFlag, Country.getImageID(mCountry));
+        BitmapUtils.decodeSampledBitmapFromResourceAsync(this, ivFlag, CountryUtils.getImageID(mCountry));
         //ivFlag.setImageResource(Country.getImageID(mCountry));
 
         TextView tvCountryName = findViewById(R.id.tv_country_name);
@@ -89,7 +90,7 @@ public class CountryDetailsActivity extends SimpleActivityBase {
         RecyclerView recyclerView = findViewById(R.id.rv_group);
         recyclerView.setAdapter(adapter);
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new VerticalLinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         // Setup recycler view
@@ -107,7 +108,7 @@ public class CountryDetailsActivity extends SimpleActivityBase {
         RecyclerView rvMatches = findViewById(R.id.rv_matches);
         rvMatches.setAdapter(knockoutListAdapter);
         rvMatches.setNestedScrollingEnabled(false);
-        rvMatches.setLayoutManager(new VerticalLinearLayoutManager(this));
+        rvMatches.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private int getTitleResource() {

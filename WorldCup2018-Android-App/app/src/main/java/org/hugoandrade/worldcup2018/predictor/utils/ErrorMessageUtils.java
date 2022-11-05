@@ -27,7 +27,7 @@ public final class ErrorMessageUtils {
             return tryAgainMessage();
         }
 
-        if (NetworkUtils.isNetworkUnavailableError(context, message))
+        if (NetworkAppUtils.isNetworkUnavailableError(context, message))
             return message;
 
         if (message.contains(sLoginIncorrectUsername))
@@ -47,7 +47,7 @@ public final class ErrorMessageUtils {
             return tryAgainMessage();
         }
 
-        if (NetworkUtils.isNetworkUnavailableError(context, message))
+        if (NetworkAppUtils.isNetworkUnavailableError(context, message))
             return message;
 
         if (message.contains(sRegisterUsernameExists))
@@ -68,7 +68,7 @@ public final class ErrorMessageUtils {
             return tryAgainMessage();
         }
 
-        if (NetworkUtils.isNetworkUnavailableError(context, message))
+        if (NetworkAppUtils.isNetworkUnavailableError(context, message))
             return message;
 
         if (message.contains(sJoinLeagueCodeErrorInit) && message.contains(sJoinLeagueCodeErrorEnd))
@@ -87,7 +87,7 @@ public final class ErrorMessageUtils {
             return tryAgainMessage();
         }
 
-        if (NetworkUtils.isNetworkUnavailableError(context, message))
+        if (NetworkAppUtils.isNetworkUnavailableError(context, message))
             return message;
 
         return context.getString(R.string.error_login_failed);

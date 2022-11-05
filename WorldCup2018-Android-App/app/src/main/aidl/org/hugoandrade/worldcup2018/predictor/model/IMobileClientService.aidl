@@ -3,10 +3,10 @@ package org.hugoandrade.worldcup2018.predictor.model;
 
 // Declare any non-default types here with import statements
 import org.hugoandrade.worldcup2018.predictor.model.IMobileClientServiceCallback;
-import org.hugoandrade.worldcup2018.predictor.data.raw.Prediction;
-import org.hugoandrade.worldcup2018.predictor.data.raw.LoginData;
-import org.hugoandrade.worldcup2018.predictor.data.raw.User;
-import org.hugoandrade.worldcup2018.predictor.data.raw.League;
+import org.hugoandrade.worldcup2018.predictor.data.Prediction;
+import org.hugoandrade.worldcup2018.predictor.data.LoginData;
+import org.hugoandrade.worldcup2018.predictor.data.User;
+import org.hugoandrade.worldcup2018.predictor.data.League;
 
 interface IMobileClientService {
 

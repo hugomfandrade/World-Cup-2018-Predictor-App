@@ -24,8 +24,7 @@ public class ServiceManager {
     }
 
     public void subscribeServiceCallback(MobileServiceCallback callback) {
-        if (!mCallbackSet.contains(callback))
-            mCallbackSet.add(callback);
+        mCallbackSet.add(callback);
     }
 
     public void unsubscribeServiceCallback(MobileServiceCallback callback) {
