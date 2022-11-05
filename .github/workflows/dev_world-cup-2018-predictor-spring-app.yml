@@ -1,14 +1,14 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy JAR app to Azure Web App - world-cup-2018-predictor-spring-app
+name: Build&Deploy JAR app to Azure (prod) - world-cup-2018-predictor-spring-app
 env:
   SUB_DIR: 'WorldCup2018-Backend/backend-spring'
 
 on:
   push:
     branches:
-      - dev
+      - master
   workflow_dispatch:
 
 jobs:

@@ -73,7 +73,7 @@ public class DatabaseConfig {
     @Bean
     public MongoClient mongo() {
         String url = "mongodb+srv://" + mongoDbUsername + ":" + mongoDbPassword + "@" +
-                mongoDbHost + "/?retryWrites=true&w=majority";
+                mongoDbHost + "/" + mongoDbDatabase + "?retryWrites=true&w=majority";
 
         ConnectionString connectionString = new ConnectionString(url);
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
@@ -97,7 +97,7 @@ public class DatabaseConfig {
         converter.setCustomConversions(customConversions());
         converter.afterPropertiesSet();
 
-        return new MongoTemplate(new SimpleMongoClientDbFactory(mongo(), "test"), converter);
+        return new MongoTemplate(new SimpleMongoClientDbFactory(mongo(), mongoDbDatabase), converter);
     }
 
     private MongoCustomConversions customConversions() {
