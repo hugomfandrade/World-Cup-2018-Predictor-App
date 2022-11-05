@@ -1,12 +1,10 @@
 package org.hugoandrade.worldcup2018.predictor.customview;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
-import android.widget.EditText;
 
-public class ImeEditText extends android.support.v7.widget.AppCompatEditText {
+public class ImeEditText extends androidx.appcompat.widget.AppCompatEditText {
 
     private OnKeyPreImeListener mOnKeyPreImeListener;
 

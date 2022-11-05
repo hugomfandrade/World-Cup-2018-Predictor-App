@@ -3,8 +3,8 @@ package org.hugoandrade.worldcup2018.predictor.view.listadapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.SparseArray;
@@ -24,7 +24,6 @@ import org.hugoandrade.worldcup2018.predictor.utils.BitmapUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.CountryUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchAppUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.MatchUtils;
-import org.hugoandrade.worldcup2018.predictor.utils.StageUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.StringUtils;
 import org.hugoandrade.worldcup2018.predictor.utils.TranslationUtils;
 

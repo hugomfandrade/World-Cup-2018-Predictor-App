@@ -7,13 +7,13 @@
     android:background="@drawable/world_cup_2018_background"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_above="@id/tv_no_network_connection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/tabanim_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,15 +21,15 @@
             android:background="?colorPrimaryDark">
 
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/anim_toolbar"
                 app:popupTheme="@style/ActionBarThemeOverlay.Popup"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 >
-            </android.support.v7.widget.Toolbar>
+            </androidx.appcompat.widget.Toolbar>
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <org.hugoandrade.worldcup2018.predictor.customview.NonSwipeableViewPager
             android:id="@+id/container"
@@ -49,7 +49,7 @@
             app:selectedColor="#4183c5"
             app:nonSelectedColor="#fff" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <include layout="@layout/layout_waiting_progress_bar"
         android:visibility="invisible"
@@ -66,7 +66,7 @@
         android:clickable="true"
         android:focusable="true">
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="#fff"
@@ -95,7 +95,7 @@
                     android:textSize="16sp"
                     android:text="@string/error_default"/>
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_marginTop="10dp"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
@@ -121,11 +121,11 @@
                         android:textAllCaps="true"
                         android:text="@string/error_try_again"/>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 

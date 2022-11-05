@@ -3,7 +3,7 @@ package org.hugoandrade.worldcup2018.predictor.admin.view.helper;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 import android.view.KeyEvent;
 import android.view.View;
 

@@ -3,8 +3,8 @@ package org.hugoandrade.worldcup2018.predictor.admin.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.widget.EditText;
 

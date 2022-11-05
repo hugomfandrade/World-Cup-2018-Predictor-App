@@ -2,10 +2,10 @@ package org.hugoandrade.worldcup2018.predictor.view.listadapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.hugoandrade.worldcup2018.predictor.R;
-import org.hugoandrade.worldcup2018.predictor.data.Country;
 import org.hugoandrade.worldcup2018.predictor.data.Match;
 import org.hugoandrade.worldcup2018.predictor.data.Prediction;
 import org.hugoandrade.worldcup2018.predictor.data.User;

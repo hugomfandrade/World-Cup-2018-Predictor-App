@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_margin="16dp" />
     
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@+id/viewGroup_prediction_header"
         android:id="@+id/rv_predictions"
         android:layout_width="match_parent"

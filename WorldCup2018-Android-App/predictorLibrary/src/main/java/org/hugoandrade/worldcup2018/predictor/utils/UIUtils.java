@@ -2,8 +2,8 @@ package org.hugoandrade.worldcup2018.predictor.utils;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.support.annotation.UiThread;
-import android.support.design.widget.Snackbar;
+import androidx.annotation.UiThread;
+import com.google.android.material.snackbar.Snackbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 

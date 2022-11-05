@@ -1,6 +1,6 @@
 package org.hugoandrade.worldcup2018.predictor.common;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class CustomRecyclerScroll extends RecyclerView.OnScrollListener {
     private static final float HIDE_THRESHOLD = 100;

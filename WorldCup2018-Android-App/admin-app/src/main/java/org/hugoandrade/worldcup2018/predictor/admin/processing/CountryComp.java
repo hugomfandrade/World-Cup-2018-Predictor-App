@@ -1,7 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.admin.processing;
 
 import android.os.Parcel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.hugoandrade.worldcup2018.predictor.data.Country;
 import org.hugoandrade.worldcup2018.predictor.data.Match;

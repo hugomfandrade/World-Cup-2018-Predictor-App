@@ -13,7 +13,7 @@
     android:paddingTop="4dp"
     tools:background="#26629e">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/cardView_container"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -157,6 +157,6 @@
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

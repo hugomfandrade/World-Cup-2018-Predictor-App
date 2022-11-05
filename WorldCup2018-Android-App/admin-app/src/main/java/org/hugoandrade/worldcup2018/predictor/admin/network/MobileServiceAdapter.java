@@ -2,7 +2,7 @@ package org.hugoandrade.worldcup2018.predictor.admin.network;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.google.common.util.concurrent.FutureCallback;

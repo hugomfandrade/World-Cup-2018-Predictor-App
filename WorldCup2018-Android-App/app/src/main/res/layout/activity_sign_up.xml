@@ -18,7 +18,7 @@
         android:paddingEnd="16dp"
         >
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/textInputLabelForLogin">
@@ -39,9 +39,9 @@
 
             </org.hugoandrade.worldcup2018.predictor.customview.ImeEditText>
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/textInputLabelForLogin">
@@ -58,9 +58,9 @@
                 android:lines="1"
                 android:textColor="@android:color/white" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/textInputLabelForLogin">
@@ -76,7 +76,7 @@
                 android:lines="1"
                 android:textColor="@android:color/white" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <RelativeLayout
             android:id="@+id/button_signup"

@@ -1,7 +1,7 @@
 package org.hugoandrade.worldcup2018.predictor.view;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import org.hugoandrade.worldcup2018.predictor.common.ContextView;
